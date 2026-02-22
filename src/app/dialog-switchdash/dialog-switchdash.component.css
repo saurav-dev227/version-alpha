@@ -1,0 +1,115 @@
+.mat-dialog-container {
+    margin-left: 670px;
+    margin-top: 300px;
+}
+
+.mat-dialog-container {
+    box-shadow:#E6E7E7;
+    background: #E6E7E7;
+    color: #fff;
+}
+
+
+
+/* table Starts */
+.panel-heading{
+    position: relative;
+    background-color: #ff7a01;
+    border: 1px;
+    border-radius: 3px;
+    text-align: left;
+    padding: 5px;
+    font-size: 16px;
+ }
+
+.hover-effect{
+    border-color: #4C4B4B;
+    background-color: #4C4B4B;
+}
+.status-panel-body{
+    width:100%;
+    background-color:black;
+    position:relative;
+    border-radius:3px; 
+    border:1px solid #ff7a01;  
+    padding: 10px;
+}  
+ 
+.chartBorder{
+    width: 100%;
+
+}
+     
+/* table End */ 
+#cancel{
+    background-color: #ff7a01;  
+}
+
+
+/* Site Deatils table start */
+.panel-body{
+    width:100%;
+    border:1px solid #ff7a01;
+    padding: 5px;  
+}  
+.mat-form-field{
+ 
+ font-size: 14px;
+ width: 100%;
+}
+
+.mat-table {
+ width: 100%;
+ text-align:left;
+ border-spacing: 0;
+ border-collapse: collapse;
+}
+.mat-header-cell{
+ background-color: black;
+ padding: 8px;
+ font-size: 16px;
+}
+.mat-header-row {
+    min-height: 56px;
+    /* width: 1675px; */
+}
+.headerRow{
+ background: red;
+ padding: 8px;
+ text-align: center;
+ font-size: 16px;
+}
+.mat-paginator{
+ background: #000000;
+}
+/* 
+th {
+ background-color: #000000;
+ padding: 8px;
+ text-align: center;
+}
+td{
+    
+ padding:8px;
+} 
+tr:nth-child(odd){
+ background-color: #666;
+}
+tr:nth-child(even){
+ background-color: #222222;
+} */
+
+/* Customer detail table end */
+
+/* .mat-cell-cdk-column-sitename-mat-column-sitename-ng-star-inserted
+{
+width: 100%;
+}
+
+.mat-cell[_ngcontent-c10] {
+    font-size: 12px;
+    border-right: 1px solid #222;
+} */
+
+
+

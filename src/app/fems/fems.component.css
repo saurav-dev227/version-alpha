@@ -1,0 +1,415 @@
+
+.dashboard_trakcer{
+
+   margin-top: 10px;
+   margin-left:10px;
+   margin-right: 5px;
+   font-size: 18px;
+}
+.mat-form-field {
+  display: inline-block;
+  position: relative;
+  text-align: left;
+  width: 100%;
+}
+
+mat-cell, mat-footer-cell, mat-header-cell {
+   flex: 1;
+   display: flex;
+   align-items: center;
+   overflow: hidden;
+   word-wrap: break-word;
+   min-height: inherit;
+   padding:4px !important;
+   text-align: center;
+   /* padding: 10px; */
+}
+.mat-table[_ngcontent-c10] .mat-cell[_ngcontent-c10]:first-child {
+   margin-top: 0%;
+}
+
+.container-fluid {
+   background: black;
+}
+
+.mat-header-cell {
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center!important;
+}
+
+hr {
+    width: 95%;
+    height: 1px;
+    margin-left: 10px;
+    margin-top: 0px;
+    background-color:#666;
+
+   }
+
+   .mat-option.mat-selected:not(.mat-option-disabled) {
+      color: #fff !important;
+  }
+
+  /* Snapshot row start */
+
+  .circle-title2{
+    margin-bottom: 15px;
+    text-align: center;
+
+
+     }
+    .circle-title-heading{
+      position:relative;
+      height: 80px;
+      width: 80px;
+      margin: 0 auto -40px;
+      border-radius: 100%;
+      transition: all ease-in-out .3s;
+      background:#ff7a01;
+      color: #fff;
+    }
+    .circle-title-heading .fa{
+       line-height: 80px;
+    }
+    .circle-title-heading .fa.icon{
+      font-size: 4em;
+      padding-top: 8px;
+   }
+    .box{
+      padding-top: 50px;
+      background-color: #222222;
+      border: 1px solid #ff7a01;
+      border-radius: 5px;
+
+   }
+
+   .box2{
+      padding-top: 50px;
+      background-color: #222222;
+      border: 1px solid #ff7a01;
+      border-radius: 5px;
+      height: 140px;
+      margin-bottom: 50px;
+   }
+   .box:hover{
+      border-color: #4C4B4B;
+      background-color: #4C4B4B;
+   }
+   .box-heading{
+        text-transform: uppercase;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+   }
+   .text-faded{
+      color:rgba(255,255,255,0.7);
+   }
+   .box-number{
+      padding:5px 0 15px;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1;
+   }
+   .footer{
+      display: block;
+      padding: 5px;
+      color:rgba(255,255,255,0.5);
+      transition: all ease-in-out .3s;
+   }
+   .footer:hover{
+      text-decoration: none;
+      color:rgba(255,255,255,0.5);
+      background-color: rgba(0,0,0,0.2);
+   }
+   #img-ctn{
+      padding-top: 14px;
+   }
+
+/* Snapshot row end */
+
+
+/* Breadcrumbs from http://bootsnipp.com/snippets/featured/triangle-breadcrumbs-arrows */
+
+#breadcrumb{
+   position: fixed;
+   z-index: 999;
+   top: 50px;
+   width: 100%;
+   background: #222222;
+}
+
+
+*  breadcrump *
+
+.btn-breadcrumb .btn:not(:last-child):after {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 17px solid transparent;
+    border-bottom: 17px solid transparent;
+    border-left: 10px solid #303030;
+    position: absolute;
+    top: 50%;
+    margin-top: -17px;
+    left: 100%;
+    z-index: 3;
+    color: #fff;
+  }
+  .btn-breadcrumb .btn:not(:last-child):before {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 17px solid transparent;
+    border-bottom: 17px solid transparent;
+    border-left: 10px solid rgb(173, 173, 173);
+    position: absolute;
+    top: 50%;
+    margin-top: -17px;
+    margin-left: 1px;
+    left: 100%;
+    z-index: 3;
+  }
+
+  .btn-breadcrumb .btn {
+    padding:6px 12px 6px 24px;
+    background: #303030;
+    color: #fff;
+  }
+  .btn-breadcrumb .btn:first-child {
+    padding:6px 6px 6px 10px;
+    background: #303030;
+    color: #fff;
+  }
+  .btn-breadcrumb .btn:last-child {
+    padding:6px 18px 6px 24px;
+    background: #303030;
+    color: #fff;
+  }
+
+  /** Default button **/
+  .btn-breadcrumb .btn.btn-default:not(:last-child):after {
+    border-left: 10px solid #303030;
+  }
+
+
+  /* The responsive part */
+
+  .btn-breadcrumb > * > div {
+      /* With less: .text-overflow(); */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+  }
+
+  .btn-breadcrumb > *:nth-child(n+2) {
+    display:none;
+  }
+
+  .mat-input-element {
+   caret-color: #E66F00 !important;
+  }
+
+  .mat-input-element ng-reflect-placeholder {
+   color: #E66F00 !important;
+  }
+  /* === For phones =================================== */
+  @media (max-width: 767px) {
+      .btn-breadcrumb > *:nth-last-child(-n+2) {
+          display:block;
+      }
+      .btn-breadcrumb > * div {
+          max-width: 60px;
+      }
+  }
+
+  /* === For tablets ================================== */
+  @media (min-width: 768px) and (max-width:991px) {
+      .btn-breadcrumb > *:nth-last-child(-n+4) {
+          display:block;
+      }
+      .btn-breadcrumb > * div {
+          max-width: 100px;
+      }
+      .hide{
+         display: none;
+      }
+  }
+
+  /* === For desktops ================================== */
+  @media (min-width: 992px) {
+      .btn-breadcrumb > *:nth-last-child(-n+6) {
+          display:block;
+      }
+      .btn-breadcrumb > * div {
+          max-width: 170px;
+      }
+  }
+  #page-wrapper {
+   width: 100%;
+   padding: 130px 25px 130px 25px;
+   background: #0F0F0F;
+
+}
+.close {
+   float: right;
+   font-size: 1.5rem;
+   font-weight: 700;
+   line-height: 1;
+   color: white;
+   text-shadow: 0 1px 0 #fff;
+   /* opacity: .5; */
+}
+/* Customer details css start  */
+.panel-body ul.all-details{
+   font-weight: bold;
+   display: table;
+   width: 100%;
+   text-align: left;
+}
+.panel-body ul.all-details li{
+ display: table-cell;
+ width: 50%;
+
+
+}
+.panel-body ul.all-details li { /*changes-23/08/17*/
+   max-width: 100px;
+   word-wrap: break-word;
+}
+.panel-body.details{
+   min-height: 277px;
+   background: #222222;
+   margin: 0;
+   padding: 0;
+ }
+ dl, ol, p, ul {
+   margin-top: 0;
+   margin-bottom: 0.6rem;
+}
+
+dl[_ngcontent-c10], ol[_ngcontent-c10], ul[_ngcontent-c10] {
+   margin-top: 1px;
+   margin-bottom: 0;
+}
+
+
+ /* Customer details css end  */
+
+
+
+ /*Table css start*/
+
+.chngpwd-body{
+  width:100%;
+  border:1px solid #ff7a01;
+  padding-top: 15px;
+  margin-top: 55px;
+  
+}
+
+
+.card-header{
+  color: black;
+  text-align: left;
+  font-size: 18px;
+}
+.oldp{
+  margin-top: 10px;
+}
+.chpwd{
+  text-align: left;
+}
+.btn-primary {
+  background: #E66F00;
+  color: #ffffff;
+}
+.btn{
+  border: #E66F00;
+   
+}
+.chngpwd{
+  margin-top: 125px;
+}
+
+
+.charheader2{
+  margin: 5px;
+  border-top: 1px solid orangered;
+  background: orangered;
+  padding: 5px;
+  border-radius: 5px;
+
+}
+.panel-heading{
+ position: relative;
+ background-color: #ff7a01;
+ border: 1px;
+ border-radius: 3px;
+ text-align: left;
+ padding: 5px;
+ font-size: 16px;
+}
+.mat-raised-button {
+ background-color: chocolate!important;
+ 
+}
+.mat-icon-material-icons-mat-icon-no-color{
+ color: cornsilk;
+}
+.md-raised.md-primary.md-button.md-link-ripple{
+ background: #E66F00; 
+ color: #ffffff;
+
+}
+.heading-panel{
+  background:#ff7a01;
+  padding:5px;
+  text-align: left;
+  font-size: 16px;
+  border-radius: 3px;
+  margin-top: 12px;
+  }
+
+.chart-body{
+  border:1px solid #ff7a01;
+  padding: 10px;
+  position: relative;
+}
+ 
+.btn-primary {
+  background: #E66F00;
+  color: #ffffff;
+}
+.btn{
+  border: #E66F00;
+   
+}
+
+/*Table css End*/
+
+
+
+table {
+  width: 100%;
+}
+
+#add-device{
+  color: white;
+  background:#b99073!important;
+  margin-left: 100px;
+
+}
+#add-device-Type{
+  color: white;
+  background:#b99073!important;
+  margin-left: 70px;
+}
+
+.mat-button.mat-accent, .mat-icon-button.mat-accent, .mat-stroked-button.mat-accent {
+  color: #E66F00;
+}
+
+

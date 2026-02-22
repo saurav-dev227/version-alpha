@@ -1,0 +1,162 @@
+p{
+    color: white;
+}
+
+.container {
+    background: black;
+}
+
+.sidenav-container{
+    height: 100%;
+}
+.sidenav{
+    width: 200px;
+    background: #222222;
+}
+
+.sidenav .mat-toolbar{
+    background:#222222;
+    margin-top: 18px;
+}
+.mat-toolbar.mat-primary{
+    position: fixed;
+    top:0;
+    z-index: 1;
+}
+.mat-toolbar{
+    background: #222222;
+
+}
+.logo_dash{
+    background: white;
+    width: 100%;
+    
+}
+.header_container{
+   width: 100%;
+    
+}
+.header1{
+    float: left;
+    
+}
+.header2{
+    float: right;
+    
+}
+
+/*  breadcrump */
+
+
+/* Breadcrumbs from http://bootsnipp.com/snippets/featured/triangle-breadcrumbs-arrows */
+.btn-breadcrumb .btn:not(:last-child):after {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 17px solid transparent;
+    border-bottom: 17px solid transparent;
+    border-left: 10px solid #303030;
+    position: absolute;
+    top: 50%;
+    margin-top: -17px;
+    left: 100%;
+    z-index: 3;
+    color: #fff;
+  }
+  .btn-breadcrumb .btn:not(:last-child):before {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 17px solid transparent;
+    border-bottom: 17px solid transparent;
+    border-left: 10px solid rgb(173, 173, 173);
+    position: absolute;
+    top: 50%;
+    margin-top: -17px;
+    margin-left: 1px;
+    left: 100%;
+    z-index: 3;
+  }
+  
+  .btn-breadcrumb .btn {
+    padding:6px 12px 6px 24px;
+    background: #303030;
+    color: #fff;
+  }
+  .btn-breadcrumb .btn:first-child {
+    padding:6px 6px 6px 10px;
+    background: #303030;
+    color: #fff;
+  }
+  .btn-breadcrumb .btn:last-child {
+    padding:6px 18px 6px 24px;
+    background: #303030;
+    color: #fff;
+  }
+  
+  /** Default button **/
+  .btn-breadcrumb .btn.btn-default:not(:last-child):after {
+    border-left: 10px solid #303030;
+  }
+  
+  
+  /* The responsive part */
+  
+  .btn-breadcrumb > * > div {
+      /* With less: .text-overflow(); */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;    
+  }
+  
+  .btn-breadcrumb > *:nth-child(n+2) {
+    display:none;
+  }
+  
+  /* === For phones =================================== */
+  @media (max-width: 767px) {
+      .btn-breadcrumb > *:nth-last-child(-n+2) {
+          display:block;
+      } 
+      .btn-breadcrumb > * div {
+          max-width: 60px;
+      }
+  }
+  
+  /* === For tablets ================================== */
+  @media (min-width: 768px) and (max-width:991px) {
+      .btn-breadcrumb > *:nth-last-child(-n+4) {
+          display:block;
+      } 
+      .btn-breadcrumb > * div {
+          max-width: 100px;
+      }
+  }
+  
+  /* === For desktops ================================== */
+  @media (min-width: 992px) {
+      .btn-breadcrumb > *:nth-last-child(-n+6) {
+          display:block;
+      } 
+      .btn-breadcrumb > * div {
+          max-width: 170px;
+      }
+  }
+  
+  .footer.footer{
+    position:fixed;
+    bottom:0;
+    right:0;
+    left:0;
+    z-index:9999;
+    background:#222222;
+    padding: 10px;
+    
+  }
+  .text-muted {
+    color: #E6E7E7!important;
+}
+
+

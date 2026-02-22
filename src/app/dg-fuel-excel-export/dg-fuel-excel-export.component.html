@@ -1,0 +1,27 @@
+<div class="example-container">  
+  <h1 mat-dialog-title style="color: rgb(247, 148, 1);">Export data Sheet</h1>
+  <hr style="border: 1px solid rgb(247, 148, 1);;">
+  <form  (ngSubmit)= "onSubmit()" [formGroup]="excelDataForm">
+    <div class="abc" mat-dialog-content>
+      <!-- <p style="color: rgb(247, 148, 1)">Select Start Date </p> -->
+      <mat-form-field appearance="fill">
+        <mat-label style="color: rgb(247, 148, 1)" >Start Date</mat-label>
+        <input matInput formControlName="startDate" min="2022-11-21" placeholder="Ex. 20-02-2022" type="date">
+      </mat-form-field> 
+    </div>
+
+    <div class="abc" mat-dialog-content>
+      <!-- <p style="color: rgb(247, 148, 1)">Select End Date</p> -->
+      <mat-form-field  appearance="fill">
+        <mat-label style="color: rgb(247, 148, 1)">End Date</mat-label>
+        <input matInput formControlName="endDate" maxlength="20" placeholder="Ex. 20-01-2022" type="date">
+      </mat-form-field>
+    </div>
+  
+    <div mat-dialog-actions>
+      <button id="Save-device"  type="Submit">Submit</button>
+      <button  id="Save-device"  (click)="onNoClick()">Cancel</button>
+      
+    </div>
+  </form>
+  </div>

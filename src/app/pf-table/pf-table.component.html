@@ -1,0 +1,63 @@
+
+<div mat-dialog-content id="selectdash">
+  <div class="row">
+    <div class="col-sm-12 ">
+        <div class="panel-heading">
+            <i class="fa fa-bar-chart-o"></i> Power-Factor below allowed values
+        </div>
+                <div class="chart-body">
+                  <div class="example-header" fxLayout="row">
+                      <mat-form-field>
+                          <input matInput class="matInputFilterBar" (keyup)="applyFilter($event.target.value)" placeholder="Search anything in table here ...">
+                        </mat-form-field>
+                      </div>
+
+                      <div class="example-container mat-elevation-z8">
+
+                        <mat-table [dataSource]="dataSource" matSort>
+
+                          <!-- ID Column -->
+                          <ng-container matColumnDef="datetime">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header > Date Time</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="Date Time" > {{row.datetime}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="power_source">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Power Source</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="power_source" > {{row.power_source}} </mat-cell>
+                          </ng-container>
+
+                          <!-- Site Name Column -->
+                          <ng-container matColumnDef="R_Phase">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >R-Phase</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="R-Phase" > {{row.r_phase}} </mat-cell>
+                          </ng-container>
+
+                          <!-- Site Type -->
+                          <ng-container matColumnDef="Y_Phase">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Y-Phase</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="Y-Phase" > {{row.y_phase}}</mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="B_Phase">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >B-Phase</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="Y-Phase"> {{row.b_phase}} </mat-cell>
+                          </ng-container>
+                          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                          <mat-row *matRowDef="let row; columns: displayedColumns;">
+                          </mat-row> 
+                        </mat-table>
+                        <mat-paginator [pageSizeOptions]="[5, 10, 20]" ></mat-paginator>
+                       
+                      </div>
+                    </div>
+                  </div>
+                </div>
+</div>
+<div mat-dialog-actions>
+  <button (click)='exportPFFluctuationData()' id="cancel" mat-button >Export</button>
+  <button (click)='onNoClick()' id="cancel" mat-button >Close</button>
+  <!-- <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Ok</button> -->
+</div>
+
+
+
+

@@ -1,0 +1,637 @@
+.dashboard_trakcer {
+
+   margin-top: 10px;
+   margin-left: 10px;
+   margin-right: 5px;
+   font-size: 18px;
+}
+
+hr {
+   width: 95%;
+   height: 1px;
+   margin-left: 10px;
+   margin-top: 0px;
+   background-color: #666;
+
+}
+
+.container-fluid {
+   background: black;
+}
+
+.mat-option.mat-selected:not(.mat-option-disabled) {
+   color: #fff !important;
+}
+
+/* Snapshot row start */
+
+.circle-title2 {
+   margin-bottom: 15px;
+   text-align: center;
+
+
+}
+
+.circle-title-heading {
+   position: relative;
+   height: 80px;
+   width: 80px;
+   margin: 0 auto -40px;
+   border-radius: 100%;
+   transition: all ease-in-out .3s;
+   background: #ff7a01;
+   color: #fff;
+}
+
+.circle-title-heading .fa {
+   line-height: 80px;
+}
+
+.circle-title-heading .fa.icon {
+   font-size: 4em;
+   padding-top: 8px;
+}
+
+#sparklineA {
+   font-size: 15px;
+}
+
+.box {
+   padding-top: 50px;
+   background-color: #222222;
+   border: 1px solid #ff7a01;
+   /*   height:180px;*/
+   border-radius: 5px;
+
+}
+
+.carbonbox {
+   padding-top: 55px;
+   background-color: #222222;
+   border: 1px solid #ff7a01;
+   /*   height:180px;*/
+   border-radius: 5px;
+
+}
+
+.box2 {
+   padding-top: 50px;
+   background-color: #222222;
+   border: 1px solid #ff7a01;
+   border-radius: 5px;
+   height: 140px;
+   margin-bottom: 50px;
+}
+
+.box:hover {
+   border-color: #4C4B4B;
+   background-color: #4C4B4B;
+}
+
+.box-heading {
+   text-transform: uppercase;
+   text-overflow: ellipsis;
+   overflow: hidden;
+   white-space: nowrap;
+}
+
+.text-faded {
+   color: rgba(255, 255, 255, 0.7);
+}
+
+.box-number {
+   padding: 5px 0 15px;
+   font-size: 26px;
+   font-weight: 700;
+   line-height: 1;
+}
+
+.box-number1 {
+   padding: 5px 0 15px;
+   font-size: 19px;
+   font-weight: 900;
+   line-height: 1;
+}
+
+.footer {
+   display: block;
+   padding: 5px;
+   color: rgba(255, 255, 255, 0.5);
+   transition: all ease-in-out .3s;
+}
+
+.footer:hover {
+   text-decoration: none;
+   color: rgba(255, 255, 255, 0.5);
+   background-color: rgba(0, 0, 0, 0.2);
+}
+
+#img-ctn {
+   padding-top: 14px;
+}
+
+/* Snapshot row end */
+
+
+
+/* status and energy power status row Starts */
+.panel-heading {
+   position: relative;
+
+   background-color: #ff7a01;
+
+   border: 1px;
+   border-radius: 3px;
+   text-align: left;
+   padding: 5px;
+   font-size: 16px;
+}
+
+.hover-effect {
+   border-color: #4C4B4B;
+   background-color: #4C4B4B;
+}
+
+.status-panel-body {
+
+   width: 100%;
+   background-color: black;
+   position: relative;
+   border-radius: 3px;
+   border: 1px solid #ff7a01;
+   padding: 10px;
+}
+
+.chartBorder {
+   width: 100%;
+
+
+}
+
+
+/* status and energy power status row End */
+
+
+/* Customer detail table start */
+
+
+.panel-body {
+   width: 100%;
+   border: 1px solid #ff7a01;
+   padding: 5px;
+}
+
+mat-form-field {
+
+   font-size: 14px;
+   width: 100%;
+}
+
+table {
+   width: 100%;
+   text-align: left;
+   border-spacing: 0;
+   border-collapse: collapse;
+}
+
+.mat-header-cell {
+   background-color: black;
+   padding: 8px;
+   font-size: 16px;
+}
+
+.headerRow {
+   background: red;
+   padding: 8px;
+   text-align: center;
+   font-size: 16px;
+}
+
+.mat-paginator {
+   background: #000000;
+}
+
+th {
+   background-color: #000000;
+   padding: 8px;
+   text-align: center;
+}
+
+td {
+
+   padding: 8px;
+}
+
+.mat-row:nth-child(even) {
+   background-color: #696969;
+}
+
+.mat-row:nth-child(odd) {
+   background-color: #3F3F3F;
+}
+
+/* Customer detail table end */
+
+/* Energy status graph start */
+.heading-panel {
+   background: #ff7a01;
+   padding: 5px;
+   text-align: left;
+   font-size: 16px;
+   border-radius: 3px;
+   margin-top: 12px;
+}
+
+/* .chart-body{
+    border:1px solid #ff7a01;
+    padding: 10px;
+    position: relative;
+ } */
+
+
+
+/* Energy status graph end */
+
+
+
+.chngpwd-body {
+   width: 100%;
+   border: 1px solid #ff7a01;
+   padding-top: 15px;
+   margin-top: 55px;
+
+}
+
+
+.card-header {
+   color: black;
+   text-align: left;
+   font-size: 18px;
+}
+
+.oldp {
+   margin-top: 10px;
+}
+
+.chpwd {
+   text-align: left;
+}
+
+.btn-primary {
+   background: #E66F00;
+   color: #ffffff;
+}
+
+.btn {
+   border: #E66F00;
+
+}
+
+.chngpwd {
+   margin-top: 125px;
+}
+
+
+.charheader2 {
+   margin: 5px;
+   border-top: 1px solid orangered;
+   background: orangered;
+   padding: 5px;
+   border-radius: 5px;
+
+}
+
+/* Breadcrumbs from http://bootsnipp.com/snippets/featured/triangle-breadcrumbs-arrows */
+#breadcrumb {
+   position: fixed;
+   z-index: 999;
+   top: 50px;
+   width: 100%;
+   background: #222222;
+}
+
+
+/*  breadcrump */
+
+.btn-breadcrumb .btn:not(:last-child):after {
+   content: " ";
+   display: block;
+   width: 0;
+   height: 0;
+   border-top: 17px solid transparent;
+   border-bottom: 17px solid transparent;
+   border-left: 10px solid #303030;
+   position: absolute;
+   top: 50%;
+   margin-top: -17px;
+   left: 100%;
+   z-index: 3;
+   color: #fff;
+}
+
+.btn-breadcrumb .btn:not(:last-child):before {
+   content: " ";
+   display: block;
+   width: 0;
+   height: 0;
+   border-top: 17px solid transparent;
+   border-bottom: 17px solid transparent;
+   border-left: 10px solid rgb(173, 173, 173);
+   position: absolute;
+   top: 50%;
+   margin-top: -17px;
+   margin-left: 1px;
+   left: 100%;
+   z-index: 3;
+}
+
+.btn-breadcrumb .btn {
+   padding: 6px 12px 6px 24px;
+   background: #303030;
+   color: #fff;
+}
+
+.btn-breadcrumb .btn:first-child {
+   padding: 6px 6px 6px 10px;
+   background: #303030;
+   color: #fff;
+}
+
+.btn-breadcrumb .btn:last-child {
+   padding: 6px 18px 6px 24px;
+   background: #303030;
+   color: #fff;
+}
+
+/** Default button **/
+.btn-breadcrumb .btn.btn-default:not(:last-child):after {
+   border-left: 10px solid #303030;
+}
+
+
+/* The responsive part */
+
+.btn-breadcrumb>*>div {
+   /* With less: .text-overflow(); */
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+.btn-breadcrumb>*:nth-child(n+2) {
+   display: none;
+}
+
+/* === For phones =================================== */
+@media (max-width: 767px) {
+   .btn-breadcrumb>*:nth-last-child(-n+2) {
+      display: block;
+   }
+
+   .btn-breadcrumb>* div {
+      max-width: 60px;
+   }
+}
+
+/* === For tablets ================================== */
+@media (min-width: 768px) and (max-width:991px) {
+   .btn-breadcrumb>*:nth-last-child(-n+4) {
+      display: block;
+   }
+
+   .btn-breadcrumb>* div {
+      max-width: 100px;
+   }
+}
+
+/* === For desktops ================================== */
+@media (min-width: 992px) {
+   .btn-breadcrumb>*:nth-last-child(-n+6) {
+      display: block;
+   }
+
+   .btn-breadcrumb>* div {
+      max-width: 170px;
+   }
+}
+
+#page-wrapper {
+   width: 100%;
+   padding: 130px 25px 130px 25px;
+   background: #0F0F0F;
+}
+
+.md-raised.md-primary.md-button.md-link-ripple {
+   background: #E66F00;
+   ;
+   color: #ffffff;
+   border: #E66F00;
+   ;
+   border-radius: 5px;
+   padding: 7px 18px;
+   margin-top: 8px;
+   font-size: 14px;
+}
+
+#excelbtn {
+   background: #E66F00;
+   ;
+   color: #ffffff;
+   border: #E66F00;
+   ;
+   border-radius: 5px;
+   padding: 7px 18px;
+   margin-top: 8px;
+   font-size: 14px;
+   margin-right: 25px;
+}
+
+#button {
+   background: #E66F00;
+   ;
+   color: #ffffff;
+   border: #E66F00;
+   ;
+   border-radius: 5px;
+   padding: 7px 18px;
+   margin-top: 8px;
+   font-size: 14px;
+   margin-right: -81px;
+
+}
+
+
+.close {
+   float: right;
+   font-size: 1.5rem;
+   font-weight: 700;
+   line-height: 1;
+   color: #fff;
+   text-shadow: 0 1px 0 #fff;
+   opacity: .5;
+}
+
+.mat-table[_ngcontent-c13] .mat-cell[_ngcontent-c13]:first-child {
+   margin-top: 0%;
+}
+
+/* Custom Modal Styles from Screenshot */
+.custom-export-modal {
+   background-color: #333333;
+   border-radius: 8px;
+   border: none;
+   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+   padding: 20px;
+}
+
+.custom-modal-body {
+   padding: 0;
+}
+
+.custom-modal-title {
+   color: #ff7a01;
+   text-align: center;
+   font-weight: 600;
+   font-size: 24px;
+   margin-bottom: 25px;
+}
+
+.site-display-container {
+   padding: 0 10px;
+   margin-bottom: 10px;
+}
+
+.site-display-box {
+   background-color: #444;
+   /* Darker box for input-like feel */
+   border-left: 4px solid #ff7a01;
+   /* Orange left border */
+   padding: 10px 15px;
+   border-radius: 4px;
+   color: white;
+   font-size: 15px;
+}
+
+.site-label {
+   color: #ff7a01;
+   font-weight: bold;
+   margin-right: 5px;
+}
+
+.custom-divider {
+   height: 1px;
+   background-color: #ff7a01;
+   margin: 15px 10px;
+   opacity: 0.8;
+}
+
+.section-label {
+   color: #ff7a01;
+   text-align: center;
+   font-weight: bold;
+   margin-bottom: 15px;
+}
+
+.date-section {
+   padding: 0 10px;
+}
+
+.input-label {
+   color: #ff7a01;
+   font-size: 12px;
+   margin-bottom: 5px;
+   font-weight: bold;
+}
+
+.custom-modal-footer {
+   display: flex;
+   justify-content: center;
+   gap: 20px;
+   padding-bottom: 10px;
+}
+
+.custom-btn-submit,
+.custom-btn-cancel {
+   background-color: #e66f00;
+   /* Darker orange base */
+   color: white;
+   border: none;
+   border-radius: 6px;
+   padding: 8px 40px;
+   font-weight: bold;
+   font-size: 14px;
+   background-image: linear-gradient(to bottom, #ff9033, #e66f00);
+   /* Gradient effect */
+}
+
+.custom-btn-submit:hover,
+.custom-btn-cancel:hover {
+   background-image: linear-gradient(to bottom, #ff7a01, #d46500);
+   color: white;
+}
+
+/* Date Picker Styles for Energy Export Modal */
+.custom-date-wrapper {
+   background-color: #444;
+   border-radius: 4px;
+   padding: 0;
+}
+
+.custom-mat-date .mat-form-field-wrapper {
+   padding-bottom: 0;
+}
+
+.custom-mat-date .mat-form-field-flex {
+   background-color: transparent !important;
+   padding: 0 10px !important;
+}
+
+.custom-mat-date .mat-form-field-outline {
+   display: none !important;
+}
+
+.custom-mat-date input.mat-input-element {
+   color: white !important;
+   font-size: 16px;
+   padding: 10px 0;
+}
+
+.custom-date-toggle {
+   color: #888 !important;
+}
+
+.custom-mat-date .mat-datepicker-toggle {
+   display: inline-block;
+}
+
+/* Override Mat Datepicker Popup */
+::ng-deep .mat-datepicker-content {
+   background-color: #333 !important;
+   color: white !important;
+}
+
+::ng-deep .mat-calendar-table-header,
+::ng-deep .mat-calendar-body-label {
+   color: #ccc !important;
+}
+
+::ng-deep .mat-calendar-body-cell-content {
+   color: white !important;
+}
+
+::ng-deep .mat-calendar-body-selected {
+   background-color: #ff7a01 !important;
+   color: white !important;
+}
+
+::ng-deep .mat-calendar-body-today:not(.mat-calendar-body-selected) {
+   border-color: #ff7a01 !important;
+}
+
+::ng-deep .mat-calendar-arrow {
+   fill: white !important;
+}
+
+::ng-deep .mat-calendar-period-button {
+   color: white !important;
+}

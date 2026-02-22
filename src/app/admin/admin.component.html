@@ -1,0 +1,468 @@
+<div class="container mt-5">
+  <h1>This is admin page</h1>
+  <!-- <div class="row">
+  <div class="col-sm-3">
+  <div class="panel-heading">
+      <i class="fa fa-bar-chart-o"></i> Customer Details
+  </div>
+  <div class="chart-body3">
+  <ngx-gauge [type]="gaugeType"
+  [value] = "gaugeValue"
+  [label]="gaugeLabel"
+  [append]="gaugeAppendText"
+  [thick]="gaugeThickness"
+  [thresholds]="gaugeThresholds"
+  [backgroundColor]="gaugeColor"
+  >
+  </ngx-gauge>
+  </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="panel-heading">
+          <i class="fa fa-bar-chart-o"></i> Customer Details
+      </div>
+      <div class="chart-body3">
+      <ngx-gauge [type]="gaugeType"
+      [value] = "gaugeValue"
+      [label]="gaugeLabel"
+      [append]="gaugeAppendText"
+      [thick]="gaugeThickness"
+      [thresholds]="gaugeThresholds"
+      [backgroundColor]="gaugeColor"
+      >
+      </ngx-gauge>
+      </div>
+        </div>
+
+        <div class="col-sm-3">
+          <div class="panel-heading">
+              <i class="fa fa-bar-chart-o"></i> Customer Details
+          </div>
+          <div class="chart-body3">
+          <ngx-gauge [type]="gaugeType"
+          [value] = "gaugeValue"
+          [label]="gaugeLabel"
+          [append]="gaugeAppendText"
+          [thick]="gaugeThickness"
+          [thresholds]="gaugeThresholds"
+          [backgroundColor]="gaugeColor"
+          >
+          </ngx-gauge>
+          </div>
+            </div>
+
+            <div class="col-sm-3">
+              <div class="panel-heading">
+                  <i class="fa fa-bar-chart-o"></i> Customer Details
+              </div>
+              <div class="chart-body3">
+              <ngx-gauge [type]="gaugeType"
+              [value] = "gaugeValue"
+              [label]="gaugeLabel"
+              [append]="gaugeAppendText"
+              [thick]="gaugeThickness"
+              [thresholds]="gaugeThresholds"
+              [backgroundColor]="gaugeColor"
+              >
+              </ngx-gauge>
+              </div>
+                </div>
+
+  </div> -->
+    <!-- <div class="row">
+            <div class="col-sm-12 ">
+                <div class="panel-heading">
+                  <i class="fa fa-bar-chart-o"></i>Customer Details
+                </div>
+              <div class="chart-body">
+                  <div class="col-md-4">
+                      <mat-form-field >
+                          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+                      </mat-form-field>
+                  </div>
+                    <div class="mat-elevation-z8">
+                            <mat-table [dataSource]="dataSource" matSort>
+
+
+                                <ng-container matColumnDef="id" class="hidden">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header > Site ID </mat-header-cell>
+                                    <mat-cell *matCellDef="let row" data-label="id" > {{row.id}} </mat-cell>
+                                  </ng-container>
+
+                                  <ng-container matColumnDef="userId">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header > Site Name </mat-header-cell>
+                                    <mat-cell *matCellDef="let row" data-label="progress" > {{row.userId}} </mat-cell>
+                                  </ng-container>
+
+                                  <ng-container matColumnDef="title">
+                                      <mat-header-cell *matHeaderCellDef mat-sort-header > Action</mat-header-cell>
+                                      <mat-cell *matCellDef="let row" data-label="progress" >
+                                        <button mat-ripple mat-raised-button color="primary" style="margin-right: 16px;" (click)="edit(row.id)"> Edit</button>
+                                        <button mat-ripple mat-raised-button color="warn" style="margin-right: 0px;">Delete</button>
+                                      </mat-cell>
+                                    </ng-container>
+
+
+
+
+                                  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                                    <mat-row style="cursor: pointer;" *matRowDef="let row; columns: displayedColumns;" >
+                                    </mat-row>
+                            </mat-table>
+
+                    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+                </div>
+            </div>
+        </div>
+    </div>  -->
+
+  <br>
+  <br>
+<!-- <div class="row">
+    <form (ngSubmit)="onSubmit()" [formGroup]="userData" class="form-inline">
+        <div class="example-form">
+            <select class="custom-select" (change)="changeCountry($event)" formControlName="countryName">
+                <option value="">Choose your country</option>
+                <option *ngFor="let country of Country" [ngValue]="country">{{country}}</option>
+            </select>
+            <select class="custom-select" (change)="changeState($event)" formControlName="stateName">
+                <option value="">Choose your state</option>
+                <option *ngFor="let state of State" [ngValue]="state">{{state}}</option>
+            </select>
+            <select class="custom-select" (change)="changeCity($event)" formControlName="cityName">
+                <option value="">Choose your city</option>
+                <option *ngFor="let city of City" [ngValue]="city">{{city}}</option>
+            </select>
+        </div>
+        <button mat-ripple mat-raised-button type="submit" >Submit</button><br>
+    </form>
+</div> -->
+
+<!-- <div class="modal" id="myModal" [style.display]="showModal ? 'block':'none'" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h4 class="modal-title">Modal Heading</h4>
+          <button type="button" class="close" data-dismiss="modal" (click)="hide()">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          Modal body..
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="hide()">Close</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+        <div class="container-color">
+        <form [formGroup]="data" >
+          <div class="row ">
+            <div class="col-25">
+              <label for="fname">First Name</label>
+            </div>
+            <div class="col-75">
+              <input type="text" id="fname"  formControlName="firstName" placeholder="Your name..">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-25">
+              <label for="lname">Last Name</label>
+            </div>
+            <div class="col-75">
+              <input type="text" id="lname"  formControlName="lastName" placeholder="Your last name..">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-25">
+              <label for="country">Country</label>
+            </div>
+            <div class="col-75">
+              <select id="country" name="country" formControlName="options">
+                <option value="" disabled>select options</option>
+                <option *ngFor="let opt of option" [value]="opt">{{opt}}</option>
+
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-25">
+              <label for="subject">Subject</label>
+            </div>
+            <div class="col-75">
+              <textarea id="subject" formControlName="subject" placeholder="Write something.." style="height:200px"></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <input type="submit" value="Submit" style="margin-right: 16px;"  (click)="onClick()" >
+            <input style="margin-right: 0px;"   type="submit" value="Cancel" (click)="onCancel()" >
+          </div>
+        </form>
+    </div> -->
+<!--
+
+<form  [formGroup]="form" autocomplete="off">
+        <ng-container formArrayName="albums">
+          <mat-table [dataSource]="albums.controls"> -->
+
+             - Note that these columns can be defined in any order.
+                  The actual rendered columns are set as a property on the row definition" -->
+
+             <!-- <ng-container matColumnDef="id">
+              <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.get('id').value}}. </mat-cell>
+            </ng-container> -->
+
+            <!-- User Column -->
+            <!-- <ng-container matColumnDef="userId">
+              <mat-header-cell *matHeaderCellDef> User </mat-header-cell>
+              <mat-cell *matCellDef="let element" [formGroup]="element">{{element.get('userId').value}}
+
+              </mat-cell>
+            </ng-container>  -->
+
+            <!-- Title Column -->
+            <!-- <ng-container matColumnDef="title">
+              <mat-header-cell *matHeaderCellDef> Title </mat-header-cell>
+              <mat-cell *matCellDef="let element;" [formGroup]="element">
+                <mat-form-field floatLabel="never">
+                  <input matInput placeholder="Title" formControlName="title" required>
+                </mat-form-field>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+        </ng-container>
+        <button type="button" (click)="submit()">Submit</button>
+      </form>   -->
+
+
+<!--
+
+      <div class="row">
+          <div class="col-sm-12 ">
+              <div class="panel-heading">
+                <i class="fa fa-bar-chart-o"></i>Customer Details
+              </div>
+              <div class="col-md-3">
+                <mat-form-field>
+                    <input matInput [max] ="maxDate" [min]="minDate" [matDatepicker]="picker1" [formControl]="date" [value]="date.value">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="chart-body">
+                <div class="col-md-4">
+                    <mat-form-field >
+                        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+                    </mat-form-field>
+                </div>
+                  <div class="mat-elevation-z8">
+                          <mat-table [dataSource]="dataSource" matSort>
+
+
+                              <ng-container matColumnDef="custId" class="hidden">
+                                  <mat-header-cell *matHeaderCellDef mat-sort-header > Site ID </mat-header-cell>
+                                  <mat-cell *matCellDef="let row" data-label="id" > {{row.custId}} </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="custUserName">
+                                  <mat-header-cell *matHeaderCellDef mat-sort-header > Site Name </mat-header-cell>
+                                  <mat-cell *matCellDef="let row" data-label="progress" > {{row.custUserName}} </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="custEmail">
+                                  <mat-header-cell *matHeaderCellDef mat-sort-header> Site Type </mat-header-cell>
+                                  <mat-cell *matCellDef="let row" data-label="progress" ><mat-slide-toggle
+                                      class="example-margin"
+                                      [color]="color"
+                                      [checked]="row.custEmail"
+                                      [disabled]="disabled"
+                                      (change)="onChange($event,row.custId,date.value)">
+
+                                  </mat-slide-toggle> <span *ngIf="checked == true">True</span> <span *ngIf="checked == false"></span></mat-cell>
+                                </ng-container>
+
+                                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                                  <mat-row style="cursor: pointer;" *matRowDef="let row; columns: displayedColumns;" >
+                                  </mat-row>
+                          </mat-table>
+
+                  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+              </div>
+          </div>
+      </div>
+  </div>  -->
+
+
+  <!-- <div class="row mt-3">
+      <div class=" col-lg-3">
+          <div class="panel-heading">
+              <i class="fa fa-bar-chart-o"></i> Admin
+          </div>
+          <div class="status-panel-body" >
+              <highcharts-chart
+                  [Highcharts]="pieChart"
+                  [constructorType]="chartConstructor"
+                  [options]="lineChartOptions"
+                  [callbackFunction]="chartCallback"
+
+                  [(update)]="updateFlag"
+                  [oneToOne]="oneToOneFlag"
+
+                  style="width: 100%; height: 100%; display: block;">
+              </highcharts-chart>
+          </div>
+      </div>
+         <div class="col-lg-3">
+
+                  <div class="panel-heading">
+                      <i class="fa fa-bar-chart-o"></i> Customer
+                  </div>
+                  <div class="status-panel-body" >
+                      <highcharts-chart
+                          [Highcharts]="pieChart"
+                          [constructorType]="chartConstructor"
+                          [options]="pieChartOptions"
+                          [callbackFunction]="chartCallback"
+
+                          [(update)]="updateFlag"
+                          [oneToOne]="oneToOneFlag"
+
+                          style="width: 100%; height: 100%; display: block;">
+                      </highcharts-chart>
+                  </div>
+              </div>
+              <div class="col-lg-3">
+
+                  <div class="panel-heading">
+                      <i class="fa fa-bar-chart-o"></i> Site Manager
+                  </div>
+                  <div class="status-panel-body" >
+                      <highcharts-chart
+                          [Highcharts]="pieChart"
+                          [constructorType]="chartConstructor"
+                          [options]="pieChartOptions"
+                          [callbackFunction]="chartCallback"
+
+                          [(update)]="updateFlag"
+                          [oneToOne]="oneToOneFlag"
+
+                          style="width: 100%; height: 100%; display: block;">
+                      </highcharts-chart>
+                  </div>
+              </div>
+
+              <div class="col-lg-3">
+
+                  <div class="panel-heading">
+                      <i class="fa fa-bar-chart-o"></i> Site Enginner
+                  </div>
+                  <div class="status-panel-body" >
+                      <highcharts-chart
+                          [Highcharts]="pieChart"
+                          [constructorType]="chartConstructor"
+                          [options]="pieChartOptions"
+                          [callbackFunction]="chartCallback"
+
+                          [(update)]="updateFlag"
+                          [oneToOne]="oneToOneFlag"
+
+                          style="width: 100%; height: 100%; display: block;">
+                      </highcharts-chart>
+                  </div>
+              </div>
+  </div>
+<div class="row mt-3">
+    <div class="col-lg-12">
+
+        <div class="panel-heading">
+            <i class="fa fa-bar-chart-o"></i> Site Enginner
+        </div>
+        <div class="chart-body">
+
+            <highcharts-chart
+                [Highcharts]="Highcharts"
+                [constructorType]="chartConstructor"
+                [options]="lineChartOptions"
+                [callbackFunction]="chartCallback"
+                [(update)]="updateFlag"
+                [oneToOne]="oneToOneFlag"
+
+                style="width: 100%; height: 100%; display: block;"
+            ></highcharts-chart>
+    </div>
+    </div>
+</div>
+<div class="row mt-3">
+    <div class="col-sm-12 ">
+        <div class="heading-panel">
+
+            <div class="row">
+                <div class="col-md-7">
+                    <i class="fa fa-bar-chart-o"></i>Total <mat-form-field style="max-width: 34%; font-size: 16px">
+                    <mat-select [(value)]="selected_graph" #energyValue (selectionChange)="columnGraphFilterChanged($event)">
+                        <mat-option *ngFor="let graphType of graphTypes" [value]="graphType.value">
+                            {{graphType.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div *ngIf="showIntervalOptions; then thenTemplate else elseTemplate"></div>
+                <ng-template #thenTemplate>
+                    <div class="col-md-2">
+                        <mat-form-field>
+                            <mat-select [(value)]="selected_task" (selectionChange)="columnGraphFilterChanged()">
+                                <mat-option  *ngFor="let interval of intervals" [value]="interval.value">
+                                    {{interval.viewValue}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </ng-template>
+                <ng-template #elseTemplate><div class="col-md-2"></div></ng-template>
+
+
+                <div class="col-md-3">
+                    <mat-form-field>
+                        <input matInput [max] ="maxDate" [min]="minDate" [matDatepicker]="picker1" [formControl]="date" [value]="date.value" (dateChange)="columnGraphFilterChanged()">
+                        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                        <mat-datepicker #picker1></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div class="chart-body">
+
+                <highcharts-chart
+                    [Highcharts]="Highcharts"
+                    [constructorType]="chartConstructor"
+                    [options]="barChartOptions"
+                    [callbackFunction]="chartCallback"
+
+                    [(update)]="updateFlag"
+                    [oneToOne]="oneToOneFlag"
+
+                    style="width: 100%; height: 100%; display: block;"
+                ></highcharts-chart>
+            <div class="row">
+                <div class="col-8"></div>
+                <div class="col-4"><button class="md-raised md-primary md-button md-link-ripple" type="button" style="float: right;" (click)="changeGraphStacking()">
+                    <span class ="ng-scope">Change Graph</span>
+                </button>
+            </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+
+</div>

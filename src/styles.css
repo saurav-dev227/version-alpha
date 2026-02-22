@@ -1,0 +1,144 @@
+/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/purple-green.css';
+
+/* deeppurple-amber.css */
+/* indigo-pink.css */
+/* pink-bluegrey.css */
+/* purple-green.css */
+
+body {
+  /* background: rgb(27, 27, 27); */
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  line-height: 20px;
+  background: #272727;
+}
+
+/* Chart Loading Styles - Prevent white blank pages */
+.chart-loading-wrapper {
+  height: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #222222;
+  border-radius: 4px;
+}
+
+.chart-loading-content {
+  text-align: center;
+  color: white;
+}
+
+
+.chart-loading-spinner {
+  margin: 0 auto 20px;
+}
+
+/* Custom Snack Bar Styles */
+.custom-snackbar {
+  background: white !important;
+  color: #333 !important;
+  border-left: 5px solid #ff7a01 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  font-weight: 500 !important;
+  margin-top: 40vh !important;
+  /* Center vertically on screen */
+}
+
+.custom-snackbar .mat-simple-snackbar-action {
+  color: #ff7a01 !important;
+}
+
+.custom-snackbar .mat-simple-snackbar {
+  font-size: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.snackbar-icon {
+  color: #ff7a01;
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+/* Orange Graph Header Styles */
+.orange-graph-header {
+  background: #ff7a01 !important;
+  color: white !important;
+  padding: 5px 15px !important;
+  border-radius: 4px 4px 0 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  min-height: 60px !important;
+}
+
+.orange-graph-header .row {
+  width: 100%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.orange-graph-header i.fa-bar-chart-o {
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+.orange-graph-header mat-form-field {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Ensure all mat-form-fields inside header have same height */
+.orange-graph-header .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+  margin: 0 !important;
+}
+
+.orange-graph-header .mat-form-field-infix {
+  padding: 12px 0 !important;
+  border-top: 0 !important;
+}
+
+.orange-graph-header .mat-form-field-appearance-outline .mat-form-field-flex {
+  padding: 0 12px !important;
+  margin-top: 0 !important;
+}
+
+/* Make form fields inside orange header look integrated */
+.orange-graph-header .mat-form-field-appearance-outline .mat-form-field-outline {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.orange-graph-header .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  color: white !important;
+}
+
+.orange-graph-header .mat-select-value,
+.orange-graph-header .mat-input-element,
+.orange-graph-header .mat-form-field-label,
+.orange-graph-header .mat-select-arrow {
+  color: white !important;
+}
+
+.orange-graph-header .mat-datepicker-toggle {
+  color: white !important;
+}
+
+.orange-graph-header .header-title-field {
+  font-size: 16px;
+  font-weight: 500;
+  max-width: 100%;
+  text-align: left;
+}
+
+.orange-graph-header .header-date-field {
+  border-radius: 4px;
+  padding: 0;
+}
+
+.orange-graph-header .header-interval-field {
+  border-radius: 4px;
+}

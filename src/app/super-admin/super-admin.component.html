@@ -1,0 +1,301 @@
+<!-- -->
+<div class="row" id="breadcrumb" >
+  <div id="bc2" style="left: 1% !important" class="btn-group btn-breadcrumb">
+    <!-- <a (click)="home()"  class="btn btn-default"><i class="fa fa-home"></i></a> -->
+    <!--
+    <a (click)="Super_Admin_Home()" *ngIf="super_admin_home" class="btn btn-default"><i class="fa fa-home"></i></a>
+    -->
+    <!-- <a (click)="customerPage()" *ngIf="customer_name" class="btn btn-default"><div >Customer detail</div></a> -->
+    
+    <!-- <a (click)="sitePage()" *ngIf="saving_site_dash" class="btn btn-default">Site Details</a>
+    <a (click)="sitePage()" *ngIf="site_dash" class="btn btn-default">Site Details</a> -->
+  </div>
+</div>
+
+
+<div  id="page-wrapper" class="container-fluid">
+  <!--
+  <div *ngIf="isShown">
+    <div class="row ">
+      <div class="dashboard_trakcer">Change Password</div>
+      <hr>
+      <!-- change password form  
+      <div class="mt-6 col-8 offset-2 chngpwd">
+        <div class="card">
+          <div class="card-header">Change Password</div>
+           <div class="card-body">
+            <form #changePassword=ngForm (ngSubmit)="onChangePwd()">
+              <div class="form-group row">
+                <div class="col-sm-10 oldp ">
+                  <input type="password" name="old_password" class="form-control"
+                         placeholder="Old Password" required
+                         [(ngModel)]="changePasswordModel.oldpassword" base-sixty-four-input>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-sm-10 newp">
+                  <input type="password" name="new_password" class="form-control"
+                         placeholder="New Password" required
+                         [(ngModel)]="changePasswordModel.newpassword">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-sm-10 confp">
+                  <input type="password" name="conf_password" class="form-control"
+                         placeholder="Confirm Password" required
+                         [(ngModel)]="changePasswordModel.confirmpassword">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-sm-10 chpwd">
+                  <button type="submit" class="btn btn-primary "
+                          [disabled]="!changePassword.valid">Submit</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  -->
+
+  <div class="row">
+    <div class="dashboard_trakcer"> Home (Super Admin)</div>
+    <hr>
+
+    <!-- 1st snapshot start -->
+    <div class="col-lg-3 col-sm-6 col-xs-6">
+      <div  class="circle-title2">
+        <div class="circle-title-heading">
+          <i class="fa fa-bell fa-fw fa-3x"></i>
+        </div>
+        <div class="box">
+          <div class="box-heading text-faded">Total Alarms</div>
+
+          <div class="box-number text-faded" id="alarm" >{{alarms}}
+            <!-- <span id="sparklineA">0</span> -->
+          </div>
+
+          <!-- <a du-smooth-scroll="table" du-scrollspy class="footer">More Info<i
+            class="fa fa-chevron-circle-right"></i></a>  -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 1st snapshot end -->
+
+
+    <!-- 2nd snapshot start -->
+    <div class="col-lg-3 col-sm-6 col-xs-6">
+      <div class="circle-title2">
+        <div class="circle-title-heading">
+          <img id="img-ctn" src="assets/image/consume.png" width="45">
+        </div>
+        <div class="box">
+          <div class="box-heading text-faded">Energy Consumed</div>
+
+          <div class="box-number text-faded">{{energyConsumed}} kWh
+             <br> 
+            <span style=font-size:medium id="sparklineA">from {{date}}</span>
+            <br>
+            <span style=font-size:small id="sparklineA">To Till Date</span>
+          </div>
+
+          <!-- <a du-smooth-scroll="table" du-scrollspy class="footer">More Info<i
+            class="fa fa-chevron-circle-right"></i></a> -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 2nd snapshot end -->
+
+    <!-- 3rd snapshot start -->
+    <div class="col-lg-3 col-sm-6 col-xs-6">
+      <div class="circle-title2">
+        <div class="circle-title-heading">
+          <img id="img-ctn" src="/assets/image/energy.png" width="45">
+        </div>
+        <div class="box">
+          <div class="box-heading text-faded">Energy Saved</div>
+          <div class="box-number text-faded">{{energySaved}} kWh
+            <br> 
+            <span style=font-size:medium id="sparklineA">from {{date}}</span> 
+            <br>
+            <span style=font-size:small id="sparklineA">To Till Date</span>
+          </div>
+          <!-- <a du-smooth-scroll="table" du-scrollspy class="footer">More Info<i
+            class="fa fa-chevron-circle-right"></i></a> -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 3rd snapshot end -->
+
+    <!-- 4th snapshot start -->
+    <div class="col-lg-3 col-sm-6 col-xs-6">
+      <div class="circle-title2">
+        <div class="circle-title-heading">
+          <img id="img-ctn" src="/assets/image/low.png" width="45">
+        </div>
+        <div class="box">
+          <div class="box-heading text-faded">% saved</div>
+
+          <div class="box-number text-faded">{{percentageSaved}} %
+            <br>
+            <span style=font-size:medium id="sparklineA">from {{date}}</span>
+            <br>
+            <span style=font-size:small id="sparklineA">To Till Date</span>
+
+          </div>
+
+          <!-- <a du-smooth-scroll="table" du-scrollspy class="footer">More Info<i
+            class="fa fa-chevron-circle-right"></i></a> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <a class="btn btn-default"><i class="fa fa-home"></i></a> -->
+
+  <!-- Alarm Priority List Table Start -->
+  <div class="mt-5">
+    <div class="row">
+      <div class="col-sm-12 "> 
+        <div class="panel-heading">
+          <div class="row">
+          <div class="col-md-8">
+          <i class="fa fa-bar-chart-o"></i> Alarm Priority List </div>
+        </div>
+        </div>
+        <div class="chart-body customer-table">
+          <div class="example-container mat-elevation-z8">
+            <mat-table [dataSource]="alarmDataSource" matSort>
+              <ng-container matColumnDef="custName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Customer Name </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="custName" > {{row.custName}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="siteName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Site Name </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="siteName" > {{row.siteName}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="alarmName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Alarm Name </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="alarmName" > {{row.alarmName}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="alarmDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Since Time </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="alarmDate"> {{row.alarmDate}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="alarmPriority">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Alarm Priority </mat-header-cell>
+                <!--<mat-cell *matCellDef="let row" data-label="alarmPriority" [ngStyle]="{'color': 'black', 'background-color': row.alarmPriority == 'High' ? '#ff6666': row.alarmPriority == 'Low' ? '#85e085' : row.alarmPriority == 'Medium' ? '#ffe066' : ''}" > {{row.alarmPriority}} </mat-cell>--> 
+                <mat-cell *matCellDef="let row" data-label="alarmPriority"> {{row.alarmPriority}} </mat-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="alarmsColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: alarmsColumns;">
+              </mat-row>
+            </mat-table>
+            
+            <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+       
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> 
+  <!-- Alarm Priority List Table End-->
+
+
+
+  <!-- Customer Details Table  Start-->
+  <div class="mt-5">
+    <div class="row">
+      <div class="col-sm-12 "> 
+
+        <div class="panel-heading">
+          <div class="row">
+          <div class="col-md-8">
+          <i class="fa fa-bar-chart-o"></i> Customer Details </div>
+
+          <!--<div class="col-md-2" >
+            <mat-form-field appearance="fill">
+              <mat-label>Start date</mat-label>
+              <input matInput [matDatepicker]="picker">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-2" >
+            <mat-form-field appearance="fill">
+              <mat-label>End date</mat-label>
+              <input matInput [matDatepicker]="picker1">
+              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+          </div>-->
+
+        </div>
+        </div>
+        <div class="chart-body">
+          <div class="example-header" fxLayout="row">     
+            <mat-form-field >
+              <input matInput class="matInputFilterBar" (keyup)="applyFilter($event.target.value)" placeholder="Search" autocomplete="off">
+            </mat-form-field>
+          </div>
+          <div class="example-container mat-elevation-z8">
+            <mat-table [dataSource]="dataSource" matSort>
+
+              <ng-container matColumnDef="custId">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Customer's ID </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="id" > {{row.custId}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="custUserName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header >Customer's Name</mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="id" >{{row.custUserName}}  </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="totalWH">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Total WH </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="id" > {{row.totalWH}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="liveWH">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Live WH </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="id">{{row.liveWH}}  </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="WHavgsaving">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > All_WH_Avg Saving % </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="id"> {{row.WHavgsaving}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="maxsaving">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Maximum Saving %</mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="id"> {{row.maxsaving}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="minsaving">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Minimum Saving %</mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="id">{{row.minsaving}}  </mat-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="customerDisplayedColumns"></mat-header-row>
+              <mat-row style="cursor: pointer;" *matRowDef="let row; columns: customerDisplayedColumns;" (click)="openCustDashboard(row)">
+              </mat-row>
+            </mat-table>
+            <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+          
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Customer Details Table End -->
+</div>

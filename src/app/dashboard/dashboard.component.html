@@ -1,0 +1,155 @@
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport="true"
+        [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="(isHandset$ | async) ? 'over' : 'side'"
+        [opened]="!(isHandset$ | async)">
+        <mat-toolbar>
+            <div class="logo_dash">
+                <img src="assets/image/1.png" width="80"> <br>
+                <img src="assets/image/2.png" width="80">
+            </div>
+        </mat-toolbar>
+
+        <mat-nav-list>
+            <a mat-list-item href='dashboard'>Dashboard </a>
+            <!-- <a mat-list-item (click)="dgFuelGraph()">Dg Fuel Graph </a> -->
+            <a mat-list-item (click)="logOut()">Logout </a>
+            
+           
+            
+            <div *ngIf="userType==1">
+
+              <!--<div [ngSwitch]="dashboardType">
+                <div *ngSwitchCase = "'superadmin'">
+                  <button class="btn btn-float btn-primary" style="margin-right: 60px; margin-top: 10px; background: #E66F00 ; border-color:#E66F00; background-color:#E66F00">
+                    <span class ="ng-scope" (click)="baseline()" >Set Baseline</span>
+                  </button>
+                </div>
+                
+                <div *ngSwitchCase = "'baseline'">
+                  <button class="btn btn-float btn-primary" style="margin-right: 60px; margin-top: 10px; background: #E66F00 ; border-color:#E66F00; background-color:#E66F00">
+                    <span class ="ng-scope" (click)="baseline()" >Update Baseline</span>
+                  </button>
+                </div>
+              </div> -->
+
+            
+            
+          </div>
+            
+          
+
+        </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+        <mat-toolbar color="primary">
+            <button type="button" aria-label="Toggle Sidenav" mat-icon-button (click)="drawer.toggle()"
+                *ngIf="isHandset$ | async">
+                <mat-icon aria-label="side nav toggle icon">menu</mat-icon>
+            </button>
+            <div class="header_container">
+                <!--User type shown here> -->
+                <!--
+                <div class="header2" style="padding-right: 16%;">{{myObj["first_name"]}} {{myObj["last_name"]}} <i class="fas fa-user-edit" [matMenuTriggerFor]="menu"></i></div>
+                -->
+                <div class="header2" style="padding-right: 16%;">{{UserName}} <i class="fas fa-user-edit" [matMenuTriggerFor]="menu"></i></div>
+                
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item data-toggle="modal" data-target="#resetPasswordModal">
+                        <mat-icon>dialpad</mat-icon>
+                        <span>Change Password </span>
+                    </button>
+                    
+                </mat-menu>
+            </div>
+        </mat-toolbar>
+        <!-- Add content Here -->
+
+        <div [ngSwitch]="dashboardType" style="padding-top: 0% !important;">
+              <div *ngSwitchCase = "'superadmin'">
+                  <app-super-admin></app-super-admin>
+              </div>
+              <div *ngSwitchCase = "'customer'">
+                <app-customer-dashboard></app-customer-dashboard>
+              </div>
+              <div *ngSwitchCase = "'whouser'">
+                <app-warehouse></app-warehouse>
+              </div>
+              <div *ngSwitchCase = "'energy_saving'">
+                <app-warehouse></app-warehouse>
+              </div>
+              <div *ngSwitchCase = "'wh_metering'">
+                <app-wh-metering></app-wh-metering>
+              </div>
+              <div *ngSwitchCase = "'baseline'">
+                <app-baseline></app-baseline>
+              </div>
+              <div *ngSwitchCase = "'admin'">
+                <app-admin></app-admin>
+              </div>
+              <div *ngSwitchCase = "'lightsData'">
+                <app-lights-watt-data></app-lights-watt-data>
+              </div>
+              <div *ngSwitchCase="'firealarm_monitoring_system'">
+                <app-fire-pump-alarm></app-fire-pump-alarm>
+              </div>
+              <div *ngSwitchCase="'firealarm_equipments_system'">
+                <app-fems></app-fems>
+              </div>
+              <div *ngSwitchCase="'loadData'">
+                <app-load-graph></app-load-graph>
+              </div>
+              <div *ngSwitchCase="'submetering'">
+                <app-submetering></app-submetering>
+              </div>
+        </div>
+   </mat-sidenav-content>
+</mat-sidenav-container>
+<footer class="footer">
+  <div style="font-size:15px" class="pull-right">
+      <i style="color:#ff7a01;margin-right:5px" class="fa fa-envelope" aria-hidden="true"></i>
+      <a href="mailto:asem@aviconncorp.com?Subject=Aviconn SEM Enquiry" class="text-muted pull-right">asem@aviconncorp.com</a>
+  </div>
+</footer>
+
+
+
+
+
+<div class="modal fade" id="resetPasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+   <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+          <div *ngIf="!isCollapsed">
+            <h5 class="modal-title" id="exampleModalLabel">Change Password</h5>
+        </div>
+
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="!isCollapsed">
+        <form (ngSubmit)="onChangepwd()" #addMountForm="ngForm">
+          <div class="form-group">
+              <label>Old Password</label>
+              <input type="password" class="form-control" name="oldPass" [(ngModel)]="changePasswordModel.oldpassword">
+          </div>
+          <div class="form-group">
+                <label>New Password</label>
+                <input type="password" class="form-control" name="newPass" [(ngModel)]="changePasswordModel.newpassword">
+            </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button [disabled]="!addMountForm.form.valid" type="submit" class="btn btn-warning" style="background-color: #ff7a01; color:white;">Submit</button>
+          </div>
+        </form>
+      </div>
+      </div>
+
+    </div>
+  </div>
+</div>

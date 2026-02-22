@@ -1,0 +1,54 @@
+<button class="close" mat-button (click)="onNoClick()">X</button>
+<h1 mat-dialog-title id="addDevDialoge">Add Device</h1>
+<form (ngSubmit)="onSubmit()" [formGroup]="inventoryDataForm">
+  <div class="example-container">
+    <mat-form-field hintLabel="Max 20 characters" appearance="fill">
+      <mat-label>Device Name</mat-label>
+      <!-- <input matInput formControlName="deviceName" maxlength="20" placeholder="Ex. Fire Extinguisher"> -->
+      <!-- <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint> -->
+      <input matInput formControlName="deviceName" value="{{getDeviceName()}}" readonly>
+     </mat-form-field>
+    <mat-form-field hintLabel="Max 20 characters" appearance="fill">
+      <mat-label>Enter Dev Asset No.</mat-label>
+      <input matInput formControlName="deviceAssetNo" maxlength="20" placeholder="Ex. XY123456" >
+      <!-- <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint> -->
+    </mat-form-field>
+    <mat-form-field hintLabel="Max 20 characters" appearance="fill">
+      <mat-label>Model No</mat-label>
+      <input matInput formControlName="updatedBy" maxlength="20" placeholder="name...." >
+      <!-- <mat-hint align="end">{{input.value?.length || 0}}/10</mat-hint> -->
+    </mat-form-field>
+
+    <mat-form-field hintLabel="Max 20 characters" appearance="fill">
+      <mat-label>Enter Loc in WH </mat-label>
+      <input matInput formControlName="location" maxlength="20" placeholder="A-Block GF">
+      <!-- <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint> -->
+    </mat-form-field>
+    <mat-form-field hintLabel="Max 20 characters" appearance="fill">
+      <mat-label>Warrenty Till</mat-label>
+      <input matInput formControlName="warrantyTillDate" maxlength="20" placeholder="Ex. 20-02-2022" type="date">
+      <!-- <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint> -->
+    </mat-form-field>
+    
+    <mat-form-field hintLabel="Max 20 characters" appearance="fill">
+      <mat-label>Last Service</mat-label>
+      <input matInput formControlName="lastServiceDate" maxlength="20" placeholder="Ex. 20-01-2022" type="date">
+      <!-- <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint> -->
+    </mat-form-field>
+    <mat-form-field hintLabel="Max 20 characters" appearance="fill">
+      <mat-label>Next Service</mat-label>
+      <input matInput formControlName="nextServiceDate" maxlength="20" placeholder="Ex. 20-01-2022" type="date">
+      <!-- <mat-hint align="end">{{input.value?.length || 0}}/10</mat-hint> -->
+    </mat-form-field>
+    
+    <mat-form-field hintLabel="Max 20 characters" appearance="fill">
+      <mat-label>Updated By</mat-label>
+      <input matInput formControlName="deviceModelNo" maxlength="20" placeholder="Ex. XY123456" >
+      <!-- <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint> -->
+    </mat-form-field>
+    <br>
+  <button mat-raised-button type="submit" id="Save-device" color="#ff7a01">Save-Device</button>
+</div>
+</form>
+
+  

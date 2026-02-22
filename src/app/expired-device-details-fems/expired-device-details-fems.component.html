@@ -1,0 +1,62 @@
+
+<div mat-dialog-content id="selectdash">
+  <div class="row">
+    <div class="col-sm-12 ">
+        <div class="panel-heading">
+            <i class="fa fa-bar-chart-o"></i> Total Devices Service Expired
+        </div>
+                <div class="chart-body">
+                  <div class="example-header" fxLayout="row">
+                      <mat-form-field>
+                          <input matInput class="matInputFilterBar" (keyup)="applyFilter($event.target.value)" placeholder="Search anything in table here ..." autocomplete="off">
+                        </mat-form-field>
+                      </div>
+
+                      <div class="example-container mat-elevation-z8">
+
+                        <mat-table [dataSource]="dataSource" matSort>
+
+                          <!-- Site Type -->
+                          <ng-container matColumnDef="assetNo">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Asset No.</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="Asset No." > {{row.assetNo}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="deviceName">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header > Device Name</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="Device Name" > {{row.deviceName}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="ModalNo">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Modal No.</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="Modal No." > {{row.modelno}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="LocInWH">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Location in WH </mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="Location in WH" > {{row.location}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="WarrentyTill">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Warranty Till</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="Warranty Till" > {{row.warrenty}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="LastService">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Last Service</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="Last Service" > {{row.last_service}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="NextService">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Next Service</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="Next Service" > {{row.next_service}} </mat-cell>
+                          </ng-container>
+
+                          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                          <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="switchSiteDashboard(row)">
+                          </mat-row> 
+                        </mat-table>
+                        <mat-paginator [pageSizeOptions]="[5, 10, 20]" ></mat-paginator>
+                       
+                      </div>
+                    </div>
+                  </div>
+                </div>
+</div>
+<div mat-dialog-actions>
+  <button (click)='onNoClick()' id="cancel" mat-button >Close</button>
+</div>

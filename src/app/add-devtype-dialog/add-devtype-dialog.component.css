@@ -1,0 +1,23 @@
+.example-container .mat-form-field + .mat-form-field {
+    margin-left: 8px;
+  }
+  
+  #Save-device{
+    color: #ffffff;
+    background:#E66F00!important;
+ }
+ #cancel{
+    color: #ffffff;
+    background:#E66F00!important;
+    margin-left: 5px;
+ }
+
+ .close.mat-button {
+   top: 0;
+   right: 0;
+   padding: 10px;
+   line-height: 16px;
+   min-width: auto;
+   color:#E66F00!important;
+  
+ }

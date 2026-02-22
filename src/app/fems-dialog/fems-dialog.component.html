@@ -1,0 +1,5 @@
+<h1 mat-dialog-title>Do you want to Delete?</h1>
+<div mat-dialog-content>
+  <button mat-button type="yes" cdkFocusInitial (click)="deleteRecord()">Yes</button>
+  <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>No</button>
+</div>

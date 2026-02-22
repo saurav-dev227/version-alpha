@@ -1,0 +1,21 @@
+.bgimg {
+    background-image: url('/assets/image/coming_soon.png');
+    height: 100%;
+    background-position: center;
+    background-size: cover;
+    position: relative;
+    color: white;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 25px;
+  }
+  h5{
+      color: #E66F00;
+  }
+  footer {
+    position: absolute;
+    bottom: 0;
+    right: 180px;
+  }
+  .example-card {
+    max-width: 400px;
+  }

@@ -1,0 +1,260 @@
+<!-- <div class="row" id="breadcrumb" style="margin-right:15px !important;" >
+  <div class="col-md-8 col-sm-12">
+   <div class="row" style="margin-left:2px !important">
+     <div id="bc2" style="left: 1% !important;" class="btn-group btn-breadcrumb">
+       <a (click)="home()" *ngIf="super_admin_home" class="btn btn-default"><i class="fa fa-home"></i></a>
+       <a (click)="home()" *ngIf="customer_home" class="btn btn-default"><i class="fa fa-home"></i></a>
+       <a (click)="customerPage()" *ngIf="customer_name" class="btn btn-default"><div >Customer Page</div></a>
+       <a (click)="sitePage()" *ngIf="site_dash" class="btn btn-default">Site Page</a>
+      </div>
+    </div>
+</div> -->
+<div  id="page-wrapper" class="container-fluid">
+  <div class="row">
+    <div class="dashboard_trakcer"> Aviconn Fire-System Configuration Status</div>
+    <hr>
+
+    <!-- 1st snapshot start -->
+   
+    <div class="col-lg-2 col-sm-6 col-xs-6">
+      <div  class="circle-title2">
+        <div class="circle-title-heading">
+          <img id="img-ctn" src="/assets/image/energy.png" width="45">
+        </div>
+        <div class="box">
+          <div class="box-heading text-faded">{{alarmData[0].aislename}}</div>
+          <div class="box-number text-faded">
+            <!--<div [ngStyle]="{  'color': main == 'ON' ? '#ff0000' : ''}">{{main}}</div>-->
+            <!-- <div class = "span1"> -->
+              <span style=font-size:medium style="color: skyblue" id="sparklineA">Auto Mode :
+                 <span [ngStyle]="{  'color': alarmData[0].R_Voltage == 'ON' ? '#04ff00' : '#FFFFFF'}">{{alarmData[0].R_Voltage}}</span>
+              </span>
+              <br>
+              <span style=font-size:medium  style="color: red" id="sparklineA">Manual Mode :
+                <span [ngStyle]="{  'color': alarmData[0].Y_Voltage == 'ON' ? '#ff0000' : '#FFFFFF'}">{{alarmData[0].Y_Voltage}}</span>
+
+              </span>
+              <br>
+              <span style=font-size:medium style="color: yellow" id="sparklineA">Off Mode : 
+                <span [ngStyle]="{ 'color': alarmData[0].B_Voltage == 'ON' ? '#ff0000' : '#FFFFFF'}">{{alarmData[0].B_Voltage}}</span>
+              </span>
+              <br>
+              <span style=font-size:medium style="color: #FF5607" id="sparklineA">Motor Status : 
+                <span [ngStyle]="{  'color': alarmData[0].motor_status == 'ON' ? '#ff0000' : '#FFFFFF'}">{{alarmData[0].motor_status}}</span>
+
+              </span>
+              <br>
+              <span style=font-size:medium  id="sparklineA">Last_checked  {{alarmData[0].current_date | date:'dd/MM/yy, h:mm:ss a'}}
+              </span>
+              <br>
+            <!-- </div> -->
+            <!-- <span id="sparklineA">0</span> -->
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- 1st snapshot end -->
+
+
+    <!-- 2nd snapshot start -->
+     <div class="col-lg-2 col-sm-6 col-xs-6">
+      <div class="circle-title2">
+        <div class="circle-title-heading">
+          <img id="img-ctn" src="assets/image/low.png" width="45">
+        </div>
+        <div class="box">
+          <div class="box-heading text-faded">{{alarmData[1].aislename}}</div>
+          <div class="box-number text-faded">
+            <span style=font-size:medium style="color: skyblue" id="sparklineA">Auto Mode : 
+              <span [ngStyle]="{ 'color': alarmData[1].R_Voltage == 'ON' ? '#04ff00' : '#FFFFFF'}">{{alarmData[1].R_Voltage}}</span>
+            </span>
+            <br>
+            <span style=font-size:medium  style="color: red" id="sparklineA">Manual Mode : 
+              <span [ngStyle]="{'color': alarmData[1].Y_Voltage == 'ON' ? '#ff0000' : '#FFFFFF'}">{{alarmData[1].Y_Voltage}}</span>
+            </span>
+            <br>
+            <span style=font-size:medium style="color: yellow" id="sparklineA">Off Mode : 
+              <span [ngStyle]="{ 'color': alarmData[1].B_Voltage == 'ON' ? '#ff0000' : '#FFFFFF'}">{{alarmData[1].B_Voltage}}</span>
+            </span>
+            <br>
+            <span style=font-size:medium style="color: #FF5607" id="sparklineA">Motor Status : 
+              <span [ngStyle]="{ 'color': alarmData[1].motor_status == 'ON' ? '#ff0000' : '#FFFFFF'}">{{alarmData[1].motor_status}}</span>
+
+            </span>
+            <br>
+            <span style=font-size:medium id="sparklineA">Last_checked {{alarmData[1].current_date | date:'dd/MM/yy, h:mm:ss a'}}</span>
+            <br>
+          </div>
+        </div>
+      </div>
+    </div> 
+    <!-- 2nd snapshot end -->
+
+    <!-- 3rd snapshot start -->
+    <div class="col-lg-2 col-sm-6 col-xs-6">
+      <div class="circle-title2">
+        <div class="circle-title-heading">
+          <div class="circle-title-heading">
+            <i class="fa fa-bolt fa-3x"></i>
+          </div>
+        </div>
+        <div class="box">
+          <div class="box-heading text-faded">{{alarmData[2].aislename}}</div>
+          <div class="box-number text-faded">
+            <span style=font-size:medium style="color: skyblue" id="sparklineA">Auto Mode : 
+              <span [ngStyle]="{  'color': alarmData[2].R_Voltage == 'ON' ? '#04ff00' : '#FFFFFF'}">{{alarmData[2].R_Voltage}}</span>
+            </span>
+            <br>
+            <span style=font-size:medium style="color: red" id="sparklineA">Manual Mode :  
+              <span [ngStyle]="{  'color': alarmData[2].Y_Voltage == 'ON' ? '#ff0000' : '#FFFFFF'}">{{alarmData[2].Y_Voltage}}</span>
+
+            </span>
+            <br>
+            <span style=font-size:medium style="color: yellow" id="sparklineA">Off Mode : 
+              <span [ngStyle]="{  'color': alarmData[2].B_Voltage == 'ON' ? '#ff0000' : '#FFFFFF'}">{{alarmData[2].B_Voltage}}</span>
+
+            </span>
+            <br>
+            <span style=font-size:medium style="color: #FF5607" id="sparklineA">Motor Status : 
+              <span [ngStyle]="{  'color': alarmData[2].motor_status == 'ON' ? '#ff0000' : '#FFFFFF'}">{{alarmData[2].motor_status}}</span>
+
+            </span>
+            <br>
+            <span style=font-size:medium id="sparklineA">Last_checked  {{alarmData[2].current_date | date:'dd/MM/yy, h:mm:ss a'}}</span>
+            <br>
+          </div>
+        </div>
+      </div>
+    </div> 
+
+    <!-- 4'th snapshot start  -->
+     <div class="col-lg-2 col-sm-6 col-xs-6">
+      <div class="circle-title2">
+        <div class="circle-title-heading">
+          <img id="img-ctn" src="assets/image/low.png" width="50">
+        </div>
+        <div class="box">
+          <div class="box-heading text-faded">{{alarmData[3].aislename}}</div>
+          <div class="box-number text-faded">
+            <span style=font-size:medium style="color: skyblue" id="sparklineA">Auto Mode : 
+              <span [ngStyle]="{  'color': alarmData[3].R_Voltage == 'ON' ? '#04ff00' : '#FFFFFF'}">{{alarmData[3].R_Voltage}}</span>
+            </span>
+            <br>
+            <span style=font-size:medium  style="color: red" id="sparklineA">Manual Mode :  
+              <span [ngStyle]="{  'color': alarmData[3].Y_Voltage == 'ON' ? '#ff0000' : '#FFFFFF'}">{{alarmData[3].Y_Voltage}}</span>
+
+            </span>
+            <br>
+            <span style=font-size:medium style="color: yellow" id="sparklineA">Off Mode : 
+              <span [ngStyle]="{  'color': alarmData[3].B_Voltage == 'ON' ? '#ff0000' : '#FFFFFF'}">{{alarmData[3].B_Voltage}}</span>
+
+            </span>
+            <br>
+            <span style=font-size:medium style="color: #FF5607" id="sparklineA">Motor Status : 
+              <span [ngStyle]="{  'color': alarmData[3].motor_status == 'ON' ? '#ff0000' : '#FFFFFF'}">{{alarmData[3].motor_status}}</span>
+
+            </span>
+            <br>
+            <span style=font-size:medium id="sparklineA">Last_checked  {{alarmData[3].current_date | date:'dd/MM/yy, h:mm:ss a'}}</span>
+            <br>
+          </div>
+
+        </div>
+      </div>
+    </div> 
+
+
+    <!-- 5'th snapshot start  -->
+     <div class="col-lg-2 col-sm-6 col-xs-6">
+      <div class="circle-title2">
+        <div class="circle-title-heading">
+          <div class="circle-title-heading">
+            <i class="fa fa-bolt fa-3x"></i>
+          </div>
+        </div>
+        <div class="box">
+          <div class="box-heading text-faded">{{alarmData[4].aislename}}</div>
+          <div class="box-number text-faded">
+            <span style=font-size:small style="color: skyblue" id="sparklineA">Auto Mode : 
+              <span [ngStyle]="{  'color': alarmData[4].R_Voltage == 'ON' ? '#04ff00' : '#FFFFFF'}">{{alarmData[4].R_Voltage}}</span>
+            </span>
+            <br>
+            <span style=font-size:medium style="color: red" id="sparklineA">Manual Mode : 
+              <span [ngStyle]="{  'color': alarmData[4].Y_Voltage == 'ON' ? '#ff0000' : '#FFFFFF'}">{{alarmData[4].Y_Voltage}}</span>
+
+            </span>
+            <br>
+            <span style=font-size:medium style="color: yellow" id="sparklineA">Off Mode : 
+              <span [ngStyle]="{  'color': alarmData[4].B_Voltage == 'ON' ? '#ff0000' : '#FFFFFF'}">{{alarmData[4].B_Voltage}}</span>
+
+            </span>
+            <br>
+            <span style=font-size:medium style="color: #FF5607" id="sparklineA">Motor Status : 
+              <span [ngStyle]="{  'color': alarmData[4].motor_status == 'ON' ? '#ff0000' : '#FFFFFF'}">{{alarmData[4].motor_status}}</span>
+
+            </span>
+            <br>
+            <span style=font-size:medium id="sparklineA">Last_checked  {{alarmData[4].current_date | date:'dd/MM/yy, h:mm:ss a'}}</span>
+            <br>
+          </div>
+        </div>
+      </div>
+    </div> 
+
+
+
+
+  </div>
+
+
+  <div class="mt-5">
+    <div class="row">
+      <div class="col-lg- col-sm-12 col-xs-6"> 
+        <div class="panel-heading">
+          <div class="row">
+            <div class="col-md-12">
+              <i class="fa fa-bar-chart-o"></i> Email History 
+            </div>
+          </div>
+        </div>
+        <div class="chart-body customer-table">
+          <div class="example-container mat-elevation-z8">
+            <mat-table [dataSource]="emailDataSource" matSort>
+              <ng-container matColumnDef="serialno">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Serial No. </mat-header-cell> 
+                <mat-cell *matCellDef="let row; let i = index;" data-label="serialno" > {{(i+1) + (mypaginator.pageIndex *mypaginator.pageSize)}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="sitename">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Site Name </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="sitename" > {{row.sitename}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="devicename">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Device Name </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="sitename" > {{row.devicename}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="emailFor">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Email For </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="emailFor" > {{row.emailFor}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="emaildatetime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header > Email DateTime </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="emaildatetime" > {{row.emaildatetime | date:'dd-MM-yy, h:mm:ss a'}} </mat-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="alarmsColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: alarmsColumns;"></mat-row>
+            </mat-table> 
+          <mat-paginator #mypaginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>      
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
+
+
+
+
+
+
+
+

@@ -1,0 +1,18 @@
+<button class="close" mat-button (click)="onNoClick()">X</button>
+<h1 mat-dialog-title id="addDevDialoge">Add Device Type</h1>
+<form (ngSubmit)="onSubmitDevType()" [formGroup]="devTypeDataForm">
+  <div class="example-container">
+    <mat-form-field hintLabel="Max 35 characters" appearance="fill">
+      <mat-label>Enter Device Name</mat-label>
+      <input matInput formControlName="deviceName" maxlength="35" placeholder="Ex. Fire  Extinguisher">
+      <!-- <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint> -->
+    </mat-form-field>
+    <mat-form-field hintLabel="Max 35 characters" appearance="fill">
+      <mat-label>Enter Device Category</mat-label>
+      <input matInput formControlName="category" maxlength="35" placeholder="Ex. Fire Equipment">
+      <!-- <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint> -->
+    </mat-form-field>
+</div>
+<br>
+<button mat-raised-button type="submit" id="Save-device" color="#ff7a01" >Save</button>
+</form>

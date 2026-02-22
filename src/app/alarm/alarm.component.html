@@ -1,0 +1,60 @@
+<div class="col-lg-12 col-sm-6">
+  <div class="panel-heading">
+          <i class="fa fa-bar-chart-o"></i>Alarms
+      </div>
+      <div class="chart-body">
+        <div class="example-header" fxLayout="row">
+              <mat-form-field>
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+              </mat-form-field>
+            </div>
+
+            <div class="example-container mat-elevation-z8">
+
+              <mat-table [dataSource]="dataSource" matSort>
+
+                
+                <ng-container matColumnDef="custname">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Customer Name </mat-header-cell>
+                  <mat-cell *matCellDef="let row" data-label="Site ID"> abc </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="totalproperty">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Total Property </mat-header-cell>
+                  <mat-cell *matCellDef="let row" data-label="Site Name" > A </mat-cell>
+                </ng-container>
+
+              
+                <ng-container matColumnDef="sensorbypass">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Sensor Bypaas </mat-header-cell>
+                  <mat-cell *matCellDef="let row" data-label="Site Type" > 10 </mat-cell>
+                </ng-container>
+
+                 
+                  <ng-container matColumnDef="powertheft">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Power Theft </mat-header-cell>
+                  <mat-cell *matCellDef="let row" data-label="Site Type" > 10 </mat-cell>
+                </ng-container>
+                
+                <ng-container matColumnDef="internetdown">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> Internet Down </mat-header-cell>
+                  <mat-cell *matCellDef="let row" data-label="Site Type" > 10 </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;">
+                </mat-row>
+              </mat-table>
+
+              <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+            </div>
+          </div>
+
+          
+        </div>
+
+
+
+
+
+

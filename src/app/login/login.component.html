@@ -1,0 +1,286 @@
+<div class="logo">
+  <img width="100" alt="Aviconn logo" src="assets/image/1.png"><br>
+  <img width="100" alt="Aviconn logo-text" src="assets/image/2.png"><br>
+  <h5 id="esm">Aviconn Smart Energy Management<br>( SEM )</h5>
+
+
+</div>
+<form (ngSubmit)="onLogin()" [formGroup]="userLogin">
+  <div class="form-group">
+    <mat-form-field class="example-full-width" appearance="none">
+      <input id="input1" matInput class="form-control" placeholder="Username" formControlName="username"
+        [(ngModel)]="userLoginModel.username">
+      <!-- <mat-placeholder class="placeholder">Username</mat-placeholder> -->
+      <mat-error *ngIf="userLogin.get('username').hasError('required')">
+        Username is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <br>
+    <mat-form-field class="example-full-width" appearance="none">
+      <input id="input1" matInput class="form-control" placeholder="Password" type="password" formControlName="password"
+        [(ngModel)]="userLoginModel.password">
+      <!-- <mat-placeholder class="placeholder">Password</mat-placeholder> -->
+      <mat-error *ngIf="userLogin.get('password').hasError('required')">
+        Password is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <a [routerLink]="[]" id="fp" data-toggle="modal" data-target="#forgotpasswordModal">Forgot Password ?</a><br>
+  <!-- <a [routerLink]="['/register']" id="fp" >Forgot Password ?</a><br> -->
+  <!-- <a [routerLink]="" (click)="onClickPopup()" id="fp">Forgot Password ?</a><br> -->
+  <button mat-ripple mat-raised-button type="submit" [disabled]="loading">
+    <span *ngIf="!loading">Login</span>
+    <span *ngIf="loading" class="button-spinner-container">
+      <span class="button-spinner"></span>
+      <span class="button-spinner-text">Logging in...</span>
+    </span>
+  </button><br>
+
+  <!-- Modern Loading Overlay -->
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner-container">
+      <!-- Circular Spinner -->
+      <div class="modern-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-dot"></div>
+      </div>
+      <p class="loading-text">Authenticating...</p>
+    </div>
+
+    <!-- Bottom Progress Bar -->
+    <div class="progress-bar-container">
+      <div class="progress-bar"></div>
+    </div>
+  </div>
+  <div style="display:inline-block;">
+    <a href="http://www.aviconn.in/" target="_blank" style="float: left" id="avc">www.aviconn.in</a>
+  </div>
+  <div style="display:inline-block; margin-left: 152px;">
+    <a href="mailto:sem@aviconn.in?Subject=Aviconn ESM Enquiry" style="float:right" id="sup">Support</a>
+  </div>
+  <br>
+
+</form>
+
+<div class="footimg">
+  <img class="bottomImg" src="assets/image/bottom_img.png">
+</div>
+
+<!-- password reset popup window -->
+<div class="modal fade" id="forgotpasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div *ngIf="!isCollapsed">
+          <h5 class="modal-title" id="exampleModalLabel">Forgot Password</h5>
+        </div>
+        <div *ngIf="isCollapsed">
+          <h5 class="modal-title" id="exampleModalLabel">Reset Password</h5>
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="!isCollapsed">
+          <form (ngSubmit)="onForgottpwd()" #addMountForm="ngForm">
+            <!-- user name input box -->
+            <div class="form-group">
+              <label class="col-form-label">User Name:</label>
+              <input type="text" #nameRef="ngModel" maxlength="20" minlength="4" required class="form-control"
+                id="recipient-name" name="userid" [(ngModel)]="forgotModel.Username">
+              <div *ngIf="nameRef.errors && (nameRef.dirty || nameRef.touched)" class="alert alert-danger">
+                <div [hidden]="!nameRef.errors.required">
+                  Please enter a Username
+                </div>
+                <div [hidden]="!nameRef.errors.minlength">
+                  please enter atleast 8 characters
+
+                </div>
+              </div>
+            </div>
+
+
+            <!-- Mobile Input box -->
+            <div class="form-group">
+              <label class="col-form-label">Mobile No.:</label>
+              <input type="text" #mobileRef="ngModel" maxlength="10" minlength="10" required class="form-control"
+                name="mobile" [(ngModel)]="forgotModel.mobile">
+              <div *ngIf="mobileRef.errors && (mobileRef.dirty || mobileRef.touched)" class="alert alert-danger">
+                <div [hidden]="!mobileRef.errors.required">
+                  Please enter a Mobile No.
+                </div>
+                <div [hidden]="!mobileRef.errors.minlength">
+                  please enter 10-digit correct Number
+
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-form-label">Email</label>
+              <input style="color: rgb(197, 27, 27);" type="email" #emailRef="ngModel" maxlength="30" required email
+                class="form-control" name="email" [(ngModel)]="forgotModel.email">
+              <div *ngIf="emailRef.errors && (emailRef.dirty || emailRef.touched)" class="alert alert-danger">
+                <div [hidden]="!emailRef.errors.required">
+                  Please enter a Email ID.
+
+                </div>
+                <div [hidden]="!emailRef.errors.email">
+                  please enter valid Email ID
+
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button [disabled]="!addMountForm.form.valid" type="submit" class="btn btn-warning">Submit</button>
+            </div>
+          </form>
+        </div>
+
+
+        <!-- 2nd form update password-->
+        <div *ngIf="isCollapsed">
+          <form (ngSubmit)="onResetpwd()" #addResetForm="ngForm" autocomplete="true">
+            <!-- user name input box -->
+            <div class="form-group">
+              <label class="col-form-label">OTP:</label>
+              <input type="text" #otpRef="ngModel" maxlength="5" minlength="5" required class="form-control"
+                id="recipient-otp" name="otp" [(ngModel)]="resetModel.otp">
+              <div *ngIf="otpRef.errors && (otpRef.dirty || otpRef.touched)" class="alert alert-danger">
+                <div [hidden]="!otpRef.errors.required">
+                  Please enter a valid otp
+
+                </div>
+                <div [hidden]="!otpRef.errors.minlength">
+                  please enter 5 characters
+
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-form-label">New Password :</label>
+              <input type="password" #newpwdRef="ngModel" maxlength="15" minlength="8" required class="form-control"
+                name="newpassword" [(ngModel)]="resetModel.newpassword">
+              <div *ngIf="newpwdRef.invalid && (newpwdRef.dirty || newpwdRef.touched)" class="alert alert-danger">
+                <div [hidden]="!newpwdRef.errors.required">
+                  Please enter a New password
+
+                </div>
+                <div [hidden]="!newpwdRef.errors.minlength">
+                  please enter valid New password
+
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-form-label">Confirm Password:</label>
+              <input type="password" #cpwdRef="ngModel" maxlength="15" minlength="8" required compare
+                class="form-control" name="confirmpassword" [(ngModel)]="resetModel.confirmpassword">
+              <div *ngIf="cpwdRef.errors && (cpwdRef.dirty || cpwdRef.touched)" class="alert alert-danger">
+                <div [hidden]="!cpwdRef.errors.required">
+                  Please enter a Confirm Password.
+
+                </div>
+                <div *ngIf="cpwdRef.errors['compare']">Password not match..try again</div>
+                <div [hidden]="!cpwdRef.errors.minlength">
+                  please enter valid Confirm Password
+
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button [disabled]="!addResetForm.form.valid" type="submit" class="btn btn-warning">OK</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Reset password window -->
+<!-- <div class="modal fade" id="resetpasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
+  aria-hidden="true" [ngStyle]="{'display': mdlSampleIsOpen ? 'block' : 'none', 'opacity': 1}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel2">Reset Password</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onResetpwd()" #addResetForm="ngForm">
+                    user name input box 
+          <div class="form-group">
+            <label class="col-form-label">OTP:</label>
+            <input type="text" #otpRef="ngModel" maxlength="5" minlength="5" required class="form-control"
+              id="recipient-otp" name="otp" [(ngModel)]="resetModel.otp">
+            <div *ngIf="otpRef.errors && (otpRef.dirty || otpRef.touched)" class="alert alert-danger">
+              <div [hidden]="!otpRef.errors.required">
+                Please enter a valid otp
+
+              </div>
+              <div [hidden]="!otpRef.errors.minlength">
+                please enter 5 characters
+
+              </div>
+            </div>
+          </div>
+
+
+           Mobile Input box 
+          <div class="form-group">
+            <label class="col-form-label">New Password :</label>
+            <input type="text" #newpwdRef="ngModel" maxlength="8" minlength="8" required class="form-control"
+              name="newpassword" [(ngModel)]="resetModel.newpassword">
+            <div *ngIf="newpwdRef.errors && (newpwdRef.dirty || newpwdRef.touched)" class="alert alert-danger">
+              <div [hidden]="!newpwdRef.errors.required">
+                Please enter a New password
+
+              </div>
+              <div [hidden]="!newpwdRef.errors.minlength">
+                please enter valid New password
+
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-form-label">Confirm Password:</label>
+            <input style="color: rgb(197, 27, 27);" type="text" #cpwdRef="ngModel" maxlength="8" minlength="8" required
+              class="form-control" name="confirmpassword" [(ngModel)]="resetModel.confirmpassword">
+            <div *ngIf="cpwdRef.errors && (cpwdRef.dirty || cpwdRef.touched)" class="alert alert-danger">
+              <div [hidden]="!cpwdRef.errors.required">
+                Please enter a Confirm Password.
+
+              </div>
+              <div [hidden]="!emailRef.errors.minlength">
+                please enter valid Confirm Password
+
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button [disabled]="!addResetForm.form.valid" type="submit" class="btn btn-warning">OK</button>
+          </div>
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+</div> -->

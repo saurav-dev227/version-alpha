@@ -1,0 +1,77 @@
+
+<div mat-dialog-content id="selectdash">
+  <div class="row">
+    <div class="col-sm-12 ">
+        <div class="panel-heading">
+            <i class="fa fa-bar-chart-o"></i> All Lights Data
+        </div>
+                <div class="chart-body">
+                  <div class="example-header" fxLayout="row">
+                      <mat-form-field>
+                          <input matInput class="matInputFilterBar" (keyup)="applyFilter($event.target.value)" placeholder="Search anything in table here ...">
+                        </mat-form-field>
+                      </div>
+
+                      <div class="example-container mat-elevation-z8">
+
+                        <mat-table [dataSource]="dataSource" matSort>
+
+                          <!-- ID Column -->
+                          <ng-container matColumnDef="area">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header > Area Name </mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="Area Name" > {{row.areaName}} </mat-cell>
+                          </ng-container>
+
+                          <!-- Site Name Column -->
+                          <ng-container matColumnDef="totalLights">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Total Lights</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="Total Lights" > {{row.totalLights}} </mat-cell>
+                          </ng-container>
+
+                          <!-- Site Type -->
+                          <ng-container matColumnDef="Watt18">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >18 Watt Lights</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="18 Watt Lights" > {{row.Watt18}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="Watt20">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >20 Watt Lights</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="20 Watt Lights" > {{row.Watt20}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="Watt24">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >24 Watt Lights </mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="24 Watt Lights" > {{row.Watt24}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="Watt36">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >36 Watt Lights</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="36 Watt Lights" > {{row.Watt36}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="Watt40">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >40 Watt Lights </mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="40 Watt Lights" > {{row.Watt40}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="totalWattLoad">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Total watt Load </mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="Total watt Load " > {{row.totalWattLights}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="totalUnits">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Units(kwh) per day </mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="Units(kwh) per day" > {{row.totalUnits}} </mat-cell>
+                          </ng-container>
+                          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                          <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="switchSiteDashboard(row)">
+                          </mat-row> 
+                        </mat-table>
+                        <!-- <mat-paginator [pageSizeOptions]="[5, 10, 20]" ></mat-paginator> -->
+                       
+                      </div>
+                    </div>
+                  </div>
+                </div>
+</div>
+<div mat-dialog-actions>
+  <button (click)='onNoClick()' id="cancel" mat-button >Close</button>
+  <!-- <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Ok</button> -->
+</div>
+
+
+

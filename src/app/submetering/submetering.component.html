@@ -1,0 +1,371 @@
+<div class="row" id="breadcrumb" style="margin-right:15px !important;">
+    <div class="col-md-6 col-sm-8">
+        <div class="row" style="margin-left:4px !important">
+            <div id="bc2" class="btn-group btn-breadcrumb">
+                <a (click)="home()" *ngIf="super_admin_home" class="btn btn-default"><i class="fa fa-home"></i></a>
+                <a (click)="home()" *ngIf="customer_home" class="btn btn-default"><i class="fa fa-home"></i></a>
+                <a (click)="customerPage()" *ngIf="customer_name" class="btn btn-default">
+                    <div>Customer Page</div>
+                </a>
+                <a (click)="sitePage()" *ngIf="saving_site_dash" class="btn btn-default">Site Page</a>
+                 
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- <div class="container no-margin "> -->
+<div id="page-wrapper" class="container-fluid">
+    <div *ngIf="isShown">
+        <div class="row ">
+            <div class="dashboard_trakcer">Change Password</div>
+            <hr>
+            <!-- change password form  -->
+            <div class="mt-6 col-8 offset-2 chngpwd">
+                <div class="card">
+                    <div class="card-header">Change Password</div>
+                    <div class="card-body">
+                        <form #changePassword=ngForm (ngSubmit)="onChangePwd()">
+                            <div class="form-group row">
+                                <div class="col-sm-10 oldp ">
+                                    <input type="password" name="old_password" class="form-control"
+                                        placeholder="Old Password" required
+                                        [(ngModel)]="changePasswordModel.oldpassword" base-sixty-four-input>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+
+                                <div class="col-sm-10 newp">
+                                    <input type="password" name="new_password" class="form-control"
+                                        placeholder="New Password" required
+                                        [(ngModel)]="changePasswordModel.newpassword">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+
+                                <div class="col-sm-10 confp">
+                                    <input type="password" name="conf_password" class="form-control"
+                                        placeholder="Confirm Password" required
+                                        [(ngModel)]="changePasswordModel.confirmpassword">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-sm-10 chpwd">
+
+                                    <button type="submit" class="btn btn-primary "
+                                        [disabled]="!changePassword.valid">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- dashboard content -->
+    <div *ngIf="!isShown">
+
+
+        <div class="row">
+            <div class="dashboard_trakcer"> {{sitename}}</div>
+            <hr>
+
+
+            <!-- 1st snapshot start -->
+            <div class="col-lg-3 col-sm-6 col-xs-6">
+                <div class="circle-title2">
+                    <div class="circle-title-heading">
+                        <i class="fa fa-bell fa-fw fa-3x"></i>
+                    </div>
+                    <div class="box" style="cursor: pointer;" (click)="alarmTable()">
+                        <div class="box-heading text-faded">Alarms</div>
+                        &nbsp;
+                        <div class="box-number1 text-faded">{{alarms}}</div>
+
+                        &nbsp;
+                        <a du-smooth-scroll="table" du-scrollspy class="footer">More Info <i
+                                class="fa fa-chevron-circle-right"></i></a>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- 1st snapshot end -->
+
+
+            <!-- 2nd snapshot start -->
+            <div class="col-lg-3 col-sm-6 col-xs-6">
+                <div class="circle-title2">
+                    <div class="circle-title-heading">
+                        <img id="img-ctn" src="assets/image/consume.png" width="45">
+                    </div>
+                    <div class="box">
+                        <div class="box-heading text-faded">Total Energy Consumed</div>
+
+                        <div class="box-number text-faded">{{energyConsumed}} kWh</div>
+                        <div>
+                            <span id="sparklineA">from {{liveDate}}</span><br>
+                            <span id="sparklineA">till {{previous}}</span>
+                        </div>
+                        &nbsp;
+                        <!-- <a du-smooth-scroll="table" du-scrollspy class="footer">More Info <i
+                                 class="fa fa-chevron-circle-right"></i></a> -->
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- 2nd snapshot end -->
+
+            <!-- 3rd snapshot start -->
+            <div class="col-lg-3 col-sm-6 col-xs-6">
+                <div class="circle-title2">
+                    <div class="circle-title-heading">
+                        <img id="img-ctn" src="/assets/image/energy.png" width="45">
+                    </div>
+                    <div class="box">
+                        <div class="box-heading text-faded">Monthly Units</div>
+
+                        <div class="box-number text-faded">{{monthlyAvg}} kWh </div>
+                        <div>
+                            <span id="sparklineA">from {{monthdate}}</span><br>
+                            <span id="sparklineA">till {{previous}}</span>
+                        </div>
+                        &nbsp;
+                        <!-- <a du-smooth-scroll="table" du-scrollspy class="footer">More Info <i
+                                 class="fa fa-chevron-circle-right"></i></a> -->
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <!-- 3rd snapshot end -->
+
+            <!-- 4th snapshot start -->
+            <div class="col-lg-3 col-sm-6 col-xs-6">
+                <div class="circle-title2">
+                    <div class="circle-title-heading">
+                        <img id="img-ctn" src="/assets/image/low.png" width="45">
+                    </div>
+                    <div class="box">
+                        <div class="box-heading text-faded">Avg. Daily Units</div>
+
+                        <div class="box-number text-faded">{{dailyAvg}} kWh</div>
+                        <div>
+                            <span id="sparklineA">from {{liveDate}}</span><br>
+                            <span id="sparklineA">till {{previous}}</span>
+                        </div>
+
+                        &nbsp;
+                        <!-- <a du-smooth-scroll="table" du-scrollspy class="footer">More Info <i
+                                 class="fa fa-chevron-circle-right"></i></a> -->
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!--Alarm details table-->
+
+        <!--power-status and customer power-status start-->
+        <div class="row mt-4">
+
+            <div class="col-md-12 col-sm-12">
+
+                <div class="orange-graph-header">
+                    <div class="header-title-field">
+                        <i class="fa fa-bar-chart-o"></i> Trend Overview(MonthlyTrend)
+                    </div>
+                </div>
+
+                <!-- <div class="status-panel-body">
+                     
+                     chart display here -->
+
+                <!-- <app-output-graph></app-output-graph>
+                 </div> -->
+                <div class="chart-body">
+                    <div *ngIf="trendChartLoading" class="chart-loading-wrapper">
+                        <div class="chart-loading-content">
+                            <mat-spinner class="chart-loading-spinner"></mat-spinner>
+                            <p>Loading chart data...</p>
+                        </div>
+                    </div>
+                    <div *ngIf="!trendChartLoading" style="height: 100%">
+                        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="chartConstructor"
+                            [options]="lineChartOptions" [callbackFunction]="chartCallback" [(update)]="updateFlag"
+                            [oneToOne]="oneToOneFlag"
+                            style="width: 100%; height: 100%; display: block;"></highcharts-chart>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--End of the power-status and customer power-status-->
+
+        <!--chart start-->
+        <div class="row mt-4">
+            <div class="col-sm-12 ">
+                <div class="orange-graph-header">
+
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="header-title-field">
+                                Total Energy Consumption
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="header-date-field">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <input matInput [max]="maxDate" [min]="minDate" [matDatepicker]="picker1"
+                                        [formControl]="date" [value]="date.value"
+                                        (dateChange)="columnGraphFilterChanged()">
+                                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker1></mat-datepicker>
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2" *ngIf="showIntervalOptions">
+                            <div class="header-interval-field">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-select [(value)]="selected_task"
+                                        (selectionChange)="columnGraphFilterChanged()">
+                                        <mat-option *ngFor="let interval of intervals" [value]="interval.value">
+                                            {{interval.viewValue}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="col-md-2" *ngIf="!showIntervalOptions"></div>
+                    </div>
+                </div>
+                <div class="chart-body" *ngIf="showDailygraph">
+                    <div *ngIf="chartLoading" class="chart-loading-wrapper">
+                        <div class="chart-loading-content">
+                            <mat-spinner class="chart-loading-spinner"></mat-spinner>
+                            <p>Loading chart data...</p>
+                        </div>
+                    </div>
+                    <div *ngIf="!chartLoading" style="height: 100%">
+                        <highcharts-chart #chart [Highcharts]="Highcharts" [constructorType]="chartConstructor"
+                            [options]="barChartOptions" [callbackFunction]="chartCallback" [(update)]="updateFlag"
+                            [oneToOne]="oneToOneFlag"
+                            style="width: 100%; height: 100%; display: block;"></highcharts-chart>
+                    </div>
+                </div>
+                <div *ngIf="showHourlygraph">
+                    <div *ngIf="chartLoading" class="chart-loading-wrapper">
+                        <div class="chart-loading-content">
+                            <mat-spinner class="chart-loading-spinner"></mat-spinner>
+                            <p>Loading chart data...</p>
+                        </div>
+                    </div>
+                    <div *ngIf="!chartLoading" style="height: 100%">
+                        <highcharts-chart #chart [Highcharts]="Highcharts" [constructorType]="chartConstructor"
+                            [options]="updatedbarChartOptions" [callbackFunction]="chartCallback"
+                            [(update)]="updateFlag" [oneToOne]="oneToOneFlag"
+                            style="width: 100%; height: 100%; display: block;"></highcharts-chart>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Specific Design Energy Export Modal -->
+                    <div class="modal fade" [ngClass]="{'show': showEnergyExportModal}"
+                        [style.display]="showEnergyExportModal ? 'block' : 'none'" tabindex="-1" role="dialog"
+                        aria-labelledby="energyExportModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content custom-export-modal">
+
+                                <div class="modal-body custom-modal-body">
+                                    <h4 class="custom-modal-title">Export Energy Data</h4>
+
+                                    <!-- Site Name Display -->
+                                    <div class="site-display-container">
+                                        <div class="site-display-box">
+                                            <span class="site-label">Site:</span>
+                                            <span class="site-value">{{sitename}}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-divider"></div>
+
+                                    <form>
+                                        <!-- Start Date Section -->
+                                        <div class="date-section">
+                                            <label class="input-label">Start Date</label>
+                                            <div class="custom-date-wrapper">
+                                                <mat-form-field appearance="outline" class="custom-mat-date w-100">
+                                                    <input matInput [matDatepicker]="startPicker"
+                                                        [(ngModel)]="energyExportStartDate" name="startDate"
+                                                        placeholder="mm/dd/yyyy">
+                                                    <mat-datepicker-toggle matSuffix [for]="startPicker"
+                                                        class="custom-date-toggle"></mat-datepicker-toggle>
+                                                    <mat-datepicker #startPicker></mat-datepicker>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+
+                                        <!-- End Date Section -->
+                                        <div class="date-section mt-3">
+                                            <label class="input-label">End Date</label>
+                                            <div class="custom-date-wrapper">
+                                                <mat-form-field appearance="outline" class="custom-mat-date w-100">
+                                                    <input matInput [matDatepicker]="endPicker"
+                                                        [(ngModel)]="energyExportEndDate" name="endDate"
+                                                        placeholder="mm/dd/yyyy">
+                                                    <mat-datepicker-toggle matSuffix [for]="endPicker"
+                                                        class="custom-date-toggle"></mat-datepicker-toggle>
+                                                    <mat-datepicker #endPicker></mat-datepicker>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+
+                                        <!-- Buttons -->
+                                        <div class="custom-modal-footer mt-4">
+                                            <button type="button" class="btn custom-btn-submit"
+                                                (click)="submitEnergyExport()">Submit</button>
+                                            <button type="button" class="btn custom-btn-cancel"
+                                                (click)="closeEnergyExportModal()">Cancel</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Backdrop -->
+                    <div class="modal-backdrop fade show" *ngIf="showEnergyExportModal"></div>
+
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                        <button class="md-raised md-primary md-button md-link-ripple" type="button"
+                            style="float: right;" (click)="openEnergyExportModal()">
+                            <span class="ng-scope">Export Excel</span>
+                        </button>
+                        <button class="md-raised md-primary md-button md-link-ripple" type="button" id="excelbtn"
+                            style="float: right;" (click)="changeGraphStacking()">
+                            <span class="ng-scope">Change Graph</span>
+                        </button>
+                        <button class="md-raised md-primary md-button md-link-ripple" id="button" type="button"
+                            (click)="reenable()">
+                            <span class="ng-scope" *ngIf="graphShown">Disable All</span>
+                            <span class="ng-scope" *ngIf="!graphShown">Enable All</span>
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

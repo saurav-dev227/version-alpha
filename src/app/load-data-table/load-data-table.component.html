@@ -1,0 +1,68 @@
+
+<div mat-dialog-content id="selectdash">
+  <div class="row">
+    <div class="col-sm-12 ">
+        <div class="panel-heading">
+            <i class="fa fa-bar-chart-o"></i> Month-Wise Load Data
+        </div>
+                <div class="chart-body">
+                  <div class="example-header" fxLayout="row">
+                      <mat-form-field>
+                          <input matInput class="matInputFilterBar" (keyup)="applyFilter($event.target.value)" placeholder="Search anything in table here ...">
+                        </mat-form-field>
+                      </div>
+
+                      <div class="example-container mat-elevation-z8">
+
+                        <mat-table [dataSource]="dataSource" matSort>
+
+                          <!-- ID Column -->
+                          <ng-container matColumnDef="power_source">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Power Source</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="power_source" > {{row.power_source}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="month">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Month</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="month" > {{row.month}} </mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="max_load_time">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Max Load (Time)</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="max_load_time" > {{row.max_load_created}} </mat-cell>
+                          </ng-container>
+
+                          <!-- Site Name Column -->
+                          <ng-container matColumnDef="max_load_value">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Max Load (KW)</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="max_load_value" > {{row.max_load}} </mat-cell>
+                          </ng-container>
+
+                          <!-- Site Type -->
+                          <ng-container matColumnDef="min_load_time">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Min Load (Time)</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="min_load_time" > {{row.min_load_created}}</mat-cell>
+                          </ng-container>
+                          <ng-container matColumnDef="min_load_value">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header >Min Load (KW)</mat-header-cell>
+                            <mat-cell *matCellDef="let row" data-label="min_load_value"> {{row.min_load}} </mat-cell>
+                          </ng-container>
+                          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                          <mat-row *matRowDef="let row; columns: displayedColumns;">
+                          </mat-row> 
+                        </mat-table>
+                        <mat-paginator [pageSizeOptions]="[5, 10, 20]" ></mat-paginator>
+                       
+                      </div>
+                    </div>
+                  </div>
+                </div>
+</div>
+<div mat-dialog-actions>
+  <button (click)='exportMonthlyLoadData()' id="cancel"  mat-button >Export</button>
+  <button (click)='onNoClick()' id="cancel" mat-button >Close</button>
+  <!-- <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Ok</button> -->
+</div>
+
+
+
+
+

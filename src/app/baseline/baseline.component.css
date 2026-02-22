@@ -1,0 +1,215 @@
+ /* Energy status graph start */
+ .heading-panel {
+    background: #ff7a01;
+    padding: 5px;
+    text-align: left;
+    font-size: 16px;
+    border-radius: 3px;
+    margin-top: 12px;
+ }
+
+ .chart-body {
+    border: 1px solid #ff7a01;
+    padding: 10px;
+    position: relative;
+ }
+
+
+
+ /* Energy status graph end */
+
+
+
+ .chngpwd-body {
+    width: 100%;
+    border: 1px solid #ff7a01;
+    padding-top: 15px;
+    margin-top: 55px;
+
+ }
+
+
+ .card-header {
+    color: black;
+    text-align: left;
+    font-size: 18px;
+ }
+
+ .oldp {
+    margin-top: 10px;
+ }
+
+ .chpwd {
+    text-align: left;
+ }
+
+ .btn-primary {
+    background: #E66F00;
+    color: #ffffff;
+ }
+
+ .btn {
+    border: #E66F00;
+
+ }
+
+ .chngpwd {
+    margin-top: 125px;
+ }
+
+
+ .charheader2 {
+    margin: 5px;
+    border-top: 1px solid orangered;
+    background: orangered;
+    padding: 5px;
+    border-radius: 5px;
+
+ }
+
+ .panel-heading {
+    position: relative;
+    background-color: #ff7a01;
+    border: 1px;
+    border-radius: 3px;
+    text-align: left;
+    padding: 5px;
+    font-size: 16px;
+ }
+
+ .mat-raised-button {
+    background-color: chocolate !important;
+
+ }
+
+ .mat-icon-material-icons-mat-icon-no-color {
+    color: cornsilk;
+ }
+
+ .md-raised.md-primary.md-button.md-link-ripple {
+    background: #E66F00;
+    color: #ffffff;
+ }
+
+
+ /* Breadcrumbs from http://bootsnipp.com/snippets/featured/triangle-breadcrumbs-arrows */
+
+ #breadcrumb {
+    position: fixed;
+    z-index: 999;
+    top: 50px;
+    width: 100%;
+    background: #222222;
+ }
+
+
+ /*  breadcrump */
+
+ .btn-breadcrumb .btn:not(:last-child):after {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 17px solid transparent;
+    border-bottom: 17px solid transparent;
+    border-left: 10px solid #303030;
+    position: absolute;
+    top: 50%;
+    margin-top: -17px;
+    left: 100%;
+    z-index: 3;
+    color: #fff;
+ }
+
+ .btn-breadcrumb .btn:not(:last-child):before {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 17px solid transparent;
+    border-bottom: 17px solid transparent;
+    border-left: 10px solid rgb(173, 173, 173);
+    position: absolute;
+    top: 50%;
+    margin-top: -17px;
+    margin-left: 1px;
+    left: 100%;
+    z-index: 3;
+ }
+
+ .btn-breadcrumb .btn {
+    padding: 6px 12px 6px 24px;
+    background: #303030;
+    color: #fff;
+ }
+
+ .btn-breadcrumb .btn:first-child {
+    padding: 6px 6px 6px 10px;
+    background: #303030;
+    color: #fff;
+ }
+
+ .btn-breadcrumb .btn:last-child {
+    padding: 6px 18px 6px 24px;
+    background: #303030;
+    color: #fff;
+ }
+
+ /** Default button **/
+ .btn-breadcrumb .btn.btn-default:not(:last-child):after {
+    border-left: 10px solid #303030;
+ }
+
+
+ /* The responsive part */
+
+ .btn-breadcrumb>*>div {
+    /* With less: .text-overflow(); */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+ }
+
+ .btn-breadcrumb>*:nth-child(n+2) {
+    display: none;
+ }
+
+ /* === For phones =================================== */
+ @media (max-width: 767px) {
+    .btn-breadcrumb>*:nth-last-child(-n+2) {
+       display: block;
+    }
+
+    .btn-breadcrumb>* div {
+       max-width: 60px;
+    }
+ }
+
+ /* === For tablets ================================== */
+ @media (min-width: 768px) and (max-width:991px) {
+    .btn-breadcrumb>*:nth-last-child(-n+4) {
+       display: block;
+    }
+
+    .btn-breadcrumb>* div {
+       max-width: 100px;
+    }
+ }
+
+ /* === For desktops ================================== */
+ @media (min-width: 992px) {
+    .btn-breadcrumb>*:nth-last-child(-n+6) {
+       display: block;
+    }
+
+    .btn-breadcrumb>* div {
+       max-width: 170px;
+    }
+ }
+
+ #page-wrapper {
+    width: 100%;
+    padding: 130px 25px 130px 25px;
+    background: #0F0F0F;
+
+ }
