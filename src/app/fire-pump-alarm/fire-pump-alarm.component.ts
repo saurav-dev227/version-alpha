@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { Observable, interval } from 'rxjs';
 import { DataRowOutlet } from '@angular/cdk/table';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTable as MatTable } from '@angular/material/legacy-table';
+import { MatTable } from '@angular/material/table';
 import { AfterViewInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { DataTableItem, DataTableDataSource } from '../super-admin/data-table-datasource';
 

@@ -11,7 +11,7 @@ import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntypedFormGroup, UntypedFormBuilder, Validators, NgForm } from '@angular/forms';
 import { UserService } from '../services/user.service';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { User } from '../models/user';
 import { resetpassword } from '../models/resetpassword';
 

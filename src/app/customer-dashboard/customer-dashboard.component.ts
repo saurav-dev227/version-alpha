@@ -6,9 +6,9 @@ import { DataService } from './../services/data.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 //import { SimpleNotificationsComponent } from 'angular2-notifications';
 //import { NotificationsService } from 'angular2-notifications';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { from } from 'rxjs';
 import * as Highcharts from 'highcharts';
 

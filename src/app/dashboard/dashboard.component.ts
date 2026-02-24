@@ -10,7 +10,7 @@ import { changePassword } from '../models/changepassword';
 import { Forgotpassword } from './../models/forgotpassword';
 import { UserService } from '../services/user.service';
 import * as Highcharts from 'highcharts';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogConfig as MatDialogConfig} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig} from '@angular/material/dialog';
 import { DialogSwitchdashComponent } from '../dialog-switchdash/dialog-switchdash.component';
 
 
