@@ -11,7 +11,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { GlobalService } from './services/global.service';
 import { MatDialogModule } from '@angular/material/dialog';
 
@@ -74,8 +74,7 @@ import { SubmeteringComponent } from './submetering/submetering.component';
 //pass the fusioncharts library and chart modules
 // FusionChartsModule.fcRoot(FusionCharts, Charts, FusionTheme);
 
-@NgModule({
-    declarations: [
+@NgModule({ declarations: [
         AppComponent,
         LoginComponent,
         DialogOverComponent,
@@ -111,10 +110,10 @@ import { SubmeteringComponent } from './submetering/submetering.component';
         DgFuelExcelExportComponent,
         SubmeteringComponent,
     ],
-    imports: [
-        BrowserModule,
+    exports: [MatDialogModule
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
         BrowserAnimationsModule,
-        HttpClientModule,
         ReactiveFormsModule,
         FormsModule,
         AppRoutingModule,
@@ -142,15 +141,10 @@ import { SubmeteringComponent } from './submetering/submetering.component';
         MatSnackBarModule,
         MatRadioModule,
         MatCardModule,
-        MatSlideToggleModule,
-    ],
-    exports: [MatDialogModule
-    ],
-    providers: [
+        MatSlideToggleModule], providers: [
         GlobalService,
         ModalService,
-    ],
-    bootstrap: [AppComponent]
-})
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 
 export class AppModule { }
