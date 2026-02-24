@@ -12,9 +12,10 @@ export interface DialogData {
 }
 
 @Component({
-  selector: 'app-dg-fuel-excel-export',
-  templateUrl: './dg-fuel-excel-export.component.html',
-  styleUrls: ['./dg-fuel-excel-export.component.css']
+    selector: 'app-dg-fuel-excel-export',
+    templateUrl: './dg-fuel-excel-export.component.html',
+    styleUrls: ['./dg-fuel-excel-export.component.css'],
+    standalone: false
 })
 export class DgFuelExcelExportComponent implements OnInit {
 

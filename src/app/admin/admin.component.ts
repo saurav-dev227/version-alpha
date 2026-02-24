@@ -15,9 +15,10 @@ import * as solidGauge from 'highcharts/modules/solid-gauge.src';
 import { formatDate } from '@angular/common';
 
 @Component({
-  selector: 'app-admin',
-  templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.css']
+    selector: 'app-admin',
+    templateUrl: './admin.component.html',
+    styleUrls: ['./admin.component.css'],
+    standalone: false
 })
 export class AdminComponent implements OnInit {
   show: Boolean = false;

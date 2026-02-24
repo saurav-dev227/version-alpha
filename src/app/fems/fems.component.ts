@@ -32,9 +32,10 @@ export interface DialogData {
 }
 
 @Component({
-  selector: 'app-fems',
-  templateUrl: './fems.component.html',
-  styleUrls: ['./fems.component.css']
+    selector: 'app-fems',
+    templateUrl: './fems.component.html',
+    styleUrls: ['./fems.component.css'],
+    standalone: false
 })
 
 export class FemsComponent implements OnInit {

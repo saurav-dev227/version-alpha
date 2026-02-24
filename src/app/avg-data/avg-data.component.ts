@@ -14,9 +14,10 @@ export interface DialogData {
   // updatedBy: string;
 }
 @Component({
-  selector: 'app-avg-data',
-  templateUrl: './avg-data.component.html',
-  styleUrls: ['./avg-data.component.css']
+    selector: 'app-avg-data',
+    templateUrl: './avg-data.component.html',
+    styleUrls: ['./avg-data.component.css'],
+    standalone: false
 })
 
 

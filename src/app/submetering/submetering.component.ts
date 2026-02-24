@@ -47,9 +47,10 @@ export interface KeyValueIf {
 
 
 @Component({
-  selector: 'app-submetering',
-  templateUrl: './submetering.component.html',
-  styleUrls: ['./submetering.component.css']
+    selector: 'app-submetering',
+    templateUrl: './submetering.component.html',
+    styleUrls: ['./submetering.component.css'],
+    standalone: false
 })
 
 

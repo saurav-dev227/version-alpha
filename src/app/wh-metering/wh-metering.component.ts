@@ -48,6 +48,8 @@ export interface KeyValueIf {
     templateUrl: './wh-metering.component.html',
     styleUrls: ['./wh-metering.component.css']
     //providers:[PieGraphComponent]
+    ,
+    standalone: false
 })
 export class WhMeteringComponent implements OnInit {
 

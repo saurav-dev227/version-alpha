@@ -14,9 +14,10 @@ export class DialogData {
 }
 
 @Component({
-  selector: 'app-lights-watt-data',
-  templateUrl: './lights-watt-data.component.html',
-  styleUrls: ['./lights-watt-data.component.css']
+    selector: 'app-lights-watt-data',
+    templateUrl: './lights-watt-data.component.html',
+    styleUrls: ['./lights-watt-data.component.css'],
+    standalone: false
 })
 
 

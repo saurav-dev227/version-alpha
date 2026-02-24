@@ -14,9 +14,10 @@ import * as Highcharts from 'highcharts';
 
 
 @Component({
-  selector: 'app-customer-dashboard',
-  templateUrl: './customer-dashboard.component.html',
-  styleUrls: ['./customer-dashboard.component.css']
+    selector: 'app-customer-dashboard',
+    templateUrl: './customer-dashboard.component.html',
+    styleUrls: ['./customer-dashboard.component.css'],
+    standalone: false
 })
 
 export class CustomerDashboardComponent {

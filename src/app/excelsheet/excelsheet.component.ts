@@ -11,9 +11,10 @@ export interface DialogData {
 }
 
 @Component({
-  selector: 'app-excelsheet',
-  templateUrl: './excelsheet.component.html',
-  styleUrls: ['./excelsheet.component.css']
+    selector: 'app-excelsheet',
+    templateUrl: './excelsheet.component.html',
+    styleUrls: ['./excelsheet.component.css'],
+    standalone: false
 })
 export class ExcelsheetComponent implements OnInit {
   myObj = JSON.parse(localStorage.getItem("account"));

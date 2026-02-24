@@ -10,9 +10,10 @@ import { MatTable } from '@angular/material/table';
 import { DialogData } from '../dialog-switchdash/dialog-switchdash.component';
 
 @Component({
-  selector: 'app-fanswattdata',
-  templateUrl: './fanswattdata.component.html',
-  styleUrls: ['./fanswattdata.component.css']
+    selector: 'app-fanswattdata',
+    templateUrl: './fanswattdata.component.html',
+    styleUrls: ['./fanswattdata.component.css'],
+    standalone: false
 })
 export class FanswattdataComponent implements OnInit {
   dataSource: MatTableDataSource<UserData>;

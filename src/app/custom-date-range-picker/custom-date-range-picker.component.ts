@@ -10,9 +10,10 @@ export interface DialogData {
  
 }
 @Component({
-  selector: 'app-custom-date-range-picker',
-  templateUrl: './custom-date-range-picker.component.html',
-  styleUrls: ['./custom-date-range-picker.component.css']
+    selector: 'app-custom-date-range-picker',
+    templateUrl: './custom-date-range-picker.component.html',
+    styleUrls: ['./custom-date-range-picker.component.css'],
+    standalone: false
 })
 export class CustomDateRangePickerComponent implements OnInit {
 

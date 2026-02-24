@@ -24,9 +24,10 @@ export interface UserData {
   totalWatts: string;
 }
 @Component({
-  selector: 'app-device-details-fems',
-  templateUrl: './device-details-fems.component.html',
-  styleUrls: ['./device-details-fems.component.css']
+    selector: 'app-device-details-fems',
+    templateUrl: './device-details-fems.component.html',
+    styleUrls: ['./device-details-fems.component.css'],
+    standalone: false
 })
 export class DeviceDetailsFemsComponent implements OnInit {
   dataSource: MatTableDataSource<UserData>;

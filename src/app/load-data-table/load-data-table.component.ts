@@ -13,9 +13,10 @@ export class DialogData {
 }
 
 @Component({
-  selector: 'app-load-data-table',
-  templateUrl: './load-data-table.component.html',
-  styleUrls: ['./load-data-table.component.css']
+    selector: 'app-load-data-table',
+    templateUrl: './load-data-table.component.html',
+    styleUrls: ['./load-data-table.component.css'],
+    standalone: false
 })
 export class LoadDataTableComponent implements OnInit {
   dataSource: MatTableDataSource<UserData>;

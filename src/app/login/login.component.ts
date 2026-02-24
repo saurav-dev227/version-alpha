@@ -21,13 +21,12 @@ import { resetpassword } from '../models/resetpassword';
 
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
-  encapsulation: ViewEncapsulation.None,
-  providers: [UserService],
-
-
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.css'],
+    encapsulation: ViewEncapsulation.None,
+    providers: [UserService],
+    standalone: false
 })
 
 

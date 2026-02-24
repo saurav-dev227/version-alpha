@@ -25,9 +25,10 @@ export interface UserData {
 }
 
 @Component({
-  selector: 'app-expired-device-details-fems',
-  templateUrl: './expired-device-details-fems.component.html',
-  styleUrls: ['./expired-device-details-fems.component.css']
+    selector: 'app-expired-device-details-fems',
+    templateUrl: './expired-device-details-fems.component.html',
+    styleUrls: ['./expired-device-details-fems.component.css'],
+    standalone: false
 })
 export class ExpiredDeviceDetailsFemsComponent implements OnInit {
   dataSource: MatTableDataSource<UserData>;
