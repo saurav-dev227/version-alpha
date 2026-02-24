@@ -67,18 +67,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "movie-rater-web:build"
+            "buildTarget": "movie-rater-web:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "movie-rater-web:build:production"
+              "buildTarget": "movie-rater-web:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "movie-rater-web:build"
+            "buildTarget": "movie-rater-web:build"
           }
         },
         "test": {
