@@ -84,12 +84,18 @@ export class UserService {
   energySavingMonthlyData(data: any) {
     return this.http.post(this.baseUrl + 'savingMonthly/', data, this.getAuthHeaders());
   }
+  warehouseMonthlyData(data: any) {
+    return this.http.post(this.baseUrl + 'monthly/data/test', data, this.getAuthHeaders());
+  }
   submeteringMonthlyBarChart(data: any) {
     return this.http.post(this.baseUrl + 'submeteringMonthlyBarChart/', data, this.getAuthHeaders());
 
   }
   energySavingHourlyData(data: any) {
     return this.http.post(this.baseUrl + 'hourlySavingData/', data, this.getAuthHeaders());
+  }
+  warehouseHourlyData(data: any) {
+    return this.http.post(this.baseUrl + 'hourly/data/test', data, this.getAuthHeaders());
   }
   submeteringHourlyData(data: any) {
     return this.http.post(this.baseUrl + 'submeteringHourlyData/', data, this.getAuthHeaders());

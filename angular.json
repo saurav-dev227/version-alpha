@@ -32,6 +32,11 @@
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ],
             "sourceMap": true,
+            "allowedCommonJsDependencies": [
+              "highcharts",
+              "highcharts/highcharts-more",
+              "highcharts/modules/exporting"
+            ]
           },
           "configurations": {
             "production": {

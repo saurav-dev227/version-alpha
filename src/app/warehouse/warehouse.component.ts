@@ -649,7 +649,7 @@ export class WarehouseComponent implements OnInit {
     let tillDate = formatDate(new Date(), 'yyyy/MM/dd', 'en');
     let fromDate = formatDate(new Date().setDate(todayDate.getDate() - 30), 'yyyy/MM/dd', 'en');
     let data1 = { 'site_id': this.siteId, 'from_date': fromDate, 'till_date': tillDate, "user_type": this.user_type };
-    this.UserService.energySavingMonthlyData(data1).subscribe(
+    this.UserService.warehouseMonthlyData(data1).subscribe(
       response => {
         console.log("ressnw  : ", response)
         // $(function () {
@@ -810,7 +810,7 @@ export class WarehouseComponent implements OnInit {
         this.chartLoading = true;
         // Call the API with specific data
         let data = { 'site_id': this.siteId, 'from_date': fromDate, 'till_date': tillDate, "user_type": this.user_type };
-        this.UserService.energySavingMonthlyData(data).subscribe(
+        this.UserService.warehouseMonthlyData(data).subscribe(
           response => {
             categories = response['Dates'];
             series = response['Data'];
@@ -832,7 +832,7 @@ export class WarehouseComponent implements OnInit {
         console.log('This is mine selected Date in hourly data', hourlySelectedDate);
         // this.barChartOptions.plotOptions.column.stacking='percent';
 
-        this.UserService.energySavingHourlyData(data).subscribe(
+        this.UserService.warehouseHourlyData(data).subscribe(
           response => {
             // this.chart.chart.redraw()
             // categories = response['Hours'];
@@ -963,7 +963,7 @@ export class WarehouseComponent implements OnInit {
         // Call the API with specific data
         let data = { 'site_id': this.siteId, 'from_date': fromDate, 'till_date': tillDate, "user_type": this.user_type };
         //this.barChartOptions.plotOptions.column.stacking='percent'; //mandeep for percentage show
-        this.UserService.energySavingMonthlyData(data).subscribe(
+        this.UserService.warehouseMonthlyData(data).subscribe(
           response => {
 
             categories = response['Dates'];
@@ -984,7 +984,7 @@ export class WarehouseComponent implements OnInit {
         // Graph Filter is for hourly data
         let data = { 'site_id': this.siteId, 'date': hourlySelectedDate };
         console.log('This is mine selected Date in hourly data for energy saving data', hourlySelectedDate);
-        this.UserService.energySavingHourlyData(data).subscribe(
+        this.UserService.warehouseHourlyData(data).subscribe(
           response => {
             console.log("respsmdksk: ", response)
             categories = response['Hours'];
