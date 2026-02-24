@@ -76,13 +76,13 @@ form button {
     background-color: white !important;
 }
 
-.mat-form-field-underline {
+.mdc-line-ripple {
     /* background-color: #ffffff !important; */
     display: none;
 }
 
 /* When the input is not focused */
-.mat-form-field .placeholder {
+.mat-mdc-form-field .placeholder {
     color: #ffffff;
 }
 
@@ -91,7 +91,7 @@ form button {
     color: white;
 }
 
-.mat-raised-button {
+.mat-mdc-raised-button {
     background-color: #E66F00;
     background-image: linear-gradient(rgb(236, 206, 73), #e0740f);
     color: white;
@@ -148,7 +148,7 @@ label {
         /* red */
 }
 
-.mat-input-element {
+.mat-mdc-input-element {
     caret-color: #fff;
 }
 
