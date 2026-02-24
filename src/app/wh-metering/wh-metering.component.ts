@@ -12,6 +12,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import * as Highcharts from 'highcharts';
+import { NgZone, ChangeDetectorRef } from '@angular/core';
 
 // Set Highcharts to use local time instead of UTC
 Highcharts.setOptions({
@@ -167,6 +168,18 @@ export class WhMeteringComponent implements OnInit {
     @ViewChild('chart') chart;
     @ViewChild("loadChart") loadChart;
 
+    pieChartInst: Highcharts.Chart;
+    dgFuelChartInst: Highcharts.Chart;
+    loadChartInst: Highcharts.Chart;
+    trendChartInst: Highcharts.Chart;
+    energyChartInst: Highcharts.Chart;
+
+    pieChartCallback: any;
+    dgFuelChartCallback: any;
+    loadChartCallback: any;
+    trendChartCallback: any;
+    energyChartCallback: any;
+
     //@ViewChild(MatPaginator) paginator: MatPaginator;
 
     constructor(private dashData: DashboardDataService,
@@ -175,7 +188,15 @@ export class WhMeteringComponent implements OnInit {
         private user_service: UserService,
         private router: Router,
         public dialog: MatDialog,
+        private ngZone: NgZone,
+        private cdr: ChangeDetectorRef
     ) {
+        this.pieChartCallback = (chart: Highcharts.Chart) => { this.pieChartInst = chart; };
+        this.dgFuelChartCallback = (chart: Highcharts.Chart) => { this.dgFuelChartInst = chart; };
+        this.loadChartCallback = (chart: Highcharts.Chart) => { this.loadChartInst = chart; };
+        this.trendChartCallback = (chart: Highcharts.Chart) => { this.trendChartInst = chart; };
+        this.energyChartCallback = (chart: Highcharts.Chart) => { this.energyChartInst = chart; };
+        this.chartCallback = this.energyChartCallback;
         this.show_dg_mains_run_time = localStorage.getItem('show_dg_mains_run_time');
         if (this.show_dg_mains_run_time == "true") {
             this.graphTypes = [
@@ -241,14 +262,10 @@ export class WhMeteringComponent implements OnInit {
         this.getPowerSourceDistData();
         // Highcharts.chart('chartcontainer',this.barChartOptions);
         this.isShown = true;
-        console.log("is_load_graph_visible: ", this.is_load_graph_visible)
-        console.log("is pf visible: ", this.pf_visible)
         if (this.is_load_graph_visible == "true") {
             this.load_graph(); // this function will call for particular customer and site
         }
-        console.log("show fuel data: ", this.dg_fuel_system_installed)
         if (this.dg_fuel_system_installed == 'true') {
-            console.log("#########################", this.customer_visible_dg_fuel_data)
             if (this.user_type == '1') {
                 this.showFuelGraph = true
                 this.dgFuelConsumptionGraph()
@@ -297,155 +314,83 @@ export class WhMeteringComponent implements OnInit {
         this.dgFuelData = true;
         this.DataService.dgFuelConsumptionData(reqData).subscribe(
             res => {
+                this.ngZone.runOutsideAngular(() => {
+                    let dataSeries = res["data"]
+                    let refuelSeries = res["refuel_alert"]
+                    refuelSeries["dataLabels"] = { "enabled": true }
+                    let theftSeries = res["theft_alert"]
+                    theftSeries["dataLabels"] = { "enabled": true }
+                    let dgFuelConsumed = res["dg_fuel_data"]
+                    dgFuelConsumed["dataLabels"] = { "enabled": true }
+                    let dgUnitPerLtr = res["dg_unit_per_litre_data"]
+                    dgUnitPerLtr["dataLabels"] = { "enabled": true }
+                    let dgConsumptionDataSeries = res["dg_unit_data"]
+                    dgConsumptionDataSeries["yAxis"] = 1
+                    dgConsumptionDataSeries["dataLabels"] = { "enabled": true }
 
-                let dataSeries = res["data"]
-                let refuelSeries = res["refuel_alert"]
-                refuelSeries["dataLabels"] = { "enabled": true }
-                let theftSeries = res["theft_alert"]
-                theftSeries["dataLabels"] = { "enabled": true }
-                let dgFuelConsumed = res["dg_fuel_data"]
-                dgFuelConsumed["dataLabels"] = { "enabled": true }
-                let dgUnitPerLtr = res["dg_unit_per_litre_data"]
-                dgUnitPerLtr["dataLabels"] = { "enabled": true }
-                let dgConsumptionDataSeries = res["dg_unit_data"]
-                dgConsumptionDataSeries["yAxis"] = 1
-                dgConsumptionDataSeries["dataLabels"] = { "enabled": true }
-                console.log("dgConsumptionDataSeries", dgConsumptionDataSeries)
-                // console.log("api data: ", dataSeries)
-                this.chartLoading = true;
-                this.dgFuelConsumptionOptions = {
-                    colorCount: '5',
-                    colors: ['#90ED7D', '#7cb5ec', '#ff0000', '#ff7a01', '#800080', '#00008B'],
-                    chart: {
-                        // type:"spline",
-                        backgroundColor: "#222222",
-                        scrollablePlotArea: {
-                            minWidth: 300,
-                            scrollPositionX: 1
+                    const options = {
+                        colorCount: '5',
+                        colors: ['#90ED7D', '#7cb5ec', '#ff0000', '#ff7a01', '#800080', '#00008B'],
+                        chart: {
+                            backgroundColor: "#222222",
+                            scrollablePlotArea: {
+                                minWidth: 300,
+                                scrollPositionX: 1
+                            },
+                            animation: false,
                         },
-                        zoomType: "x",
-
-                    },
-                    navigator: {
-                        enabled: true
-                    },
-                    scrollbar: {
-                        enabled: true
-                    },
-                    legend: {
-                        itemStyle: { color: 'white', },
-                    },
-
-                    xAxis: {
-                        type: 'datetime',
-                        dateTimeLabelFormats: {
-                            day: '%d %b %Y'    //ex- 01 Jan 2016
-                        },
-                        startOnTick: true,
-                        endOnTick: true,
-                        showLastLabel: true,
-                        labels: {
-                            style: { color: 'white', },
-                            rotation: -45,
-                            //Specify the formatting of xAxis labels:
-                            format: '{value:%Y-%m-%d %H:%M}',
-
-                        }
-                    },
-
-                    yAxis: [{ // Primary yAxis
-                        labels: {
-                            // format: '{value} units',
-                            style: {
-                                color: 'white'
+                        navigator: { enabled: true },
+                        scrollbar: { enabled: true },
+                        legend: { itemStyle: { color: 'white' } },
+                        xAxis: {
+                            type: 'datetime',
+                            dateTimeLabelFormats: { day: '%d %b %Y' },
+                            startOnTick: true,
+                            endOnTick: true,
+                            showLastLabel: true,
+                            labels: {
+                                style: { color: 'white' },
+                                rotation: -45,
+                                format: '{value:%Y-%m-%d %H:%M}',
                             }
                         },
-                        title: {
-                            text: 'Fuel Level (in Litres)',
-                            style: {
-                                color: 'white'
+                        yAxis: [
+                            {
+                                labels: { style: { color: 'white' } },
+                                title: { text: 'Fuel Level (in Litres)', style: { color: 'white' } },
+                                opposite: false,
+                            },
+                            {
+                                gridLineWidth: 0,
+                                title: { text: 'Unit Consumed In KWH', style: { color: 'white' } },
+                                labels: { format: '{value} KWH', style: { color: 'white' } },
+                                opposite: true,
+                                min: 0,
+                                max: 600,
+                                tickInterval: 100,
                             }
+                        ],
+                        time: { useUTC: false },
+                        title: { text: 'DG Fuel and Unit Trend', style: { color: 'white' } },
+                        plotOptions: {
+                            series: { turboThreshold: 0, pointWidth: 15, animation: false }
                         },
-                        opposite: false,
-                        // plotOptions: {
-                        //     series: {
-                        //         pointWidth: 50
-                        //     }
-                        // },
-                        // min: 0,
-                        // max: 1000,
-                        // tickInterval: 100,
-                        // lineWidth: 0,
+                        series: [{
+                            type: "areaspline",
+                            name: 'Fuel Level',
+                            data: dataSeries,
+                            fillColor: (Highcharts as any).color('#808080').setOpacity(0.66).get()
+                        }, refuelSeries, theftSeries, dgConsumptionDataSeries, dgFuelConsumed, dgUnitPerLtr]
+                    };
 
-                    },
-                    { // Secondary yAxis
-                        gridLineWidth: 0,
-                        title: {
-                            text: 'Unit Consumed In KWH',
-                            style: {
-                                color: 'white'
-                            }
-                        },
-                        labels: {
-                            format: '{value} KWH',
-                            style: {
-                                color: 'white'
-                            }
-
-                        },
-                        opposite: true,
-                        min: 0,
-                        max: 600,
-                        tickInterval: 100,
-
-
+                    if (this.dgFuelChartInst) {
+                        this.dgFuelChartInst.update(options as any, true, true, false);
+                    } else {
+                        this.dgFuelConsumptionOptions = options;
                     }
-                    ],
-
-
-                    time: {
-                        useUTC: false
-                    },
-
-
-
-                    title: {
-                        text: 'DG Fuel and Unit Trend',
-                        style: {
-                            color: 'white',
-                        },
-                    },
-
-                    plotOptions: {
-                        series: {
-                            turboThreshold: 0,
-                            pointWidth: 15
-                        }
-                    },
-
-                    series: [{
-                        type: "areaspline",
-                        name: 'Fuel Level',
-                        data: dataSeries,
-                        fillColor: new Highcharts.Color('#808080').setOpacity(0.66).get(),
-                        // pointStart: dataSeries[0]['x']
-                        // fillColor: {
-                        //     linearGradient: {
-                        //         x1: 0,
-                        //         y1: 0,
-                        //         x2: 0,
-                        //         y2: 1
-                        //     },
-                        //     stops: [
-                        //         [0, Highcharts.getOptions().colors[0]],
-                        //         [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                        //     ]
-                        // },
-                    }, refuelSeries, theftSeries, dgConsumptionDataSeries, dgFuelConsumed, dgUnitPerLtr
-
-
-                    ]
-                }
+                    this.chartLoading = false;
+                    this.cdr.detectChanges();
+                });
             }
         )
     }
@@ -457,153 +402,106 @@ export class WhMeteringComponent implements OnInit {
         this.dgFuelDataSelectionChange = true;
         this.DataService.dgFuelConsumptionData(reqData).subscribe(
             res => {
-                let dataSeries = res["data"]
-                // dataSeries["dataLabels"] = {"enabled": true}
-                let refuelSeries = res["refuel_alert"]
-                refuelSeries["dataLabels"] = { "enabled": true }
-                let theftSeries = res["theft_alert"]
-                theftSeries["dataLabels"] = { "enabled": true }
-                let dgFuelConsumed = res["dg_fuel_data"]
-                dgFuelConsumed["dataLabels"] = { "enabled": true }
-                let dgUnitPerLtr = res["dg_unit_per_litre_data"]
-                dgUnitPerLtr["dataLabels"] = { "enabled": true }
-                let dgConsumptionDataSeries = res["dg_unit_data"]
-                dgConsumptionDataSeries["yAxis"] = 1
-                dgConsumptionDataSeries["dataLabels"] = { "enabled": true }
-                console.log("################## ", dataSeries[0]['x'])
-                let alertData = res["alert_data"]
-                console.log("api data: ", dataSeries)
-                this.chartLoading = true;
-                this.dgFuelConsumptionSelectionOptions = {
-                    colorCount: '5',
-                    colors: ['#90ED7D', '#7cb5ec', '#ff0000', '#ff7a01', '#800080', '#00008B'],
-                    chart: {
-                        type: "spline",
-                        backgroundColor: "#222222",
-                        scrollablePlotArea: {
-                            minWidth: 300,
-                            scrollPositionX: 1
+                this.ngZone.runOutsideAngular(() => {
+                    let dataSeries = res["data"]
+                    let refuelSeries = res["refuel_alert"]
+                    refuelSeries["dataLabels"] = { "enabled": true }
+                    let theftSeries = res["theft_alert"]
+                    theftSeries["dataLabels"] = { "enabled": true }
+                    let dgFuelConsumed = res["dg_fuel_data"]
+                    dgFuelConsumed["dataLabels"] = { "enabled": true }
+                    let dgUnitPerLtr = res["dg_unit_per_litre_data"]
+                    dgUnitPerLtr["dataLabels"] = { "enabled": true }
+                    let dgConsumptionDataSeries = res["dg_unit_data"]
+                    dgConsumptionDataSeries["yAxis"] = 1
+                    dgConsumptionDataSeries["dataLabels"] = { "enabled": true }
+
+                    const options = {
+                        colorCount: '5',
+                        colors: ['#90ED7D', '#7cb5ec', '#ff0000', '#ff7a01', '#800080', '#00008B'],
+                        chart: {
+                            type: "spline",
+                            backgroundColor: "#222222",
+                            scrollablePlotArea: {
+                                minWidth: 300,
+                                scrollPositionX: 1
+                            },
+                            zoomType: "x",
+                            animation: false,
                         },
-                        zoomType: "x",
-
-                    },
-                    navigator: {
-                        enabled: true
-                    },
-                    scrollbar: {
-                        enabled: true
-                    },
-                    legend: {
-                        itemStyle: { color: 'white', },
-                    },
-
-
-                    xAxis: {
-                        type: 'datetime',
-                        dateTimeLabelFormats: {
-                            day: '%d %b %Y'    //ex- 01 Jan 2016
+                        navigator: { enabled: true },
+                        scrollbar: { enabled: true },
+                        legend: {
+                            itemStyle: { color: 'white' },
                         },
-                        startOnTick: true,
-                        endOnTick: true,
-                        showLastLabel: true,
-                        labels: {
-                            style: { color: 'white', },
-                            rotation: -45,
-                            //Specify the formatting of xAxis labels:
-                            format: '{value:%Y-%m-%d %H:%M}',
-
+                        xAxis: {
+                            type: 'datetime',
+                            dateTimeLabelFormats: {
+                                day: '%d %b %Y'
+                            },
+                            startOnTick: true,
+                            endOnTick: true,
+                            showLastLabel: true,
+                            labels: {
+                                style: { color: 'white' },
+                                rotation: -45,
+                                format: '{value:%Y-%m-%d %H:%M}',
+                            }
+                        },
+                        yAxis: [{
+                            labels: {
+                                style: { color: 'white' }
+                            },
+                            title: {
+                                text: 'Fuel Level (in Litres)',
+                                style: { color: 'white' }
+                            },
+                            opposite: false,
+                        },
+                        {
+                            gridLineWidth: 0,
+                            title: {
+                                text: 'Unit Consumed In KWH',
+                                style: { color: 'white' }
+                            },
+                            labels: {
+                                format: '{value} KWH',
+                                style: { color: 'white' }
+                            },
+                            opposite: true,
+                            min: 0,
+                            max: 600,
+                            tickInterval: 100,
                         }
-                    },
-                    yAxis: [{ // Primary yAxis
-                        labels: {
-                            // format: '{value} units',
-                            style: {
-                                color: 'white'
-                            }
-                        },
+                        ],
+                        time: { useUTC: false },
                         title: {
-                            text: 'Fuel Level (in Litres)',
-                            style: {
-                                color: 'white'
+                            text: 'DG Fuel and Unit Trend',
+                            style: { color: 'white' },
+                        },
+                        plotOptions: {
+                            series: {
+                                turboThreshold: 0,
+                                pointWidth: 15,
+                                animation: false
                             }
                         },
-                        opposite: false,
-                        // min: 0,
-                        // max: 1000,
-                        // tickInterval: 100,
-                        // lineWidth: 0,
+                        series: [{
+                            type: "areaspline",
+                            name: 'Fuel Level',
+                            data: dataSeries,
+                            fillColor: (Highcharts as any).color('#808080').setOpacity(0.66).get(),
+                        }, refuelSeries, theftSeries, dgConsumptionDataSeries, dgFuelConsumed, dgUnitPerLtr]
+                    };
 
-                    },
-                    { // Secondary yAxis
-                        gridLineWidth: 0,
-                        title: {
-                            text: 'Unit Consumed In KWH',
-                            style: {
-                                color: 'white'
-                            }
-                        },
-                        labels: {
-                            format: '{value} KWH',
-                            style: {
-                                color: 'white'
-                            }
-
-                        },
-                        opposite: true,
-                        min: 0,
-                        max: 600,
-                        tickInterval: 100,
-
-
-                    },
-
-                    ],
-
-
-                    time: {
-                        useUTC: false
-                    },
-
-
-
-                    title: {
-                        text: 'DG Fuel and Unit Trend',
-                        style: {
-                            color: 'white',
-                        },
-                    },
-
-                    plotOptions: {
-                        series: {
-                            turboThreshold: 0,
-                            pointWidth: 15
-                        }
-                    },
-
-                    series: [{
-                        type: "areaspline",
-                        name: 'Fuel Level',
-                        data: dataSeries,
-                        fillColor: new Highcharts.Color('#808080').setOpacity(0.66).get(),
-                        // fillColor: new Highcharts.Color('#ADD8E6').setOpacity(0.66).get(),
-                        // pointStart: dataSeries[0]['x']
-                        // fillColor: {
-                        //     linearGradient: {
-                        //         x1: 0,
-                        //         y1: 0,
-                        //         x2: 0,
-                        //         y2: 1
-                        //     },
-                        //     stops: [
-                        //         [0, Highcharts.getOptions().colors[0]],
-                        //         [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                        //     ]
-                        // },
-                    }, refuelSeries, theftSeries, dgConsumptionDataSeries, dgFuelConsumed, dgUnitPerLtr
-
-
-                    ]
-                }
+                    if (this.dgFuelChartInst) {
+                        this.dgFuelChartInst.update(options as any, true, true, false);
+                    } else {
+                        this.dgFuelConsumptionSelectionOptions = options;
+                    }
+                    this.chartLoading = false;
+                    this.cdr.detectChanges();
+                });
             }
         )
     }
@@ -629,7 +527,6 @@ export class WhMeteringComponent implements OnInit {
             response => {
                 this.sessionVerify = response['result']
                 if (this.sessionVerify == 'true') {
-                    console.log(this.sessionVerify + 'Session verified')
 
                 }
                 else {
@@ -675,10 +572,9 @@ export class WhMeteringComponent implements OnInit {
         req_data = { 'site_id': this.siteId, 'date': formatDate(new Date().setDate(todayDate.getDate()), 'yyyy/MM/dd', 'en') };
         this.DataService.hourly_load_graph(req_data).subscribe(
             res => {
-                console.log(new Date().toString());
 
                 let dataSeries = res["data"]
-                console.log("api data: ", dataSeries)
+                // console.log("api data: ", dataSeries)
                 if (res["data"].length == 0) {
                     let epoch_time = new Date(this.date.value).getTime()
                     dataSeries = [[epoch_time, 0]]
@@ -769,7 +665,8 @@ export class WhMeteringComponent implements OnInit {
                     plotOptions: {
                         series: {
                             turboThreshold: 0,
-                            color: '#00FFFF'
+                            color: '#00FFFF',
+                            animation: false
                         }
                     }, tooltip: {
                         formatter: function () {
@@ -793,68 +690,45 @@ export class WhMeteringComponent implements OnInit {
 
     loadGraphFilterChanged() {
         this.loadGraphLoading = true;
-        console.log("#######################", formatDate(this.loadDate.value, 'yyyy/MM/dd', 'en'), this.selected_load_options)
+        let selectedDate = formatDate(this.loadDate.value, 'yyyy/MM/dd', 'en');
+
         if (this.selected_load_options == "0") {
             this.loadGraph = true;
             this.liveLoadApiCal = false;
             this.seprateManinsDgLoad = false;
-            let data = { "site_id": this.siteId, 'date': formatDate(this.loadDate.value, 'yyyy/MM/dd', 'en') }
+            let data = { "site_id": this.siteId, 'date': selectedDate }
             this.DataService.hourly_load_graph(data).subscribe(
                 res => {
-                    this.loadGraphLoading = false;
-                    console.log("data: ", res["data"])
-                    if (res["data"].length > 0) {
-                        this.loadChart.chart.series[0].update({ data: res["data"] })
-                        this.updateLoadDataFlag = true;
-                    } else {
-                        let epoch_time = new Date(this.loadDate.value).getTime()
-                        this.loadChart.chart.series[0].update({ data: [[epoch_time, 0]] })
-                        this.updateLoadDataFlag = true;
-                    }
-
+                    this.ngZone.runOutsideAngular(() => {
+                        let seriesData = res["data"].length > 0 ? res["data"] : [[new Date(this.loadDate.value).getTime(), 0]];
+                        if (this.loadChartInst) {
+                            this.loadChartInst.update({ series: [{ data: seriesData }] } as any, true, true, false);
+                        } else {
+                            this.lineChartOptions.series[0].data = seriesData;
+                        }
+                        this.loadGraphLoading = false;
+                        this.cdr.detectChanges();
+                    });
                 }
             )
         }
-        else if (this.selected_load_options == "1") {
+        else if (this.selected_load_options == "1" || this.selected_load_options == "2") {
             this.loadGraph = true;
             this.liveLoadApiCal = false;
             this.seprateManinsDgLoad = false;
-            let data = { "site_id": this.siteId, 'date': formatDate(this.loadDate.value, 'yyyy/MM/dd', 'en') }
+            let data = { "site_id": this.siteId, 'date': selectedDate }
             this.DataService.daily_load_graph(data).subscribe(
                 res => {
-                    this.loadGraphLoading = false;
-                    console.log("data: ", res["data"])
-                    if (res["data"].length > 0) {
-                        this.loadChart.chart.series[0].update({ data: res["data"] })
-                        this.updateLoadDataFlag = true;
-                    } else {
-                        let epoch_time = new Date(this.loadDate.value).getTime()
-                        this.loadChart.chart.series[0].update({ data: [[epoch_time, 0]] })
-                        this.updateLoadDataFlag = true;
-                    }
-
-                }
-            )
-
-        }
-        else if (this.selected_load_options == "2") {
-            this.loadGraph = true;
-            this.liveLoadApiCal = false;
-            this.seprateManinsDgLoad = false;
-            let data = { "site_id": this.siteId, 'date': formatDate(this.loadDate.value, 'yyyy/MM/dd', 'en') }
-            this.DataService.daily_load_graph(data).subscribe(
-                res => {
-                    this.loadGraphLoading = false;
-                    console.log("data: ", res["data"])
-                    if (res["data"].length > 0) {
-                        this.loadChart.chart.series[0].update({ data: res["data"] });
-                        this.updateLoadDataFlag = true;
-                    } else {
-                        let epoch_time = new Date(this.loadDate.value).getTime()
-                        this.loadChart.chart.series[0].update({ data: [[epoch_time, 0]] })
-                        this.updateLoadDataFlag = true;
-                    }
-
+                    this.ngZone.runOutsideAngular(() => {
+                        let seriesData = res["data"].length > 0 ? res["data"] : [[new Date(this.loadDate.value).getTime(), 0]];
+                        if (this.loadChartInst) {
+                            this.loadChartInst.update({ series: [{ data: seriesData }] } as any, true, true, false);
+                        } else {
+                            this.lineChartOptions.series[0].data = seriesData;
+                        }
+                        this.loadGraphLoading = false;
+                        this.cdr.detectChanges();
+                    });
                 }
             )
         }
@@ -862,59 +736,38 @@ export class WhMeteringComponent implements OnInit {
             this.liveLoadApiCal = false;
             this.loadGraph = false;
             this.seprateManinsDgLoad = true;
-            let data = { "site_id": this.siteId, 'date': formatDate(this.loadDate.value, 'yyyy/MM/dd', 'en') }
+            let data = { "site_id": this.siteId, 'date': selectedDate }
             this.DataService.mains_dg_daily_load_graph(data).subscribe(
                 res => {
-                    this.loadGraphLoading = false;
-                    console.log("data @@@@@@: ", res["data"])
-                    if (res["data"].length > 0) {
-                        console.log("data mains: ", res["data"][0]["data"])
-                        this.seprateManinsDgLoadChartOptions = {
+                    this.ngZone.runOutsideAngular(() => {
+                        const options = {
                             colorCount: 12,
                             colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
                             chart: {
                                 type: "spline",
                                 backgroundColor: '#222222',
-                                scrollablePlotArea: {
-                                    minWidth: 300,
-                                    scrollPositionX: 1
-                                },
+                                scrollablePlotArea: { minWidth: 300, scrollPositionX: 1 },
                                 zoomType: "x",
-
+                                animation: false,
                             },
-                            navigator: {
-                                enabled: true
-                            },
-                            scrollbar: {
-                                enabled: true
-                            },
-
+                            navigator: { enabled: true },
+                            scrollbar: { enabled: true },
                             xAxis: {
                                 type: 'datetime',
-                                dateTimeLabelFormats: {
-                                    day: '%d %b %Y'    //ex- 01 Jan 2016
-                                },
+                                dateTimeLabelFormats: { day: '%d %b %Y' },
                                 startOnTick: true,
                                 endOnTick: true,
                                 showLastLabel: true,
                                 labels: {
-                                    style: {
-                                        color: 'white',
-                                    },
+                                    style: { color: 'white' },
                                     rotation: -45,
-                                    //Specify the formatting of xAxis labels:
                                     format: '{value:%Y-%m-%d %H:%M}',
-
                                 }
                             },
-
                             yAxis: {
                                 allowDecimals: false,
                                 min: 0,
-                                title: {
-                                    style: { color: 'white', },
-                                    text: 'Load Values(in KW)'
-                                },
+                                title: { style: { color: 'white' }, text: 'Load Values(in KW)' },
                                 stackLabels: {
                                     enabled: true,
                                     rotation: -90,
@@ -922,60 +775,24 @@ export class WhMeteringComponent implements OnInit {
                                     verticalAlign: "top",
                                     y: -30,
                                 },
+                                labels: { style: { color: 'white' } }
+                            },
+                            time: { useUTC: false },
+                            credits: { enabled: false },
+                            title: { text: 'Load data', style: { color: 'white' } },
+                            legend: { itemStyle: { color: 'white' } },
+                            plotOptions: { series: { turboThreshold: 0 } },
+                            series: res["data"].length > 0 ? res["data"] : [{ data: [[new Date(this.loadDate.value).getTime(), 0]] }]
+                        };
 
-
-                                labels: {
-                                    style: {
-                                        color: 'white'
-                                    }
-                                }
-                            },
-
-                            time: {
-                                useUTC: false
-                            },
-                            credits: {
-                                enabled: false
-                            },
-
-                            title: {
-                                text: 'Load data',
-                                style: { color: 'white', },
-                            },
-
-                            // exporting: {
-                            //     enabled: false
-                            // },
-                            legend: {
-                                itemStyle: { color: 'white', },
-                            },
-                            plotOptions: {
-                                series: {
-                                    turboThreshold: 0,
-                                    // color: '#00FFFF'
-                                }
-                            },
-                            series: res["data"]
-                            // series: [{
-                            //     name: res["data"][0]["name"],
-                            //     data:res["data"][0]["data"],                    
-                            //     },
-                            //     {
-                            //         name: res["data"][1]["name"],
-                            //         data:res["data"][1]["data"],                    
-                            //     }
-                            //     ]
+                        if (this.loadChartInst) {
+                            this.loadChartInst.update(options as any, true, true, false);
+                        } else {
+                            this.seprateManinsDgLoadChartOptions = options;
                         }
-
-                        // this.lineChartOptions.series = res["data"]
-                        // console.log("$$$$$$$$$$$", this.loadChart.chart.series)
-                        // this.updateLoadDataFlag = true;
-                    } else {
-                        let epoch_time = new Date(this.loadDate.value).getTime()
-                        this.loadChart.chart.series[0].update({ data: [[epoch_time, 0]] })
-                        this.updateLoadDataFlag = true;
-                    }
-
+                        this.loadGraphLoading = false;
+                        this.cdr.detectChanges();
+                    });
                 }
             )
         }
@@ -986,26 +803,22 @@ export class WhMeteringComponent implements OnInit {
             this.liveLoadApiCal = true;
             this.DataService.load_live_graph(req_data).subscribe(
                 res => {
-
-                    if (res["data"].length > 0) {
-
-                        this.updateLoadDataFlag = true;
-                        console.log("########")
-                        console.log("@@@@@")
-                        this.loadChart.chart.series[0].update({ data: res["data"] });
-                        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                        localStorage.setItem("epoch_time", res["data"].splice(-1)[0].x)
-                    } else {
-                        let epoch_time = new Date(this.loadDate.value).getTime()
-                        localStorage.setItem("epoch_time", epoch_time.toString())
-                        this.loadChart.chart.series[0].update({ data: [[epoch_time, 0]] })
-                        this.updateLoadDataFlag = true;
-                    }
-                    this.loadGraphLoading = false;
+                    this.ngZone.runOutsideAngular(() => {
+                        let seriesData = res["data"].length > 0 ? res["data"] : [[new Date(this.loadDate.value).getTime(), 0]];
+                        if (this.loadChartInst) {
+                            this.loadChartInst.update({ series: [{ data: seriesData }] } as any, true, true, false);
+                        } else {
+                            this.lineChartOptions.series[0].data = seriesData;
+                        }
+                        if (res["data"].length > 0) {
+                            localStorage.setItem("epoch_time", res["data"][res["data"].length - 1].x || res["data"][res["data"].length - 1][0]);
+                        }
+                        this.loadGraphLoading = false;
+                        this.cdr.detectChanges();
+                    });
                 }
             )
         }
-
     }
 
 
@@ -1023,7 +836,6 @@ export class WhMeteringComponent implements OnInit {
                     site_type = 'WH_ENERGY SAVING'
                 }
 
-                console.log("Site Details" + siteDetails);
                 this.siteDetails.site_id = siteDetails['id'];
                 this.siteDetails.site_name = siteDetails['site_name'];
                 this.siteDetails.site_addr = siteDetails['location'];
@@ -1042,198 +854,141 @@ export class WhMeteringComponent implements OnInit {
 
 
     getPowerSourceDistData() {
+        this.pieChartLoading = true;
         let data = { 'siteId': this.siteId };
         this.DataService.getPowerSrcDistData(data).subscribe(
             response => {
-                let status = response['result'];
-                let mainsPercentage = 0;
-                let dg1Percentage = 0;
-                let dg2Percentage = 0;
-                let seriesData = [];
-                let currentMonth = response['current_month'];
+                this.ngZone.runOutsideAngular(() => {
+                    let status = response['result'];
+                    let seriesData = [];
+                    let currentMonth = response['current_month'];
 
-
-                if (status == "1") {
-                    for (let k = 0; k < response['data'].length; k++) {
-                        let data: any;
-                        data = { 'name': response['data'][k]['name'], 'y': response['data'][k]['data'] };
-                        seriesData.push(data);
+                    if (status == "1") {
+                        for (let k = 0; k < response['data'].length; k++) {
+                            seriesData.push({ 'name': response['data'][k]['name'], 'y': response['data'][k]['data'] });
+                        }
                     }
-                }
 
-
-                // this.pieChartComp.updatePieChartData(seriesData);
-
-                // this.highcharts = Highcharts;
-                this.pieChartOptions = {
-                    colorCount: '12',
-                    colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
-                    chart: {
-                        type: 'pie',
-                        backgroundColor: '#222222',
-                        options3d: {
-                            enabled: true,
-                            alpha: 45,
-                            beta: 0
-                        }
-                    },
-
-                    // pane: {
-                    //     startAngle: -90,
-                    //     endAngle: 90,
-                    //     background: {
-                    //       backgroundColor: 'white',
-                    //       innerRadius: '60%',
-                    //       outerRadius: '90%',
-                    //       shape: 'arc'
-                    //     }
-                    //   },
-
-                    credits: {
-                        enabled: false
-                    },
-                    title: {
-                        style: {
-                            color: 'white',
+                    const options = {
+                        colorCount: '12',
+                        colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+                        chart: {
+                            type: 'pie',
+                            backgroundColor: '#222222',
+                            options3d: { enabled: true, alpha: 45, beta: 0 }
                         },
-                        text: 'Power Source Distribution ( ' + currentMonth + ' )'
-                    },
-                    tooltip: {
-                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                    },
-                    plotOptions: {
-                        pie: {
-                            allowPointSelect: true,
-                            cursor: 'pointer',
-                            depth: 35,
-                            dataLabels: {
-                                style: {
-                                    color: 'white',
-                                    fontSize: '12'
-                                },
-                                enabled: true,
-                                format: '{point.name}: <b>{point.percentage:.1f}%</b>'
+                        credits: { enabled: false },
+                        title: {
+                            style: { color: 'white' },
+                            text: 'Power Source Distribution ( ' + currentMonth + ' )'
+                        },
+                        tooltip: { pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>' },
+                        plotOptions: {
+                            pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                depth: 35,
+                                dataLabels: {
+                                    style: { color: 'white', fontSize: '12' },
+                                    enabled: true,
+                                    format: '{point.name}: <b>{point.percentage:.1f}%</b>'
+                                }
                             }
-                        }
-                    },
-                    series: [{
-                        type: 'pie',
-                        name: 'share',
-                        // innersize:'50%',
-                        data: seriesData
-                    }]
-                }
-                console.log("this is series data", this.pieChartOptions);
-                this.pieChartLoading = false;
-                // else {
-                //   // Show the meaningful text on  graph
-                // }
+                        },
+                        series: [{
+                            type: 'pie',
+                            name: 'share',
+                            data: seriesData
+                        }]
+                    };
+
+                    if (this.pieChartInst) {
+                        this.pieChartInst.update(options as any, true, true, false);
+                    } else {
+                        this.pieChartOptions = options;
+                    }
+                    this.pieChartLoading = false;
+                    this.cdr.detectChanges();
+                });
             },
-            error => {
-
-            }
+            error => { }
         );
-
     }
 
     getConsumptionData() {
         let todayDate = new Date();
         let tillDate = formatDate(new Date(), 'yyyy/MM/dd', 'en');
         let fromDate = formatDate(new Date().setDate(todayDate.getDate() - 30), 'yyyy/MM/dd', 'en');
-        console.log("till Date is : " + tillDate);
-        console.log("From Date is : " + fromDate);
         let data1 = { 'site_id': this.siteId, 'from_date': fromDate, 'till_date': tillDate };
         this.DataService.getGraphData(data1).subscribe(
             response => {
-                //this.Highcharts = Highcharts;
-                this.barChartOptions = {
-                    colorCount: '12',
-                    colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
-                    credits: {
-                        enabled: false,
-                    },
-
-                    chart: {
-                        backgroundColor: '#222222',
-                        type: 'column',
-                        zoomType: "x"
-                    },
-                    title: {
-                        text: this.graphTitle,
-                        style: {
-                            color: 'white',
+                this.ngZone.runOutsideAngular(() => {
+                    const options = {
+                        colorCount: '12',
+                        colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+                        credits: { enabled: false },
+                        chart: {
+                            backgroundColor: '#222222',
+                            type: 'column',
+                            zoomType: "x",
+                            animation: false
                         },
-                    },
-
-                    xAxis: {
-                        labels: {
-                            style: {
-                                color: 'white',
-                            },
-                        },
-                        categories: response['Dates']
-                    },
-
-
-                    yAxis: {
-                        allowDecimals: false,
-                        min: 0,
                         title: {
-                            style: { color: 'white', },
-                            text: 'Number of units (kWh)'
+                            text: this.graphTitle,
+                            style: { color: 'white' }
                         },
-                        stackLabels: {
-                            enabled: true,
-                            rotation: -90,
-                            style: { color: "white" },
-                            verticalAlign: "top",
-                            y: -30,
+                        xAxis: {
+                            labels: { style: { color: 'white' } },
+                            categories: response['Dates']
                         },
-
-
-                        labels: {
-                            style: {
-                                color: 'white'
+                        yAxis: {
+                            allowDecimals: false,
+                            min: 0,
+                            title: {
+                                style: { color: 'white' },
+                                text: 'Number of units (kWh)'
+                            },
+                            stackLabels: {
+                                enabled: true,
+                                rotation: -90,
+                                style: { color: "white" },
+                                verticalAlign: "top",
+                                y: -30,
+                            },
+                            labels: { style: { color: 'white' } }
+                        },
+                        tooltip: {
+                            formatter: function () {
+                                return '<b>' + this.x + '</b><br/>' +
+                                    this.series.name + ': ' + this.y + '<br/>' +
+                                    'Total: ' + this.point.stackTotal;
                             }
-                        }
-                    },
-
-
-                    labels: {
-                        style: {
-                            color: 'white'
-                        }
-                    },
-
-
-                    tooltip: {
-                        formatter: function () {
-                            return '<b>' + this.x + '</b><br/>' +
-                                this.series.name + ': ' + this.y + '<br/>' +
-                                'Total: ' + this.point.stackTotal;
-                        }
-                    },
-
-                    plotOptions: {
-                        column: {
-                            stacking: 'normal',
-                            //colors: ['orange', 'white', 'blue']
                         },
-                    },
+                        plotOptions: {
+                            column: {
+                                stacking: 'normal' as any,
+                                animation: false
+                            },
+                            series: {
+                                animation: false
+                            }
+                        },
+                        legend: { itemStyle: { color: 'white' } },
+                        series: response['Data']
+                    };
 
-                    legend: {
-                        itemStyle: { color: 'white', },
-                    },
-
-                    series: response['Data'],
-                }
-                console.log("graph data", this.barChartOptions)
-                this.barChartLoading = false;
+                    if (this.energyChartInst) {
+                        this.energyChartInst.update(options as any, true, true, false);
+                    } else {
+                        this.barChartOptions = options;
+                    }
+                    this.barChartLoading = false;
+                    this.cdr.detectChanges();
+                });
             });
     }
 
     onChange(value) {
-        console.log("@@@@@@@ ", value)
     }
 
     // Energy Export Modal Properties (Total Energy Consumption)
@@ -1257,8 +1012,8 @@ export class WhMeteringComponent implements OnInit {
             const formattedFrom = formatDate(this.energyExportStartDate, 'yyyy-MM-dd', 'en');
             const formattedTo = formatDate(this.energyExportEndDate, 'yyyy-MM-dd', 'en');
 
-            console.log(`Exporting Energy Data from ${formattedFrom} to ${formattedTo}`);
-            console.log(`Site: ${this.siteDetails.site_name}`);
+            // console.log(`Exporting Energy Data from ${formattedFrom} to ${formattedTo}`);
+            // console.log(`Site: ${this.siteDetails.site_name}`);
 
             let data = {
                 "user_id": this.user_id,
@@ -1300,7 +1055,6 @@ export class WhMeteringComponent implements OnInit {
     columnGraphFilterChanged(interval) {
         this.barChartLoading = true;
         let mode = this.selected_task;
-        console.log("value of selected task is", mode);
         let tillDate = formatDate(this.date.value, 'yyyy/MM/dd', 'en');
         let graphType = this.selected_graph;
         let todayDate = new Date();
@@ -1341,13 +1095,20 @@ export class WhMeteringComponent implements OnInit {
                 let data = { 'site_id': this.siteId, 'from_date': fromDate, 'till_date': tillDate };
                 this.DataService.getGraphData(data).subscribe(
                     response => {
-                        categories = response['Dates'];
-                        series = response['Data'];
-                        this.updateFlag = true;
-                        this.barChartOptions.xAxis.categories = categories;
-                        this.barChartOptions.series = series;
-                        this.barChartLoading = false;
-                        // this.updateFlag = true;
+                        this.ngZone.runOutsideAngular(() => {
+                            if (this.energyChartInst) {
+                                this.energyChartInst.update({
+                                    xAxis: { categories: response['Dates'] },
+                                    series: response['Data'],
+                                    plotOptions: { column: { animation: false }, series: { animation: false } }
+                                } as any, true, true, false);
+                            } else {
+                                this.barChartOptions.xAxis.categories = response['Dates'];
+                                this.barChartOptions.series = response['Data'];
+                            }
+                            this.barChartLoading = false;
+                            this.cdr.detectChanges();
+                        });
                     },
                     error => { }
                 );
@@ -1359,13 +1120,20 @@ export class WhMeteringComponent implements OnInit {
 
                 this.DataService.getSiteHourlyConsumptionData(data).subscribe(
                     response => {
-                        categories = response['Hours'];
-                        series = response['Data'];
-                        this.updateFlag = true;
-                        this.barChartOptions.xAxis.categories = categories;
-                        this.barChartOptions.series = series;
-                        this.barChartLoading = false;
-                        // this.updateFlag = true;
+                        this.ngZone.runOutsideAngular(() => {
+                            if (this.energyChartInst) {
+                                this.energyChartInst.update({
+                                    xAxis: { categories: response['Hours'] },
+                                    series: response['Data'],
+                                    plotOptions: { column: { animation: false }, series: { animation: false } }
+                                } as any, true, true, false);
+                            } else {
+                                this.barChartOptions.xAxis.categories = response['Hours'];
+                                this.barChartOptions.series = response['Data'];
+                            }
+                            this.barChartLoading = false;
+                            this.cdr.detectChanges();
+                        });
                     },
                     error => { }
                 );
@@ -1384,15 +1152,22 @@ export class WhMeteringComponent implements OnInit {
                 //this.barChartOptions.plotOptions.column.stacking='percent'; //mandeep for percentage show
                 this.DataService.getDailyPowerSrcDistData(data).subscribe(
                     response => {
-
-                        categories = response['Dates'];
-                        series = response['Data'];
-
-                        this.barChartOptions.xAxis.categories = categories;
-                        this.barChartOptions.series = series;
-                        this.barChartOptions.yAxis.title.text = "Number of units % (KWh)"
-                        this.updateFlag = true;
-                        this.barChartLoading = false;
+                        this.ngZone.runOutsideAngular(() => {
+                            if (this.energyChartInst) {
+                                this.energyChartInst.update({
+                                    xAxis: { categories: response['Dates'] },
+                                    series: response['Data'],
+                                    yAxis: { title: { text: "Number of units % (KWh)" } },
+                                    plotOptions: { column: { animation: false }, series: { animation: false } }
+                                } as any, true, true, false);
+                            } else {
+                                this.barChartOptions.xAxis.categories = response['Dates'];
+                                this.barChartOptions.series = response['Data'];
+                                this.barChartOptions.yAxis.title.text = "Number of units % (KWh)"
+                            }
+                            this.barChartLoading = false;
+                            this.cdr.detectChanges();
+                        });
                     },
                     error => { }
                 );
@@ -1402,13 +1177,20 @@ export class WhMeteringComponent implements OnInit {
                 let data = { 'site_id': this.siteId, 'date': hourlySelectedDate };
                 this.DataService.getHourlyPowerSrcDistData(data).subscribe(
                     response => {
-                        categories = response['Hours'];
-                        series = response['Data'];
-                        this.updateFlag = true;
-                        this.barChartOptions.xAxis.categories = categories;
-                        this.barChartOptions.series = series;
-                        this.barChartLoading = false;
-                        // this.updateFlag = true;
+                        this.ngZone.runOutsideAngular(() => {
+                            if (this.energyChartInst) {
+                                this.energyChartInst.update({
+                                    xAxis: { categories: response['Hours'] },
+                                    series: response['Data'],
+                                    plotOptions: { column: { animation: false }, series: { animation: false } }
+                                } as any, true, true, false);
+                            } else {
+                                this.barChartOptions.xAxis.categories = response['Hours'];
+                                this.barChartOptions.series = response['Data'];
+                            }
+                            this.barChartLoading = false;
+                            this.cdr.detectChanges();
+                        });
                     },
                     error => { }
                 );
@@ -1427,109 +1209,79 @@ export class WhMeteringComponent implements OnInit {
                 //this.barChartOptions.plotOptions.column.stacking='percent'; //mandeep for percentage show
                 this.DataService.getDailyPowerSrcDistDataTime(data).subscribe(
                     response => {
-
-                        this.barChartOptionsRunTime = {
-                            colorCount: '12',
-                            colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
-                            credits: {
-                                enabled: false,
-                            },
-
-                            chart: {
-                                backgroundColor: '#222222',
-                                type: 'column',
-                                zoomType: "x"
-                            },
-                            title: {
-                                text: this.graphTitle,
-                                style: {
-                                    color: 'white',
+                        this.ngZone.runOutsideAngular(() => {
+                            const options = {
+                                colorCount: '12',
+                                colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+                                credits: { enabled: false },
+                                chart: {
+                                    backgroundColor: '#222222',
+                                    type: 'column',
+                                    zoomType: "x",
+                                    animation: false
                                 },
-                            },
-
-                            xAxis: {
-                                labels: {
-                                    style: {
-                                        color: 'white',
-                                    },
-                                },
-                                categories: response['Dates']
-                            },
-
-
-                            yAxis: {
-                                allowDecimals: false,
-                                min: 0,
                                 title: {
-                                    style: { color: 'white', },
-                                    text: 'Time (In Seconds)'
+                                    text: this.graphTitle,
+                                    style: { color: 'white' }
                                 },
-                                stackLabels: {
-                                    enabled: true,
-                                    rotation: -90,
-                                    style: { color: "white" },
-                                    verticalAlign: "top",
-                                    y: -30,
+                                xAxis: {
+                                    labels: { style: { color: 'white' } },
+                                    categories: response['Dates']
                                 },
-
-
-                                labels: {
-                                    style: {
-                                        color: 'white'
+                                yAxis: {
+                                    allowDecimals: false,
+                                    min: 0,
+                                    title: {
+                                        style: { color: 'white' },
+                                        text: 'Time (In Seconds)'
+                                    },
+                                    stackLabels: {
+                                        enabled: true,
+                                        rotation: -90,
+                                        style: { color: "white" },
+                                        verticalAlign: "top",
+                                        y: -30,
+                                    },
+                                    labels: { style: { color: 'white' } }
+                                },
+                                tooltip: {
+                                    formatter: function () {
+                                        var totalMinutes = Math.floor(this.y / 60);
+                                        var seconds = this.y % 60;
+                                        var hours = Math.floor(totalMinutes / 60);
+                                        var minutes = totalMinutes % 60;
+                                        var y = hours + " hrs " + minutes + " min " + seconds + " sec";
+                                        var tm = Math.floor(this.point.stackTotal / 60);
+                                        var ss = this.point.stackTotal % 60;
+                                        var hrs = Math.floor(tm / 60);
+                                        var ms = tm % 60;
+                                        var total = hrs + " hrs " + ms + " min " + ss + " sec";
+                                        return '<b>' + this.x + '</b><br/>' +
+                                            this.series.name + ': ' + y + '<br/>' +
+                                            'Total: ' + total;
                                     }
-                                }
-                            },
-
-
-                            labels: {
-                                style: {
-                                    color: 'white'
-                                }
-                            },
-
-
-                            tooltip: {
-                                formatter: function () {
-                                    var totalMinutes = Math.floor(this.y / 60);
-                                    var seconds = this.y % 60;
-                                    var hours = Math.floor(totalMinutes / 60);
-                                    var minutes = totalMinutes % 60;
-                                    var y = hours + " hrs " + minutes + " min " + seconds + " sec";
-                                    // for total
-                                    var tm = Math.floor(this.point.stackTotal / 60);
-                                    var ss = this.point.stackTotal % 60;
-                                    var hrs = Math.floor(tm / 60);
-                                    var ms = tm % 60;
-                                    var total = hrs + " hrs " + ms + " min " + ss + " sec";
-                                    return '<b>' + this.x + '</b><br/>' +
-                                        this.series.name + ': ' + y + '<br/>' +
-                                        'Total: ' + total;
-                                }
-                            },
-
-                            plotOptions: {
-                                column: {
-                                    stacking: 'normal',
-                                    //colors: ['orange', 'white', 'blue']
                                 },
-                            },
+                                plotOptions: {
+                                    column: {
+                                        stacking: 'normal' as any,
+                                        animation: false
+                                    },
+                                    series: { animation: false }
+                                },
+                                legend: { itemStyle: { color: 'white' } },
+                                series: response['Data']
+                            };
 
-                            legend: {
-                                itemStyle: { color: 'white', },
-                            },
-
-                            series: response['Data'],
-                        }
-                        this.unitConsumptionGraph = false;
-                        this.runTimeGraph = true;
-
-                        // categories = response['Dates'];
-                        // series = response['Data'];
-                        // this.barChartOptions.xAxis.categories = categories;
-                        // this.barChartOptions.series = series;
-                        // this.barChartOptions.yAxis.tittle = "abc"
-                        // this.updateFlag = true;
-                        this.barChartLoading = false;
+                            if (this.energyChartInst) {
+                                this.energyChartInst.update(options as any, true, true, false);
+                            } else {
+                                this.barChartOptionsRunTime = options;
+                            }
+                            this.unitConsumptionGraph = false;
+                            this.runTimeGraph = true;
+                            this.barChartLoading = false;
+                            this.cdr.detectChanges();
+                        });
                     },
                     error => { }
                 );
@@ -1539,108 +1291,79 @@ export class WhMeteringComponent implements OnInit {
                 let data = { 'site_id': this.siteId, 'date': hourlySelectedDate };
                 this.DataService.getHourlyPowerSrcDistDataTime(data).subscribe(
                     response => {
-
-                        this.barChartOptionsRunTime = {
-                            colorCount: '12',
-                            colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
-                            credits: {
-                                enabled: false,
-                            },
-
-                            chart: {
-                                backgroundColor: '#222222',
-                                type: 'column',
-                                zoomType: "x"
-                            },
-                            title: {
-                                text: this.graphTitle,
-                                style: {
-                                    color: 'white',
+                        this.ngZone.runOutsideAngular(() => {
+                            const options = {
+                                colorCount: '12',
+                                colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+                                credits: { enabled: false },
+                                chart: {
+                                    backgroundColor: '#222222',
+                                    type: 'column',
+                                    zoomType: "x",
+                                    animation: false
                                 },
-                            },
-
-                            xAxis: {
-                                labels: {
-                                    style: {
-                                        color: 'white',
-                                    },
-                                },
-                                categories: response['Dates']
-                            },
-
-
-                            yAxis: {
-                                allowDecimals: false,
-                                min: 0,
                                 title: {
-                                    style: { color: 'white', },
-                                    text: 'Number of units (kWh)'
+                                    text: this.graphTitle,
+                                    style: { color: 'white' }
                                 },
-                                stackLabels: {
-                                    enabled: true,
-                                    rotation: -90,
-                                    style: { color: "white" },
-                                    verticalAlign: "top",
-                                    y: -30,
+                                xAxis: {
+                                    labels: { style: { color: 'white' } },
+                                    categories: response['Dates']
                                 },
-
-
-                                labels: {
-                                    style: {
-                                        color: 'white'
+                                yAxis: {
+                                    allowDecimals: false,
+                                    min: 0,
+                                    title: {
+                                        style: { color: 'white' },
+                                        text: 'Number of units (kWh)'
+                                    },
+                                    stackLabels: {
+                                        enabled: true,
+                                        rotation: -90,
+                                        style: { color: "white" },
+                                        verticalAlign: "top",
+                                        y: -30,
+                                    },
+                                    labels: { style: { color: 'white' } }
+                                },
+                                tooltip: {
+                                    formatter: function () {
+                                        var totalMinutes = Math.floor(this.y / 60);
+                                        var seconds = this.y % 60;
+                                        var hours = Math.floor(totalMinutes / 60);
+                                        var minutes = totalMinutes % 60;
+                                        var y = hours + " hrs " + minutes + " min " + seconds + " sec";
+                                        var tm = Math.floor(this.point.stackTotal / 60);
+                                        var ss = this.point.stackTotal % 60;
+                                        var hrs = Math.floor(tm / 60);
+                                        var ms = tm % 60;
+                                        var total = hrs + " hrs " + ms + " min " + ss + " sec";
+                                        return '<b>' + this.x + '</b><br/>' +
+                                            this.series.name + ': ' + y + '<br/>' +
+                                            'Total: ' + total;
                                     }
-                                }
-                            },
-
-
-                            labels: {
-                                style: {
-                                    color: 'white'
-                                }
-                            },
-
-
-                            tooltip: {
-                                formatter: function () {
-                                    var totalMinutes = Math.floor(this.y / 60);
-                                    var seconds = this.y % 60;
-                                    var hours = Math.floor(totalMinutes / 60);
-                                    var minutes = totalMinutes % 60;
-                                    var y = hours + " hrs " + minutes + " min " + seconds + " sec";
-                                    // for total
-                                    var tm = Math.floor(this.point.stackTotal / 60);
-                                    var ss = this.point.stackTotal % 60;
-                                    var hrs = Math.floor(tm / 60);
-                                    var ms = tm % 60;
-                                    var total = hrs + " hrs " + ms + " min " + ss + " sec";
-                                    return '<b>' + this.x + '</b><br/>' +
-                                        this.series.name + ': ' + y + '<br/>' +
-                                        'Total: ' + total;
-                                }
-                            },
-
-                            plotOptions: {
-                                column: {
-                                    stacking: 'normal',
-                                    //colors: ['orange', 'white', 'blue']
                                 },
-                            },
+                                plotOptions: {
+                                    column: {
+                                        stacking: 'normal' as any,
+                                        animation: false
+                                    },
+                                    series: { animation: false }
+                                },
+                                legend: { itemStyle: { color: 'white' } },
+                                series: response['Data']
+                            };
 
-                            legend: {
-                                itemStyle: { color: 'white', },
-                            },
-
-                            series: response['Data'],
-                        }
-                        this.unitConsumptionGraph = false;
-                        this.runTimeGraph = true;
-                        // categories = response['Hours'];
-                        // series = response['Data'];
-                        // this.updateFlag = true;
-                        // this.barChartOptions.xAxis.categories = categories;
-                        // this.barChartOptions.series = series;
-                        // this.updateFlag = true;
-                        this.barChartLoading = false;
+                            if (this.energyChartInst) {
+                                this.energyChartInst.update(options as any, true, true, false);
+                            } else {
+                                this.barChartOptionsRunTime = options;
+                            }
+                            this.unitConsumptionGraph = false;
+                            this.runTimeGraph = true;
+                            this.barChartLoading = false;
+                            this.cdr.detectChanges();
+                        });
                     },
                     error => { }
                 );
@@ -1654,12 +1377,10 @@ export class WhMeteringComponent implements OnInit {
         if (this.whichGraph == 0) {
             this.barChartOptions.plotOptions.column.stacking = '';
             this.updateFlag = true;
-            console.log('Inside normal stacking false')
         }
         else {
             this.barChartOptions.plotOptions.column.stacking = 'normal';
             this.updateFlag = true;
-            console.log('Inside normal stacking True')
         }
     }
     changeGraphStackingRunTime() {
@@ -1668,12 +1389,10 @@ export class WhMeteringComponent implements OnInit {
         if (this.whichGraph == 0) {
             this.barChartOptionsRunTime.plotOptions.column.stacking = '';
             this.updateFlag = true;
-            console.log('Inside normal stacking false')
         }
         else {
             this.barChartOptionsRunTime.plotOptions.column.stacking = 'normal';
             this.updateFlag = true;
-            console.log('Inside normal stacking True')
         }
     }
 
@@ -1713,7 +1432,6 @@ export class WhMeteringComponent implements OnInit {
         let data = { "site_id": this.siteId, "date": formatDate(this.loadDate.value, 'yyyy/MM/dd', 'en'), "graph_type": this.selected_load_options }
         this.DataService.download_excel_load_data(data).subscribe(
             (response: any) => {
-                console.log("response: ", response);
                 let selectedGraphName = this.loadGraphintervals[parseInt(this.selected_load_options)].viewValue
                 let blob: Blob = response.body as Blob;
                 var downloadURL = window.URL.createObjectURL(blob);
@@ -1730,7 +1448,6 @@ export class WhMeteringComponent implements OnInit {
         let data = { 'site_id': this.siteId };
         this.dashData.getSiteCurrentLoadInfo(data).subscribe(
             response => {
-                console.log("Response#####", response)
                 this.liveData.totalLoad = response.Total_Load;
                 this.liveData.r_volt = response.R_Voltage;
                 this.liveData.y_volt = response.Y_Voltage;
@@ -1775,10 +1492,8 @@ export class WhMeteringComponent implements OnInit {
         this.UserService.changePassword(this.chngpwd).subscribe(
             data => {
                 //console.log("server_Res: ", data);
-            },
-            error => {
-                console.log("Server Error: ", error);
-            });
+            }
+        );
     }
 
     home() {
@@ -1794,7 +1509,6 @@ export class WhMeteringComponent implements OnInit {
     }
 
     customRangePopup() {
-        console.log("function called")
         const dialogConfig = new MatDialogConfig();
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
@@ -1803,163 +1517,97 @@ export class WhMeteringComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result.length > 0 && result[0].from_date != '' && result[0].end_date != '') {
-                console.log("#############:", result.length, result)
                 result = result[0]
                 let start_date = result.from_date;
                 let end_date = result.end_date;
                 let reqData = { "site_id": this.siteId, "from_date": start_date, "end_date": end_date }
                 this.DataService.fetchDGFuelDataCustomeRange(reqData).subscribe(
                     res => {
-                        this.dgFuelData = false;
-                        this.dgFuelDataSelectionChange = true;
-                        console.log("response: ", res);
-                        let dataSeries = res["data"]
-                        // dataSeries["dataLabels"] = {"enabled": true}
-                        let refuelSeries = res["refuel_alert"]
-                        refuelSeries["dataLabels"] = { "enabled": true }
-                        let theftSeries = res["theft_alert"]
-                        theftSeries["dataLabels"] = { "enabled": true }
-                        let dgFuelConsumed = res["dg_fuel_data"]
-                        // dgFuelConsumed["dataLabels"] = {"enabled": true}
-                        let dgUnitPerLtr = res["dg_unit_per_litre_data"]
-                        // dgUnitPerLtr["dataLabels"] = {"enabled": true}
-                        let dgConsumptionDataSeries = res["dg_unit_data"]
-                        dgConsumptionDataSeries["yAxis"] = 1
-                        dgConsumptionDataSeries["dataLabels"] = { "enabled": true }
-                        console.log("################## ", dataSeries[0]['x'])
-                        let alertData = res["alert_data"]
-                        console.log("api data: ", dataSeries)
-                        this.chartLoading = true;
-                        this.dgFuelConsumptionSelectionOptions = {
-                            colorCount: '5',
-                            colors: ['#90ED7D', '#7cb5ec', '#ff0000', '#ff7a01', '#800080', '#00008B'],
-                            chart: {
-                                type: "spline",
-                                backgroundColor: "#222222",
-                                scrollablePlotArea: {
-                                    minWidth: 300,
-                                    scrollPositionX: 1
+                        this.ngZone.runOutsideAngular(() => {
+                            this.dgFuelData = false;
+                            this.dgFuelDataSelectionChange = true;
+                            let dataSeries = res["data"]
+                            let refuelSeries = res["refuel_alert"]
+                            refuelSeries["dataLabels"] = { "enabled": true }
+                            let theftSeries = res["theft_alert"]
+                            theftSeries["dataLabels"] = { "enabled": true }
+                            let dgFuelConsumed = res["dg_fuel_data"]
+                            let dgUnitPerLtr = res["dg_unit_per_litre_data"]
+                            let dgConsumptionDataSeries = res["dg_unit_data"]
+                            dgConsumptionDataSeries["yAxis"] = 1
+                            dgConsumptionDataSeries["dataLabels"] = { "enabled": true }
+
+                            const options = {
+                                colorCount: '5',
+                                colors: ['#90ED7D', '#7cb5ec', '#ff0000', '#ff7a01', '#800080', '#00008B'],
+                                chart: {
+                                    type: "spline",
+                                    backgroundColor: "#222222",
+                                    scrollablePlotArea: { minWidth: 300, scrollPositionX: 1 },
+                                    zoomType: "x",
+                                    animation: false
                                 },
-                                zoomType: "x",
-
-                            },
-                            navigator: {
-                                enabled: true
-                            },
-                            scrollbar: {
-                                enabled: true
-                            },
-                            legend: {
-                                itemStyle: { color: 'white', },
-                            },
-
-
-                            xAxis: {
-                                type: 'datetime',
-                                dateTimeLabelFormats: {
-                                    day: '%d %b %Y'    //ex- 01 Jan 2016
+                                navigator: { enabled: true },
+                                scrollbar: { enabled: true },
+                                legend: { itemStyle: { color: 'white' } },
+                                xAxis: {
+                                    type: 'datetime',
+                                    dateTimeLabelFormats: { day: '%d %b %Y' },
+                                    startOnTick: true,
+                                    endOnTick: true,
+                                    showLastLabel: true,
+                                    labels: {
+                                        style: { color: 'white' },
+                                        rotation: -45,
+                                        format: '{value:%Y-%m-%d %H:%M}',
+                                    }
                                 },
-                                startOnTick: true,
-                                endOnTick: true,
-                                showLastLabel: true,
-                                labels: {
-                                    style: { color: 'white', },
-                                    rotation: -45,
-                                    //Specify the formatting of xAxis labels:
-                                    format: '{value:%Y-%m-%d %H:%M}',
-
+                                yAxis: [{
+                                    labels: { style: { color: 'white' } },
+                                    title: { text: 'Fuel Level (in Litres)', style: { color: 'white' } },
+                                    opposite: false,
+                                },
+                                {
+                                    gridLineWidth: 0,
+                                    title: { text: 'Unit Consumed In KWH', style: { color: 'white' } },
+                                    labels: { format: '{value} KWH', style: { color: 'white' } },
+                                    opposite: true,
+                                    min: 0,
+                                    max: 600,
+                                    tickInterval: 100,
                                 }
-                            },
-                            yAxis: [{ // Primary yAxis
-                                labels: {
-                                    // format: '{value} units',
-                                    style: {
-                                        color: 'white'
+                                ],
+                                time: { useUTC: false },
+                                title: { text: 'DG Fuel and Unit Trend', style: { color: 'white' } },
+                                plotOptions: {
+                                    series: {
+                                        turboThreshold: 0,
+                                        pointWidth: 15,
+                                        animation: false
+                                    },
+                                    spline: {
+                                        animation: false
+                                    },
+                                    areaspline: {
+                                        animation: false
                                     }
                                 },
-                                title: {
-                                    text: 'Fuel Level (in Litres)',
-                                    style: {
-                                        color: 'white'
-                                    }
-                                },
-                                opposite: false,
-                                // min: 0,
-                                // max: 1000,
-                                // tickInterval: 100,
-                                // lineWidth: 0,
+                                series: [{
+                                    type: "areaspline",
+                                    name: 'Fuel Level',
+                                    data: dataSeries,
+                                    fillColor: (Highcharts as any).color('#808080').setOpacity(0.66).get(),
+                                }, refuelSeries, theftSeries, dgConsumptionDataSeries, dgFuelConsumed, dgUnitPerLtr]
+                            };
 
-                            },
-                            { // Secondary yAxis
-                                gridLineWidth: 0,
-                                title: {
-                                    text: 'Unit Consumed In KWH',
-                                    style: {
-                                        color: 'white'
-                                    }
-                                },
-                                labels: {
-                                    format: '{value} KWH',
-                                    style: {
-                                        color: 'white'
-                                    }
-
-                                },
-                                opposite: true,
-                                min: 0,
-                                max: 600,
-                                tickInterval: 100,
-
-
-                            },
-
-                            ],
-
-
-                            time: {
-                                useUTC: false
-                            },
-
-
-
-                            title: {
-                                text: 'DG Fuel and Unit Trend',
-                                style: {
-                                    color: 'white',
-                                },
-                            },
-
-                            plotOptions: {
-                                series: {
-                                    turboThreshold: 0,
-                                    pointWidth: 15
-                                }
-                            },
-
-                            series: [{
-                                type: "areaspline",
-                                name: 'Fuel Level',
-                                data: dataSeries,
-                                fillColor: new Highcharts.Color('#808080').setOpacity(0.66).get(),
-                                // fillColor: new Highcharts.Color('#ADD8E6').setOpacity(0.66).get(),
-                                // pointStart: dataSeries[0]['x']
-                                // fillColor: {
-                                //     linearGradient: {
-                                //         x1: 0,
-                                //         y1: 0,
-                                //         x2: 0,
-                                //         y2: 1
-                                //     },
-                                //     stops: [
-                                //         [0, Highcharts.getOptions().colors[0]],
-                                //         [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                                //     ]
-                                // },
-                            }, refuelSeries, theftSeries, dgConsumptionDataSeries, dgFuelConsumed, dgUnitPerLtr
-
-
-                            ]
-                        }
+                            if (this.dgFuelChartInst) {
+                                this.dgFuelChartInst.update(options as any, true, true, false);
+                            } else {
+                                this.dgFuelConsumptionSelectionOptions = options;
+                            }
+                            this.chartLoading = false;
+                            this.cdr.detectChanges();
+                        });
                     }
                 )
             }
@@ -1968,150 +1616,85 @@ export class WhMeteringComponent implements OnInit {
     }
 
     dgFuelMonthlyTrend() {
-        console.log("5%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
         let data1 = { 'site_id': this.siteId, "user_type": this.user_type };
-        // this.dgFuelData=true;
 
         this.DataService.dgFuelConsumptionMonthlyTrend(data1).subscribe(
             response => {
-                console.log('**************************', response)
-                let seriesData = [];
-                //this.Highcharts = Highcharts;
-                //let xyz = [response['Data'],{"leg":'baseline', 'type': "spline", 'data':[{"a":100,'b':90,'c':80,'d':86,'e':90,'f':100,'g':100,'h':100,'i':100,'j':100,'k':100,'l':100,'m':100,'n':100,'o':100,'p':100,'q':100,'r':100,'s':100,'t':100,'u':100,'v':100,'w':100,'x':100,'y':100,'z':100,'ca':100,'cb':100,'cc':100,'cd':100,}]}]
-
-
-                let energyConsumed: any;
-                energyConsumed = { "name": "Mains", 'type': "spline", 'y': response['mains_unit_consumption_monthly'] }
-                let enegySaved = { "name": "DG", 'type': 'spline', 'y': response['dg_unit_consumption_monthly'] }
-                let percentageSaved = { "name": "DG-Fuel-Consumption", 'type': 'spline', 'y': response['dg_unit_consumption_monthly'] }
-
-
-
-                let data2 = [{ "data": [energyConsumed, enegySaved, percentageSaved] }]
-                // seriesData.push(consumption);
-                // seriesData1.push(dataSaving);
-                seriesData.push(data2);
-
-
-                // highcharts = Highcharts;
-                this.lineChartOption = {
-                    colorCount: '4',
-                    colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7'],
-                    chart: {
-                        type: "column",
-                        backgroundColor: "#222222",
-
-                        overflow: 'scroll'
-                    },
-                    title: {
-                        style: {
-                            color: 'white',
+                this.ngZone.runOutsideAngular(() => {
+                    const options = {
+                        colorCount: '4',
+                        colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7'],
+                        chart: {
+                            type: "column",
+                            backgroundColor: "#222222",
+                            overflow: 'scroll',
+                            animation: false
                         },
-                        text: 'Monthly Trend Mains/DG-Units & DG-Fuel-Consumption'
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    xAxis: {
-                        labels: {
-                            style: {
-                                color: 'white',
+                        title: {
+                            style: { color: 'white' },
+                            text: 'Monthly Trend Mains/DG-Units & DG-Fuel-Consumption'
+                        },
+                        credits: { enabled: false },
+                        xAxis: {
+                            labels: { style: { color: 'white' } },
+                            categories: response['months']
+                        },
+                        yAxis: [{
+                            labels: { style: { color: '#ff7a01' } },
+                            title: { text: 'Units (KWH)', style: { color: '#ff7a01' } },
+                            opposite: false
+                        }, {
+                            gridLineWidth: 0,
+                            title: { text: 'DG Fuel Consumption', style: { color: '#7cb5ec' } },
+                            labels: { style: { color: '#7cb5ec' } },
+                            opposite: true
+                        }],
+                        plotOptions: {
+                            column: {
+                                stacking: 'normal' as any,
+                                animation: false
                             },
-                        },
-                        categories: response['months']
-                    },
-                    // yAxis: {
-                    //   title: {
-                    //     style: {color:'white',},
-                    //     text: "Value"
-                    //   },
-                    //   labels : {
-                    //     style: {
-                    //       color:'white'
-                    //     }
-                    //   }
-                    // },
-
-                    yAxis: [{ // Primary yAxis
-                        labels: {
-                            //   format: '{value} units',
-                            style: {
-                                color: '#ff7a01'
+                            series: {
+                                animation: false
+                            },
+                            spline: {
+                                animation: false
                             }
                         },
-                        title: {
-                            text: 'Units (KWH)',
-                            style: {
-                                color: '#ff7a01'
+                        tooltip: {
+                            formatter: function () {
+                                return '<b>' + this.x + '</b><br/>' +
+                                    this.series.name + ': ' + this.y + '<br/>'
                             }
                         },
-                        opposite: false
-
-                    }, { // Secondary yAxis
-                        gridLineWidth: 0,
-                        title: {
-                            text: 'DG Fuel Consumption',
-                            style: {
-                                color: '#7cb5ec'
+                        legend: { itemStyle: { color: 'white' } },
+                        series: [
+                            {
+                                name: 'Mains-Units',
+                                data: response['mains_unit_consumption_monthly'],
+                            },
+                            {
+                                name: 'DG-Units',
+                                data: response["dg_unit_consumption_monthly"],
+                            },
+                            {
+                                yAxis: 1,
+                                name: 'DG-Fuel-Consumption',
+                                data: response["dg_fuel_monthly"],
+                                type: 'spline'
                             }
-                        },
-                        labels: {
-                            //   format: '{value} %',
-                            style: {
-                                color: '#7cb5ec'
-                            }
+                        ]
+                    };
 
-                        },
-                        opposite: true
-
-                    }],
-
-
-
-                    tooltip: {
-                        formatter: function () {
-                            //   let date = new Date().toLocaleDateString("en-US", { month: 'short' })  + '-' + new Date().getFullYear().toString();
-                            //   if (date == this.x){
-                            //     var d = new Date(); // today!
-                            //     d.setDate(d.getDate() - 1);
-                            //     return '<b>' + 'till' + ' '  + d.getDate().toString() +'-'+ new Date().toLocaleDateString("en-US", { month: 'short' })  + '-' + new Date().getFullYear().toString() + '</b><br/>' +
-                            //     this.series.name + ': ' + this.y + '<br/>' 
-                            //   }
-                            return '<b>' + this.x + '</b><br/>' +
-                                this.series.name + ': ' + this.y + '<br/>'
-
-                        }
-                    },
-                    legend: {
-                        itemStyle: { color: 'white', },
-                    },
-                    series: [
-
-                        {
-                            name: 'Mains-Units',
-                            data: response['mains_unit_consumption_monthly'],
-
-
-                        },
-                        {
-                            name: 'DG-Units',
-                            data: response["dg_unit_consumption_monthly"],
-
-
-                        },
-                        {
-                            yAxis: 1,
-                            name: 'DG-Fuel-Consumption',
-                            data: response["dg_fuel_monthly"],
-                            type: 'spline'
-
-                        }
-                    ]
-                }
-                //   console.log("graph data", this.lineChartOptions)
+                    if (this.trendChartInst) {
+                        this.trendChartInst.update(options as any, true, true, false);
+                    } else {
+                        this.lineChartOption = options;
+                    }
+                    this.cdr.detectChanges();
+                });
             });
     }
-
 }
 
 
