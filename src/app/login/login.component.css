@@ -76,16 +76,27 @@ form button {
     display: none !important;
 }
 
+/* Aggressive MDC background resets for Login inputs */
+.example-full-width .mat-mdc-text-field-wrapper {
+    background-color: transparent !important;
+}
+
+.example-full-width .mat-mdc-form-field-focus-overlay {
+    background-color: transparent !important;
+}
+
 /* MDC structure override for 'appearance=none' look */
 .example-full-width .mat-mdc-form-field-flex {
     padding: 0 !important;
     min-height: unset !important;
+    background: transparent !important;
 }
 
 .example-full-width .mat-mdc-form-field-infix {
     padding: 0 !important;
     min-height: unset !important;
     width: unset !important;
+    background: transparent !important;
 }
 
 /* Input text and placeholder styles */
@@ -159,6 +170,16 @@ label {
 
 .mat-mdc-input-element {
     caret-color: #fff;
+}
+
+/* Fix for white background during browser autofill */
+.mat-mdc-input-element:-webkit-autofill,
+.mat-mdc-input-element:-webkit-autofill:hover,
+.mat-mdc-input-element:-webkit-autofill:focus,
+.mat-mdc-input-element:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #272727 inset !important;
+    -webkit-text-fill-color: white !important;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Modern Loading Overlay */
