@@ -249,7 +249,7 @@
                         <div class="col-md-2" *ngIf="!showIntervalOptions"></div>
                     </div>
                 </div>
-                <div class="chart-body" *ngIf="showDailygraph">
+                <div class="chart-body">
                     <div *ngIf="chartLoading" class="chart-loading-overlay">
                         <div class="chart-loading-content">
                             <mat-spinner class="chart-loading-spinner"></mat-spinner>
@@ -257,21 +257,8 @@
                     </div>
                     <div style="height: 100%">
                         <highcharts-chart #chart [Highcharts]="Highcharts" [constructorType]="chartConstructor"
-                            [options]="barChartOptions" [callbackFunction]="energyChartCallback" [(update)]="updateFlag"
-                            [oneToOne]="oneToOneFlag"
-                            style="width: 100%; height: 100%; display: block;"></highcharts-chart>
-                    </div>
-                </div>
-                <div *ngIf="showHourlygraph">
-                    <div *ngIf="chartLoading" class="chart-loading-overlay">
-                        <div class="chart-loading-content">
-                            <mat-spinner class="chart-loading-spinner"></mat-spinner>
-                        </div>
-                    </div>
-                    <div style="height: 100%">
-                        <highcharts-chart #chart [Highcharts]="Highcharts" [constructorType]="chartConstructor"
-                            [options]="updatedbarChartOptions" [callbackFunction]="energyChartCallback"
-                            [(update)]="updateFlag" [oneToOne]="oneToOneFlag"
+                            [options]="showDailygraph ? barChartOptions : updatedbarChartOptions"
+                            [callbackFunction]="energyChartCallback" [(update)]="updateFlag" [oneToOne]="oneToOneFlag"
                             style="width: 100%; height: 100%; display: block;"></highcharts-chart>
                     </div>
                 </div>

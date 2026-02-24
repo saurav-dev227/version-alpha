@@ -646,13 +646,13 @@ export class SubmeteringComponent implements OnInit {
       // Energy Consumption Graph
       if (mode == '0') {
         // Graph Filter is for daily data
-        this.showHourlygraph = false;
-        this.showDailygraph = true;
         this.chartLoading = true;
         let data = { 'site_id': this.siteId, 'from_date': fromDate, 'till_date': tillDate, "user_type": this.user_type };
         this.UserService.submeteringMonthlyBarChart(data).subscribe(
           response => {
             this.ngZone.runOutsideAngular(() => {
+              this.showHourlygraph = false;
+              this.showDailygraph = true;
               if (this.energyChartInst) {
                 this.energyChartInst.update({
                   xAxis: { categories: response['Dates'] },
@@ -672,14 +672,14 @@ export class SubmeteringComponent implements OnInit {
       }
       else {
         // Graph Filter is for hourly data
-        this.showDailygraph = false;
-        this.showHourlygraph = true;
         this.chartLoading = true;
         let data = { 'site_id': this.siteId, 'date': hourlySelectedDate };
 
         this.UserService.submeteringHourlyData(data).subscribe(
           response => {
             this.ngZone.runOutsideAngular(() => {
+              this.showDailygraph = false;
+              this.showHourlygraph = true;
               const options = {
                 colorCount: '12',
                 colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
@@ -766,13 +766,13 @@ export class SubmeteringComponent implements OnInit {
       // Graph for energy saving data ....
       if (mode == '0') {
         // Graph Filter is for daily data
-        this.showDailygraph = true;
-        this.showHourlygraph = false;
         this.chartLoading = true;
         let data = { 'site_id': this.siteId, 'from_date': fromDate, 'till_date': tillDate, "user_type": this.user_type };
         this.UserService.energySavingMonthlyData(data).subscribe(
           response => {
             this.ngZone.runOutsideAngular(() => {
+              this.showDailygraph = true;
+              this.showHourlygraph = false;
               if (this.energyChartInst) {
                 this.energyChartInst.update({
                   xAxis: { categories: response['Dates'] },
@@ -791,13 +791,13 @@ export class SubmeteringComponent implements OnInit {
         );
       }
       else {
-        this.showDailygraph = false;
-        this.showHourlygraph = true;
         this.chartLoading = true;
         let data = { 'site_id': this.siteId, 'date': hourlySelectedDate };
         this.UserService.energySavingHourlyData(data).subscribe(
           response => {
             this.ngZone.runOutsideAngular(() => {
+              this.showDailygraph = false;
+              this.showHourlygraph = true;
               if (this.energyChartInst) {
                 this.energyChartInst.update({
                   xAxis: { categories: response['Hours'] },
