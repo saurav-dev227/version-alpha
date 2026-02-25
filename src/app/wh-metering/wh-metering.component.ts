@@ -128,9 +128,7 @@ export class WhMeteringComponent implements OnInit {
     pieChart = Highcharts;
     public pieChartOptions: any = {};
     barChartOptions: any = {};
-    barChartOptionsRunTime: any = {}; // this is for run time graph
-    unitConsumptionGraph: boolean = true;
-    runTimeGraph: boolean = false
+            runTimeGraph: boolean = false
     graphTitle: string;
     graphYAxis: string;
     changePasswordModel = new changePassword(this.token, '', '');
@@ -199,7 +197,7 @@ export class WhMeteringComponent implements OnInit {
         this.loadChartCallback = (chart: Highcharts.Chart) => { this.loadChartInst = chart; };
         this.trendChartCallback = (chart: Highcharts.Chart) => { this.trendChartInst = chart; };
         this.energyChartCallback = (chart: Highcharts.Chart) => { this.energyChartInst = chart; };
-        this.chartCallback = this.energyChartCallback;
+        this.chartCallback = this.trendChartCallback;
         this.show_dg_mains_run_time = localStorage.getItem('show_dg_mains_run_time');
         if (this.show_dg_mains_run_time == "true") {
             this.graphTypes = [
@@ -1036,7 +1034,8 @@ export class WhMeteringComponent implements OnInit {
                         this.energyChartInst.update(options as any, true, true, false);
                     } else {
                         this.barChartOptions = options;
-                    }
+                        this.updateFlag = true;
+                            }
                     this.barChartLoading = false;
                     this.cdr.detectChanges();
                 });
@@ -1338,6 +1337,7 @@ export class WhMeteringComponent implements OnInit {
                             } else {
                                 this.barChartOptions.xAxis.categories = response['Dates'];
                                 this.barChartOptions.series = response['Data'];
+                                this.updateFlag = true;
                             }
                             this.barChartLoading = false;
                             this.cdr.detectChanges();
@@ -1363,6 +1363,7 @@ export class WhMeteringComponent implements OnInit {
                             } else {
                                 this.barChartOptions.xAxis.categories = response['Hours'];
                                 this.barChartOptions.series = response['Data'];
+                                this.updateFlag = true;
                             }
                             this.barChartLoading = false;
                             this.cdr.detectChanges();
@@ -1371,8 +1372,8 @@ export class WhMeteringComponent implements OnInit {
                     error => { }
                 );
             }
-            this.unitConsumptionGraph = true;
-            this.runTimeGraph = false;
+            
+            
         }
         else if (graphType == "1") {
             // Percentage Run Graph
@@ -1397,6 +1398,7 @@ export class WhMeteringComponent implements OnInit {
                                 this.barChartOptions.xAxis.categories = response['Dates'];
                                 this.barChartOptions.series = response['Data'];
                                 this.barChartOptions.yAxis.title.text = "Number of units % (KWh)"
+                                this.updateFlag = true;
                             }
                             this.barChartLoading = false;
                             this.cdr.detectChanges();
@@ -1420,6 +1422,7 @@ export class WhMeteringComponent implements OnInit {
                             } else {
                                 this.barChartOptions.xAxis.categories = response['Hours'];
                                 this.barChartOptions.series = response['Data'];
+                                this.updateFlag = true;
                             }
                             this.barChartLoading = false;
                             this.cdr.detectChanges();
@@ -1428,8 +1431,8 @@ export class WhMeteringComponent implements OnInit {
                     error => { }
                 );
             }
-            this.unitConsumptionGraph = true;
-            this.runTimeGraph = false;
+            
+            
         }
 
         else {
@@ -1508,10 +1511,11 @@ export class WhMeteringComponent implements OnInit {
                             if (this.energyChartInst) {
                                 this.energyChartInst.update(options as any, true, true, false);
                             } else {
-                                this.barChartOptionsRunTime = options;
+                                this.barChartOptions = options;
+                                this.updateFlag = true;
                             }
-                            this.unitConsumptionGraph = false;
-                            this.runTimeGraph = true;
+                            
+                            
                             this.barChartLoading = false;
                             this.cdr.detectChanges();
                         });
@@ -1541,7 +1545,7 @@ export class WhMeteringComponent implements OnInit {
                                 },
                                 xAxis: {
                                     labels: { style: { color: 'white' } },
-                                    categories: response['Dates']
+                                    categories: response['Hours']
                                 },
                                 yAxis: {
                                     allowDecimals: false,
@@ -1590,10 +1594,11 @@ export class WhMeteringComponent implements OnInit {
                             if (this.energyChartInst) {
                                 this.energyChartInst.update(options as any, true, true, false);
                             } else {
-                                this.barChartOptionsRunTime = options;
+                                this.barChartOptions = options;
+                                this.updateFlag = true;
                             }
-                            this.unitConsumptionGraph = false;
-                            this.runTimeGraph = true;
+                            
+                            
                             this.barChartLoading = false;
                             this.cdr.detectChanges();
                         });
@@ -1614,19 +1619,6 @@ export class WhMeteringComponent implements OnInit {
             } as any, true, false, false);
         } else {
             this.barChartOptions.plotOptions.column.stacking = stacking;
-            this.updateFlag = true;
-        }
-    }
-    changeGraphStackingRunTime() {
-        this.whichGraph ^= 0x1;
-        const stacking = this.whichGraph == 0 ? '' : 'normal';
-
-        if (this.energyChartInst) {
-            this.energyChartInst.update({
-                plotOptions: { column: { stacking: stacking as any } }
-            } as any, true, false, false);
-        } else {
-            this.barChartOptionsRunTime.plotOptions.column.stacking = stacking;
             this.updateFlag = true;
         }
     }
