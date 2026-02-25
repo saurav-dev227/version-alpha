@@ -128,7 +128,7 @@ export class WhMeteringComponent implements OnInit {
     pieChart = Highcharts;
     public pieChartOptions: any = {};
     barChartOptions: any = {};
-            runTimeGraph: boolean = false
+    runTimeGraph: boolean = false
     graphTitle: string;
     graphYAxis: string;
     changePasswordModel = new changePassword(this.token, '', '');
@@ -1035,7 +1035,7 @@ export class WhMeteringComponent implements OnInit {
                     } else {
                         this.barChartOptions = options;
                         this.updateFlag = true;
-                            }
+                    }
                     this.barChartLoading = false;
                     this.cdr.detectChanges();
                 });
@@ -1372,8 +1372,8 @@ export class WhMeteringComponent implements OnInit {
                     error => { }
                 );
             }
-            
-            
+
+
         }
         else if (graphType == "1") {
             // Percentage Run Graph
@@ -1431,8 +1431,8 @@ export class WhMeteringComponent implements OnInit {
                     error => { }
                 );
             }
-            
-            
+
+
         }
 
         else {
@@ -1514,8 +1514,8 @@ export class WhMeteringComponent implements OnInit {
                                 this.barChartOptions = options;
                                 this.updateFlag = true;
                             }
-                            
-                            
+
+
                             this.barChartLoading = false;
                             this.cdr.detectChanges();
                         });
@@ -1597,8 +1597,8 @@ export class WhMeteringComponent implements OnInit {
                                 this.barChartOptions = options;
                                 this.updateFlag = true;
                             }
-                            
-                            
+
+
                             this.barChartLoading = false;
                             this.cdr.detectChanges();
                         });
@@ -1656,18 +1656,38 @@ export class WhMeteringComponent implements OnInit {
     }
 
     exportLoadData() {
-        let data = { "site_id": this.siteId, "date": formatDate(this.loadDate.value, 'yyyy/MM/dd', 'en'), "graph_type": this.selected_load_options }
-        this.DataService.download_excel_load_data(data).subscribe(
-            (response: any) => {
-                let selectedGraphName = this.loadGraphintervals[parseInt(this.selected_load_options)].viewValue
-                let blob: Blob = response.body as Blob;
-                var downloadURL = window.URL.createObjectURL(blob);
-                var link = document.createElement('a');
-                link.href = downloadURL;
-                link.download = (selectedGraphName + "load_data_" + formatDate(this.loadDate.value, 'yyyy/MM/dd', 'en') + ".csv")
-                link.click();
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = true;
+        dialogConfig.autoFocus = true;
+        dialogConfig.width = "20%";
+        const dialogRef = this.dialog.open(CustomDateRangePickerComponent, dialogConfig);
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result && result.length > 0 && result[0].from_date != '' && result[0].end_date != '') {
+                result = result[0];
+                let data = {
+                    "site_id": this.siteId,
+                    "from_date": result.from_date,
+                    "end_date": result.end_date,
+                    "graph_type": "2"
+                };
+
+                this.DataService.download_load_data_excel_test(data).subscribe(
+                    (response: any) => {
+                        let blob: Blob = response.body as Blob;
+                        var downloadURL = window.URL.createObjectURL(blob);
+                        var link = document.createElement('a');
+                        link.href = downloadURL;
+                        link.download = ("load_data_" + result.from_date + "_to_" + result.end_date + ".csv");
+                        link.click();
+                        this.DataService.success("Report Downloaded Successfully");
+                    },
+                    error => {
+                        this.DataService.warn("Failed to download report");
+                    }
+                );
             }
-        )
+        });
     }
 
     getSiteCurrLoadInfoData() {

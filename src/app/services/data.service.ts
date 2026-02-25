@@ -194,6 +194,12 @@ export class DataService {
     return this.http.post(this.baseUrl + "downloadExcelLoadData/", data, { observe: "response", responseType: "blob", headers: httpHeaders })
   }
 
+  download_load_data_excel_test(data: any) {
+    const token = localStorage.getItem('token');
+    const httpHeaders = new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Token ' + token });
+    return this.http.post(this.baseUrl + "loadDataExcel/test", data, { observe: "response", responseType: "blob", headers: httpHeaders })
+  }
+
   fetch_power_factor_fluctuation_data(data: any) {
     return this.http.post(this.baseUrl + "fluctuatedPowerFactorData/", data, this.getAuthHeaders())
   }
