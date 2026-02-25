@@ -8,7 +8,7 @@ import { DashboardDataService } from './../services/dashboard-data.service';
 import { LoginComponent } from './../login/login.component';
 
 import { UserService } from './../services/user.service';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import * as Highcharts from 'highcharts';
@@ -23,7 +23,8 @@ Highcharts.setOptions({
 //import {MatPaginator} from '@angular/material';
 import { MatSort } from '@angular/material/sort';
 import { UntypedFormControl } from '@angular/forms';
-import { Observable, from, interval } from 'rxjs';
+import { Observable, from, interval, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { formatDate, getLocaleDayNames } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material/dialog';
@@ -53,7 +54,7 @@ export interface KeyValueIf {
     ,
     standalone: false
 })
-export class WhMeteringComponent implements OnInit {
+export class WhMeteringComponent implements OnInit, OnDestroy {
 
     myObj = JSON.parse(localStorage.getItem("account"));
     siteId = localStorage.getItem('siteId');
@@ -175,6 +176,7 @@ export class WhMeteringComponent implements OnInit {
     loadChartInst: Highcharts.Chart;
     trendChartInst: Highcharts.Chart;
     energyChartInst: Highcharts.Chart;
+    private destroy$ = new Subject<void>();
 
     pieChartCallback: any;
     dgFuelChartCallback: any;
@@ -295,7 +297,7 @@ export class WhMeteringComponent implements OnInit {
 
 
     ngAfterViewInit() {
-        interval(15000).subscribe(
+        interval(60000).pipe(takeUntil(this.destroy$)).subscribe(
             response => {
                 if (this.selected_load_options == "4" && this.liveLoadApiCal) {
                     this.load_data_every_second();
@@ -303,10 +305,15 @@ export class WhMeteringComponent implements OnInit {
 
             }
         );
-        interval(5000).subscribe(
+        interval(30000).pipe(takeUntil(this.destroy$)).subscribe(
             response => {
                 this.getSiteCurrLoadInfoData();
             });
+    }
+
+    ngOnDestroy() {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     dgFuelConsumptionGraph() {

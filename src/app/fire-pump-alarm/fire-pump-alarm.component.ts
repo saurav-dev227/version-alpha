@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UserService } from '../services/user.service';
-import { Observable, interval } from 'rxjs';
+import { Observable, interval, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { DataRowOutlet } from '@angular/cdk/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -21,14 +22,15 @@ export interface EmailData {
 
 
 @Component({
-    selector: 'app-fire-pump-alarm',
-    templateUrl: './fire-pump-alarm.component.html',
-    styleUrls: ['./fire-pump-alarm.component.css'],
-    standalone: false
+  selector: 'app-fire-pump-alarm',
+  templateUrl: './fire-pump-alarm.component.html',
+  styleUrls: ['./fire-pump-alarm.component.css'],
+  standalone: false
 })
 
 
-export class FirePumpAlarmComponent implements OnInit {
+export class FirePumpAlarmComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
 
   emailDataSource: MatTableDataSource<EmailData>;
   alarmsColumns: string[] = ['serialno', 'sitename', 'devicename', 'emailFor', 'emaildatetime',]
@@ -100,9 +102,14 @@ export class FirePumpAlarmComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    interval(5000).subscribe(
+    interval(30000).pipe(takeUntil(this.destroy$)).subscribe(
       response => { this.getFireAlarmData(); }
     );
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   customerPage() {
