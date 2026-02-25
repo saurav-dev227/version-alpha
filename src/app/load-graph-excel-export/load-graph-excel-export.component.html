@@ -1,0 +1,57 @@
+<div class="custom-export-modal">
+    <div class="custom-modal-body">
+        <h4 class="custom-modal-title">Export Load Data</h4>
+
+        <!-- Site Name Display -->
+        <div class="site-display-container">
+            <div class="site-display-box">
+                <span class="site-label">Site:</span>
+                <span class="site-value">{{siteName}}</span>
+            </div>
+        </div>
+
+        <div class="custom-divider"></div>
+
+        <form [formGroup]="excelDataForm" (ngSubmit)="onSubmit()">
+            <!-- Start Date Section -->
+            <div class="date-section">
+                <label class="input-label">Start Date</label>
+                <div class="custom-date-wrapper">
+                    <mat-form-field appearance="outline" class="custom-mat-date w-100">
+                        <input matInput [matDatepicker]="startPicker" formControlName="startDate"
+                            placeholder="mm/dd/yyyy">
+                        <mat-datepicker-toggle matSuffix [for]="startPicker"
+                            class="custom-date-toggle"></mat-datepicker-toggle>
+                        <mat-datepicker #startPicker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- End Date Section -->
+            <div class="date-section mt-3">
+                <label class="input-label">End Date</label>
+                <div class="custom-date-wrapper">
+                    <mat-form-field appearance="outline" class="custom-mat-date w-100">
+                        <input matInput [matDatepicker]="endPicker" formControlName="endDate" placeholder="mm/dd/yyyy">
+                        <mat-datepicker-toggle matSuffix [for]="endPicker"
+                            class="custom-date-toggle"></mat-datepicker-toggle>
+                        <mat-datepicker #endPicker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="custom-modal-footer mt-4">
+                <button type="submit" class="btn custom-btn-submit" [disabled]="exportLoading">
+                    <span *ngIf="!exportLoading">Submit</span>
+                    <span *ngIf="exportLoading" style="display:flex; align-items:center; gap:8px;">
+                        <mat-spinner diameter="18" style="display:inline-block;"></mat-spinner>
+                        Exporting...
+                    </span>
+                </button>
+                <button type="button" class="btn custom-btn-cancel" [disabled]="exportLoading"
+                    (click)="onNoClick()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>

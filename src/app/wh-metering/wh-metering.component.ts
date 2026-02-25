@@ -36,6 +36,7 @@ import { LightsWattDataComponent } from '../lights-watt-data/lights-watt-data.co
 import { LoadDataTableComponent } from '../load-data-table/load-data-table.component';
 import { CustomDateRangePickerComponent } from '../custom-date-range-picker/custom-date-range-picker.component';
 import { DgFuelExcelExportComponent } from '../dg-fuel-excel-export/dg-fuel-excel-export.component';
+import { LoadGraphExcelExportComponent } from '../load-graph-excel-export/load-graph-excel-export.component';
 
 
 export interface KeyValueIf {
@@ -1655,39 +1656,42 @@ export class WhMeteringComponent implements OnInit {
         this.dialog.open(DgFuelExcelExportComponent, dialogConfig);
     }
 
-    exportLoadData() {
-        const dialogConfig = new MatDialogConfig();
-        dialogConfig.disableClose = true;
-        dialogConfig.autoFocus = true;
-        dialogConfig.width = "20%";
-        const dialogRef = this.dialog.open(CustomDateRangePickerComponent, dialogConfig);
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result && result.length > 0 && result[0].from_date != '' && result[0].end_date != '') {
-                result = result[0];
-                let data = {
-                    "site_id": this.siteId,
-                    "from_date": result.from_date,
-                    "end_date": result.end_date,
-                    "graph_type": "2"
-                };
-
-                this.DataService.download_load_data_excel_test(data).subscribe(
-                    (response: any) => {
-                        let blob: Blob = response.body as Blob;
-                        var downloadURL = window.URL.createObjectURL(blob);
-                        var link = document.createElement('a');
-                        link.href = downloadURL;
-                        link.download = ("load_data_" + result.from_date + "_to_" + result.end_date + ".csv");
-                        link.click();
-                        this.DataService.success("Report Downloaded Successfully");
-                    },
-                    error => {
-                        this.DataService.warn("Failed to download report");
-                    }
-                );
-            }
-        });
+    exportLoadData(type: string = '2') {
+        if (this.selected_load_options == '0' || this.selected_load_options == '1' || this.selected_load_options == '4') {
+            const selectedDate = formatDate(this.loadDate.value, 'yyyy/MM/dd', 'en');
+            let data = {
+                "site_id": this.siteId,
+                "date": selectedDate,
+                "graph_type": this.selected_load_options
+            };
+            this.DataService.showLoader();
+            this.DataService.download_excel_load_data(data).subscribe(
+                (response: any) => {
+                    let blob: Blob = response.body as Blob;
+                    var downloadURL = window.URL.createObjectURL(blob);
+                    var link = document.createElement('a');
+                    link.href = downloadURL;
+                    link.download = ("load_data_" + selectedDate + ".csv");
+                    link.click();
+                    this.DataService.hideLoader();
+                    this.DataService.success("Report Downloaded Successfully");
+                },
+                error => {
+                    this.DataService.hideLoader();
+                    this.DataService.warn("Failed to download report");
+                }
+            );
+        } else {
+            const dialogConfig = new MatDialogConfig();
+            dialogConfig.disableClose = true;
+            dialogConfig.autoFocus = true;
+            dialogConfig.width = "20%";
+            dialogConfig.data = {
+                site_name: this.siteDetails.site_name,
+                graph_type: type
+            };
+            this.dialog.open(LoadGraphExcelExportComponent, dialogConfig);
+        }
     }
 
     getSiteCurrLoadInfoData() {
