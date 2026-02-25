@@ -1052,7 +1052,10 @@ export class WarehouseComponent implements OnInit {
     localStorage.setItem("baseline", 'true');
   }
 
-
+  getSelectedGraphLabel(): string {
+    const selected = this.graphTypes.find(g => g.value === this.selected_graph);
+    return selected ? selected.viewValue : '';
+  }
 
 }
 

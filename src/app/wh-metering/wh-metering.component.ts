@@ -1694,6 +1694,11 @@ export class WhMeteringComponent implements OnInit {
         }
     }
 
+    getSelectedGraphLabel(): string {
+        const selected = this.graphTypes.find(g => g.value === this.selected_graph);
+        return selected ? selected.viewValue : '';
+    }
+
     getSiteCurrLoadInfoData() {
         let pf_visible = localStorage.getItem('pf_visible');
         let data = { 'site_id': this.siteId };

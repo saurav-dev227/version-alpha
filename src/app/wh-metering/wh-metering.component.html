@@ -644,10 +644,17 @@
                     <div class="row">
                         <div class="col-md-7">
                             <div class="header-title-field">
-                                <i class="fa fa-bar-chart-o"></i>Total
-                                <mat-form-field style="max-width: 45%; font-size: 18px; color: white;">
+                                <mat-form-field appearance="outline">
                                     <mat-select [(value)]="selected_graph" #energyValue
                                         (selectionChange)="columnGraphFilterChanged($event)">
+                                        <mat-select-trigger>
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <i class="fa fa-bar-chart-o"></i>
+                                                <span style="font-weight: 500;">Total</span>
+                                                <span
+                                                    style="opacity: 0.8; margin-left: 4px;">{{getSelectedGraphLabel()}}</span>
+                                            </div>
+                                        </mat-select-trigger>
                                         <mat-option *ngFor="let graphType of graphTypes" [value]="graphType.value">
                                             {{graphType.viewValue}}
                                         </mat-option>
