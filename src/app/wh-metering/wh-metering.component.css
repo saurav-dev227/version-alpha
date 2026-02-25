@@ -255,6 +255,8 @@ td {
    border: 1px solid #ff7a01;
    padding: 10px;
    position: relative;
+   width: 100%;
+   box-sizing: border-box;
 }
 
 

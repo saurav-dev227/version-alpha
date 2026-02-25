@@ -366,46 +366,154 @@
                         </div>
                         <div class="col-md-2">
                             <button id="button2" type="button" class="btn btn-sm btn-outline-light w-100"
-                                style="cursor: pointer;" (click)="customRangePopup()">Custom Range</button>
+                                style="cursor: pointer;" (click)="openDgFuelCustomRangeModal()">Custom Range</button>
                         </div>
                     </div>
                 </div>
 
 
-                <div class="chart-body" *ngIf="dgFuelData">
-                    <highcharts-chart [Highcharts]="Highcharts" [constructorType]="stockChart"
-                        [options]="dgFuelConsumptionOptions" [callbackFunction]="dgFuelChartCallback"
-                        [(update)]="updateFlag" [oneToOne]="oneToOneFlag"
-                        style="width: 100%; height: 100%; display: block;"></highcharts-chart>
+                <div class="chart-body" *ngIf="dgFuelData || dgFuelDataSelectionChange">
+                    <div *ngIf="dgFuelChartLoading" class="chart-loading-overlay">
+                        <div class="chart-loading-content">
+                            <mat-spinner class="chart-loading-spinner"></mat-spinner>
+                        </div>
+                    </div>
+                    <div style="height: 100%">
+                        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="stockChart"
+                            [options]="dgFuelConsumptionOptions" [callbackFunction]="dgFuelChartCallback"
+                            [(update)]="updateFlag" [oneToOne]="oneToOneFlag"
+                            style="width: 100%; height: 100%; display: block;"></highcharts-chart>
+                    </div>
                     <div class="row">
                         <div class="col-8"></div>
                         <div class="col-4">
-
                             <button class="md-raised md-primary md-button md-link-ripple" id="exceldata" type="button"
-                                style="float: right;" (click)="exportDgFuelExcelData()">
+                                style="float: right;" (click)="openDgFuelExportModal()">
                                 <span class="ng-scope">Export Excel</span>
                             </button>
                         </div>
                     </div>
-
                 </div>
-                <div class="chart-body" *ngIf="dgFuelDataSelectionChange">
-                    <highcharts-chart [Highcharts]="Highcharts" [constructorType]="stockChart"
-                        [options]="dgFuelConsumptionSelectionOptions" [callbackFunction]="dgFuelChartCallback"
-                        [(update)]="updateFlag" [oneToOne]="oneToOneFlag"
-                        style="width: 100%; height: 100%; display: block;"></highcharts-chart>
-                    <div class="row">
-                        <div class="col-8"></div>
-                        <div class="col-4">
+            </div>
 
-                            <button class="md-raised md-primary md-button md-link-ripple" id="exceldata" type="button"
-                                style="float: right;" (click)="exportDgFuelExcelData()">
-                                <span class="ng-scope">Export Excel</span>
-                            </button>
+            <!-- ── DG Fuel Custom Range Modal ─────────────────────────────────── -->
+            <div class="col-sm-12">
+                <div class="modal fade" [ngClass]="{'show': showDgFuelCustomRangeModal}"
+                    [style.display]="showDgFuelCustomRangeModal ? 'block' : 'none'" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content custom-export-modal">
+                            <div class="modal-body custom-modal-body">
+                                <h4 class="custom-modal-title">Custom Date Range</h4>
+                                <div class="site-display-container">
+                                    <div class="site-display-box">
+                                        <span class="site-label">Site:</span>
+                                        <span class="site-value">{{siteDetails.site_name}}</span>
+                                    </div>
+                                </div>
+                                <div class="custom-divider"></div>
+                                <form>
+                                    <div class="date-section">
+                                        <label class="input-label">Start Date</label>
+                                        <div class="custom-date-wrapper">
+                                            <mat-form-field appearance="outline" class="custom-mat-date w-100">
+                                                <input matInput [matDatepicker]="dgCrStartPicker"
+                                                    [(ngModel)]="dgFuelCustomRangeStartDate" name="dgCrStart"
+                                                    placeholder="mm/dd/yyyy">
+                                                <mat-datepicker-toggle matSuffix [for]="dgCrStartPicker"
+                                                    class="custom-date-toggle"></mat-datepicker-toggle>
+                                                <mat-datepicker #dgCrStartPicker></mat-datepicker>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="date-section mt-3">
+                                        <label class="input-label">End Date</label>
+                                        <div class="custom-date-wrapper">
+                                            <mat-form-field appearance="outline" class="custom-mat-date w-100">
+                                                <input matInput [matDatepicker]="dgCrEndPicker"
+                                                    [(ngModel)]="dgFuelCustomRangeEndDate" name="dgCrEnd"
+                                                    placeholder="mm/dd/yyyy">
+                                                <mat-datepicker-toggle matSuffix [for]="dgCrEndPicker"
+                                                    class="custom-date-toggle"></mat-datepicker-toggle>
+                                                <mat-datepicker #dgCrEndPicker></mat-datepicker>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="custom-modal-footer mt-4">
+                                        <button type="button" class="btn custom-btn-submit"
+                                            (click)="submitDgFuelCustomRange()">Submit</button>
+                                        <button type="button" class="btn custom-btn-cancel"
+                                            (click)="closeDgFuelCustomRangeModal()">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
-
                 </div>
+                <div class="modal-backdrop fade show" *ngIf="showDgFuelCustomRangeModal"></div>
+            </div>
+
+            <!-- ── DG Fuel Export Excel Modal ─────────────────────────────────── -->
+            <div class="col-sm-12">
+                <div class="modal fade" [ngClass]="{'show': showDgFuelExportModal}"
+                    [style.display]="showDgFuelExportModal ? 'block' : 'none'" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content custom-export-modal">
+                            <div class="modal-body custom-modal-body">
+                                <h4 class="custom-modal-title">Export DG Fuel Data</h4>
+                                <div class="site-display-container">
+                                    <div class="site-display-box">
+                                        <span class="site-label">Site:</span>
+                                        <span class="site-value">{{siteDetails.site_name}}</span>
+                                    </div>
+                                </div>
+                                <div class="custom-divider"></div>
+                                <form>
+                                    <div class="date-section">
+                                        <label class="input-label">Start Date</label>
+                                        <div class="custom-date-wrapper">
+                                            <mat-form-field appearance="outline" class="custom-mat-date w-100">
+                                                <input matInput [matDatepicker]="dgExpStartPicker"
+                                                    [(ngModel)]="dgFuelExportStartDate" name="dgExpStart"
+                                                    placeholder="mm/dd/yyyy">
+                                                <mat-datepicker-toggle matSuffix [for]="dgExpStartPicker"
+                                                    class="custom-date-toggle"></mat-datepicker-toggle>
+                                                <mat-datepicker #dgExpStartPicker></mat-datepicker>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="date-section mt-3">
+                                        <label class="input-label">End Date</label>
+                                        <div class="custom-date-wrapper">
+                                            <mat-form-field appearance="outline" class="custom-mat-date w-100">
+                                                <input matInput [matDatepicker]="dgExpEndPicker"
+                                                    [(ngModel)]="dgFuelExportEndDate" name="dgExpEnd"
+                                                    placeholder="mm/dd/yyyy">
+                                                <mat-datepicker-toggle matSuffix [for]="dgExpEndPicker"
+                                                    class="custom-date-toggle"></mat-datepicker-toggle>
+                                                <mat-datepicker #dgExpEndPicker></mat-datepicker>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="custom-modal-footer mt-4">
+                                        <button type="button" class="btn custom-btn-submit"
+                                            (click)="submitDgFuelExport()" [disabled]="dgFuelExportLoading">
+                                            <span *ngIf="!dgFuelExportLoading">Submit</span>
+                                            <span *ngIf="dgFuelExportLoading"
+                                                style="display:flex; align-items:center; gap:8px;">
+                                                <mat-spinner diameter="18" style="display:inline-block;"></mat-spinner>
+                                                Exporting...
+                                            </span>
+                                        </button>
+                                        <button type="button" class="btn custom-btn-cancel"
+                                            [disabled]="dgFuelExportLoading"
+                                            (click)="closeDgFuelExportModal()">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-backdrop fade show" *ngIf="showDgFuelExportModal"></div>
             </div>
 
             <div class="col-sm-12 " *ngIf="is_load_graph_visible == 'true'">
@@ -629,8 +737,17 @@
                                         <!-- Buttons -->
                                         <div class="custom-modal-footer mt-4">
                                             <button type="button" class="btn custom-btn-submit"
-                                                (click)="submitEnergyExport()">Submit</button>
+                                                (click)="submitEnergyExport()" [disabled]="energyExportLoading">
+                                                <span *ngIf="!energyExportLoading">Submit</span>
+                                                <span *ngIf="energyExportLoading"
+                                                    style="display:flex; align-items:center; gap:8px;">
+                                                    <mat-spinner diameter="18"
+                                                        style="display:inline-block;"></mat-spinner>
+                                                    Exporting...
+                                                </span>
+                                            </button>
                                             <button type="button" class="btn custom-btn-cancel"
+                                                [disabled]="energyExportLoading"
                                                 (click)="closeEnergyExportModal()">Cancel</button>
                                         </div>
                                     </form>
