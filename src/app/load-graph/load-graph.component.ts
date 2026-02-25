@@ -6,9 +6,10 @@ import { Observable } from 'rxjs';
 
 
 @Component({
-  selector: 'app-load-graph',
-  templateUrl: './load-graph.component.html',
-  styleUrls: ['./load-graph.component.css']
+    selector: 'app-load-graph',
+    templateUrl: './load-graph.component.html',
+    styleUrls: ['./load-graph.component.css'],
+    standalone: false
 })
 export class LoadGraphComponent implements OnInit {
   lineChartOptions: any = {};

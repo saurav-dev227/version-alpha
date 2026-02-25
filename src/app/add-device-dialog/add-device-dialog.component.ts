@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Inject} from '@angular/core';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { DataService } from '../services/data.service';
 import {formatDate, getLocaleDayNames} from '@angular/common';
@@ -22,9 +22,10 @@ export interface DialogData {
 }
 
 @Component({
-  selector: 'app-add-device-dialog',
-  templateUrl: './add-device-dialog.component.html',
-  styleUrls: ['./add-device-dialog.component.css']
+    selector: 'app-add-device-dialog',
+    templateUrl: './add-device-dialog.component.html',
+    styleUrls: ['./add-device-dialog.component.css'],
+    standalone: false
 })
 export class AddDeviceDialogComponent implements OnInit {
   constructor(public dialog: MatDialog, public dialogRef: MatDialogRef<AddDeviceDialogComponent>,

@@ -14,9 +14,10 @@ More(Highcharts);
 noData(Highcharts);
 
 @Component({
-  selector: 'app-output-graph',
-  templateUrl: './output-graph.component.html',
-  styleUrls: ['./output-graph.component.css']
+    selector: 'app-output-graph',
+    templateUrl: './output-graph.component.html',
+    styleUrls: ['./output-graph.component.css'],
+    standalone: false
 })
 export class OutputGraphComponent implements OnInit {
   lineChartOptions: any = {};

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Inject} from '@angular/core';
-import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA} from '@angular/material/legacy-dialog';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { UntypedFormGroup, UntypedFormControl,Validators } from '@angular/forms';
 import { DataService } from '../services/data.service';
 
@@ -14,9 +14,10 @@ export interface DialogData {
 
 
 @Component({
-  selector: 'app-add-devtype-dialog',
-  templateUrl: './add-devtype-dialog.component.html',
-  styleUrls: ['./add-devtype-dialog.component.css']
+    selector: 'app-add-devtype-dialog',
+    templateUrl: './add-devtype-dialog.component.html',
+    styleUrls: ['./add-devtype-dialog.component.css'],
+    standalone: false
 })
 
 export class AddDevtypeDialogComponent implements OnInit {

@@ -1,12 +1,12 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { DataService } from './../services/data.service';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { MatLegacyTable as MatTable } from '@angular/material/legacy-table';
+import { MatTable } from '@angular/material/table';
 import { AfterViewInit, ViewChildren, QueryList } from '@angular/core';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { DataTableItem } from '../super-admin/data-table-datasource';
 
 export class DialogData {
@@ -25,9 +25,10 @@ export interface UserData {
 }
 
 @Component({
-  selector: 'app-expired-device-details-fems',
-  templateUrl: './expired-device-details-fems.component.html',
-  styleUrls: ['./expired-device-details-fems.component.css']
+    selector: 'app-expired-device-details-fems',
+    templateUrl: './expired-device-details-fems.component.html',
+    styleUrls: ['./expired-device-details-fems.component.css'],
+    standalone: false
 })
 export class ExpiredDeviceDetailsFemsComponent implements OnInit {
   dataSource: MatTableDataSource<UserData>;

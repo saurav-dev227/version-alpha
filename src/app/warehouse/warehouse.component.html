@@ -240,15 +240,14 @@
                 <!-- <app-output-graph></app-output-graph>
                    </div> -->
                 <div class="chart-body">
-                    <div *ngIf="trendChartLoading" class="chart-loading-wrapper">
+                    <div *ngIf="trendChartLoading" class="chart-loading-overlay">
                         <div class="chart-loading-content">
                             <mat-spinner class="chart-loading-spinner"></mat-spinner>
-                            <p>Loading chart data...</p>
                         </div>
                     </div>
-                    <div *ngIf="!trendChartLoading" style="height: 100%">
+                    <div style="height: 100%">
                         <highcharts-chart [Highcharts]="Highcharts" [constructorType]="chartConstructor"
-                            [options]="lineChartOptions" [callbackFunction]="chartCallback" [(update)]="updateFlag"
+                            [options]="lineChartOptions" [callbackFunction]="lineChartCallback" [(update)]="updateFlag"
                             [oneToOne]="oneToOneFlag"
                             style="width: 100%; height: 100%; display: block;"></highcharts-chart>
                     </div>
@@ -472,31 +471,16 @@
                         <div class="col-md-2" *ngIf="!showIntervalOptions"></div>
                     </div>
                 </div>
-                <div class="chart-body" *ngIf="showDailygraph">
-                    <div *ngIf="chartLoading" class="chart-loading-wrapper">
+                <div class="chart-body">
+                    <div *ngIf="chartLoading" class="chart-loading-overlay">
                         <div class="chart-loading-content">
                             <mat-spinner class="chart-loading-spinner"></mat-spinner>
-                            <p>Loading chart data...</p>
                         </div>
                     </div>
-                    <div *ngIf="!chartLoading" style="height: 100%">
+                    <div style="height: 100%">
                         <highcharts-chart #chart [Highcharts]="Highcharts" [constructorType]="chartConstructor"
-                            [options]="barChartOptions" [callbackFunction]="chartCallback" [(update)]="updateFlag"
-                            [oneToOne]="oneToOneFlag"
-                            style="width: 100%; height: 100%; display: block;"></highcharts-chart>
-                    </div>
-                </div>
-                <div *ngIf="showHourlygraph">
-                    <div *ngIf="chartLoading" class="chart-loading-wrapper">
-                        <div class="chart-loading-content">
-                            <mat-spinner class="chart-loading-spinner"></mat-spinner>
-                            <p>Loading chart data...</p>
-                        </div>
-                    </div>
-                    <div *ngIf="!chartLoading" style="height: 100%">
-                        <highcharts-chart #chart [Highcharts]="Highcharts" [constructorType]="chartConstructor"
-                            [options]="updatedbarChartOptions" [callbackFunction]="chartCallback"
-                            [(update)]="updateFlag" [oneToOne]="oneToOneFlag"
+                            [options]="showDailygraph ? barChartOptions : updatedbarChartOptions"
+                            [callbackFunction]="barChartCallback" [(update)]="updateFlag" [oneToOne]="oneToOneFlag"
                             style="width: 100%; height: 100%; display: block;"></highcharts-chart>
                     </div>
                 </div>

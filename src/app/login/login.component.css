@@ -72,29 +72,49 @@ form button {
 }
 
 /* When the input is focused underline color*/
-.mat-form-field-ripple {
-    background-color: white !important;
+.mat-mdc-form-field .mdc-line-ripple {
+    display: none !important;
 }
 
-.mat-form-field-underline {
-    /* background-color: #ffffff !important; */
-    display: none;
+/* Aggressive MDC background resets for Login inputs */
+.example-full-width .mat-mdc-text-field-wrapper {
+    background-color: transparent !important;
 }
 
-/* When the input is not focused */
-.mat-form-field .placeholder {
-    color: #ffffff;
+.example-full-width .mat-mdc-form-field-focus-overlay {
+    background-color: transparent !important;
 }
 
-/* When the input is focused */
-.mat-focused .placeholder {
-    color: white;
+/* MDC structure override for 'appearance=none' look */
+.example-full-width .mat-mdc-form-field-flex {
+    padding: 0 !important;
+    min-height: unset !important;
+    background: transparent !important;
 }
 
-.mat-raised-button {
-    background-color: #E66F00;
-    background-image: linear-gradient(rgb(236, 206, 73), #e0740f);
-    color: white;
+.example-full-width .mat-mdc-form-field-infix {
+    padding: 0 !important;
+    min-height: unset !important;
+    width: unset !important;
+    background: transparent !important;
+}
+
+/* Input text and placeholder styles */
+.mat-mdc-input-element::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.mat-focused .mat-mdc-input-element::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.mat-mdc-raised-button {
+    background-color: #E66F00 !important;
+    background-image: linear-gradient(rgb(236, 206, 73), #e0740f) !important;
+    color: white !important;
+    height: 40px !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
 }
 
 .modal-content {
@@ -148,8 +168,18 @@ label {
         /* red */
 }
 
-.mat-input-element {
+.mat-mdc-input-element {
     caret-color: #fff;
+}
+
+/* Fix for white background during browser autofill */
+.mat-mdc-input-element:-webkit-autofill,
+.mat-mdc-input-element:-webkit-autofill:hover,
+.mat-mdc-input-element:-webkit-autofill:focus,
+.mat-mdc-input-element:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #272727 inset !important;
+    -webkit-text-fill-color: white !important;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Modern Loading Overlay */

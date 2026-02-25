@@ -8,9 +8,10 @@ import { LoginComponent } from './../login/login.component';
 
 import { UserService } from './../services/user.service';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
-import { MatLegacyTableDataSource as MatTableDataSource, MatLegacyTable as MatTable } from '@angular/material/legacy-table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource, MatTable } from '@angular/material/table';
 import * as Highcharts from 'highcharts';
+import { NgZone, ChangeDetectorRef } from '@angular/core';
 //import {MatPaginator} from '@angular/material';
 import { MatSort } from '@angular/material/sort';
 import { UntypedFormControl } from '@angular/forms';
@@ -19,7 +20,7 @@ import { from } from 'rxjs';
 // import {formatDate} from '@angular/common';
 import { formatDate, getLocaleDayNames } from '@angular/common';
 import { SiteDetailsModel, LiveMeteringDataModel } from './../models/siteDataModel';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material/dialog';
 import { DialogSwitchdashComponent } from '../dialog-switchdash/dialog-switchdash.component';
 import { Router } from '@angular/router';
 import { preserveWhitespacesDefault } from '@angular/compiler';
@@ -51,7 +52,8 @@ export interface KeyValueIf {
 @Component({
   selector: 'app-warehouse',
   templateUrl: './warehouse.component.html',
-  styleUrls: ['./warehouse.component.css']
+  styleUrls: ['./warehouse.component.css'],
+  standalone: false
 })
 
 
@@ -173,10 +175,14 @@ export class WarehouseComponent implements OnInit {
   Highcharts = Highcharts;
   chartConstructor = 'chart';
   chartCallback: any;
+  barChartCallback: any;
+  lineChartCallback: any;
   oneToOneFlag = true;
   pieChart = Highcharts;
-  chartLoading: boolean = true;
-  trendChartLoading: boolean = true;
+  chartLoading: boolean = false;
+  trendChartLoading: boolean = false;
+  chartInst: Highcharts.Chart;
+  lineChartInst: Highcharts.Chart;
   //breadcrumbs keywords 
   myObj = JSON.parse(localStorage.getItem("account"));
   user_id = this.myObj["id"];
@@ -264,8 +270,8 @@ export class WarehouseComponent implements OnInit {
       const fromMonth = `${this.trendExportFromYear}-${this.trendExportFromMonth}`;
       const toMonth = `${this.trendExportToYear}-${this.trendExportToMonth}`;
 
-      console.log(`Exporting Trend Data from ${fromMonth} to ${toMonth}`);
-      console.log(`Site: ${this.sitename}`);
+      // console.log(`Exporting Trend Data from ${fromMonth} to ${toMonth}`);
+      // console.log(`Site: ${this.sitename}`);
 
       let data = {
         "site_id": this.siteId,
@@ -314,8 +320,8 @@ export class WarehouseComponent implements OnInit {
       const formattedFrom = formatDate(this.energyExportStartDate, 'yyyy-MM-dd', 'en');
       const formattedTo = formatDate(this.energyExportEndDate, 'yyyy-MM-dd', 'en');
 
-      console.log(`Exporting Energy Data from ${formattedFrom} to ${formattedTo}`);
-      console.log(`Site: ${this.sitename}`);
+      // console.log(`Exporting Energy Data from ${formattedFrom} to ${formattedTo}`);
+      // console.log(`Site: ${this.sitename}`);
 
       let data = {
         "user_id": this.user_id,
@@ -354,9 +360,22 @@ export class WarehouseComponent implements OnInit {
     link.click();
   }
 
-  constructor(private dashData: DashboardDataService, private UserService: UserService, private DataService: DataService, public dialog: MatDialog, private router: Router,) {
-
-
+  constructor(
+    private dashData: DashboardDataService,
+    private UserService: UserService,
+    private DataService: DataService,
+    public dialog: MatDialog,
+    private router: Router,
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
+  ) {
+    this.barChartCallback = (chart: Highcharts.Chart) => {
+      this.chartInst = chart;
+    };
+    this.lineChartCallback = (chart: Highcharts.Chart) => {
+      this.lineChartInst = chart;
+    };
+    this.chartCallback = this.barChartCallback;
   }
 
   ngOnInit() {
@@ -368,7 +387,7 @@ export class WarehouseComponent implements OnInit {
 
     this.siteId = localStorage.getItem('siteId');
     this.sitename = localStorage.getItem('sitename')
-    console.log('here site id in energy saving', this.siteId)
+    // console.log('here site id in energy saving', this.siteId)
 
     //here is implementation of breadcrumb...
     if (this.user_type == '1') {
@@ -438,7 +457,7 @@ export class WarehouseComponent implements OnInit {
 
   valuechange(newValue) {
     //mymodel = newValue;
-    console.log(newValue)
+    // console.log(newValue)
   }
   //   ngAfterViewInit() {
   //     Observable.interval(5000).subscribe(
@@ -489,33 +508,26 @@ export class WarehouseComponent implements OnInit {
   }
   changeGraphStacking() {
     this.whichGraph ^= 0x1;
+    const stacking = this.whichGraph === 0 ? '' : 'normal';
 
-    if (this.whichGraph == 0) {
-      try {
-        this.barChartOptions.plotOptions.column.stacking = ''; // for daily
+    this.ngZone.runOutsideAngular(() => {
+      if (this.chartInst) {
+        this.chartInst.update({
+          plotOptions: {
+            column: { stacking: stacking as any }
+          }
+        }, true, true, false);
       }
-      catch {
-        console.log("error in daily")
+      // Update the options objects too just in case of a full re-render
+      if (this.barChartOptions && this.barChartOptions.plotOptions && this.barChartOptions.plotOptions.column) {
+        this.barChartOptions.plotOptions.column.stacking = stacking as any;
       }
-      try {
-        this.updatedbarChartOptions.plotOptions.column.stacking = '';  // for hourly
-      }
-      catch {
-        console.log("err in hourly")
+      if (this.updatedbarChartOptions && this.updatedbarChartOptions.plotOptions && this.updatedbarChartOptions.plotOptions.column) {
+        this.updatedbarChartOptions.plotOptions.column.stacking = stacking as any;
       }
       this.updateFlag = true;
-      console.log('Inside normal stacking false')
-    }
-    else {
-      try {
-        this.barChartOptions.plotOptions.column.stacking = 'normal'; // for daily
-      } catch { console.log("error in daily....") }
-      try {
-        this.updatedbarChartOptions.plotOptions.column.stacking = 'normal'; // for hourly
-      } catch { console.log("error in hourly ....") }
-      this.updateFlag = true;
-      console.log('Inside normal stacking True')
-    }
+      this.cdr.detectChanges();
+    });
   }
 
 
@@ -540,17 +552,15 @@ export class WarehouseComponent implements OnInit {
       // this.chart.chart.legend.allItems.forEach(item=>console.log("item : ", item));
       let chartData = this.chart.chart.legend.allItems
       for (let i = 0; i <= chartData.length - 1; i++) {
-        console.log("data : ", chartData[i])
+        // console.log("data : ", chartData[i])
         chartData[i].setVisible(true, false)
       }
       this.chart.chart.redraw()
-      console.log("reenable function true")
     }
     else {
       this.graphShown = false
       let chartData = this.chart.chart.legend.allItems
       for (let i = 0; i <= chartData.length - 1; i++) {
-        console.log("data : ", chartData[i])
         chartData[i].setVisible(false, false)
       }
       this.chart.chart.redraw()
@@ -586,7 +596,6 @@ export class WarehouseComponent implements OnInit {
           })
         }
         this.dataSource = new MatTableDataSource(data);
-        console.log(data);
         this.dataSource.paginator = this.paginator;  //mandeep
         this.dataSource.sort = this.sort;  //mandeep
 
@@ -600,7 +609,6 @@ export class WarehouseComponent implements OnInit {
     let data = { "site_id": this.siteId }
     this.UserService.siteSnapshot(data).subscribe(
       response => {
-        console.log(response);
 
       }
     )
@@ -618,7 +626,6 @@ export class WarehouseComponent implements OnInit {
     this.isShown = true;
   }
   customerdetail(obj) {
-    console.log(obj);
   }
   onChangePwd() {
 
@@ -628,7 +635,6 @@ export class WarehouseComponent implements OnInit {
         //console.log("server_Res: ", data);
       },
       error => {
-        console.log("Server Error: ", error);
       });
   }
 
@@ -651,119 +657,86 @@ export class WarehouseComponent implements OnInit {
     let data1 = { 'site_id': this.siteId, 'from_date': fromDate, 'till_date': tillDate, "user_type": this.user_type };
     this.UserService.warehouseMonthlyData(data1).subscribe(
       response => {
-        console.log("ressnw  : ", response)
-        // $(function () {
-        this.barChartOptions = {
-          colorCount: '12',
-          colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
-          credits: {
-            enabled: false,
-          },
-
-          chart: {
-            backgroundColor: '#222222',
-            type: 'column',
-            zoomType: 'x',
-            setVisible: 'false',
-          },
-
-          title: {
-            text: this.graphTitle,
-            style: {
-              color: 'white',
+        this.ngZone.runOutsideAngular(() => {
+          const options = {
+            colorCount: '12',
+            colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+            credits: { enabled: false },
+            chart: {
+              backgroundColor: '#222222',
+              type: 'column',
+              zoomType: 'x',
+              animation: false
             },
-          },
-
-          xAxis: {
-            labels: {
-              style: {
-                color: 'white',
-              },
-            },
-            categories: response['Dates']
-          },
-
-
-          yAxis: {
-            allowDecimals: false,
-            min: 0,
-            // max:6000,
             title: {
-              style: { color: 'white', },
-              text: 'Number of units (kWh)'
+              text: this.graphTitle,
+              style: { color: 'white' }
             },
-            labels: {
-              style: {
-                color: 'white'
+            xAxis: {
+              labels: { style: { color: 'white' } },
+              categories: response['Dates']
+            },
+            yAxis: {
+              allowDecimals: false,
+              min: 0,
+              title: {
+                style: { color: 'white' },
+                text: 'Number of units (kWh)'
+              },
+              labels: { style: { color: 'white' } },
+              stackLabels: {
+                enabled: true,
+                rotation: 270,
+                y: -28,
+                style: {
+                  color: 'white',
+                  fontSize: '11px',
+                  verticalAlign: "top",
+                }
               }
             },
-
-            stackLabels: {
-              enabled: true,
-              rotation: 270,
-              y: -28,
-              style: {
-                color: 'white',
-                fontSize: '11px',
-                verticalAlign: "top",
+            tooltip: {
+              formatter: function () {
+                return '<b>' + this.x + '</b><br/>' +
+                  this.series.name + ': ' + this.y + '<br/>' +
+                  'Total: ' + this.point.stackTotal;
               }
-            }
-
-          },
-
-          tooltip: {
-            formatter: function () {
-              return '<b>' + this.x + '</b><br/>' +
-                this.series.name + ': ' + this.y + '<br/>' +
-                'Total: ' + this.point.stackTotal;
-            }
-          },
-
-          plotOptions: {
-            // series:{
-            //   pointWidth:15
-            // },
-            column: {
-              stacking: 'normal',
-              maxPointWidth: 50
-              //colors: ['orange', 'white', 'blue']
             },
-
-
-
-          },
-
-          legend: {
-            itemStyle: { color: 'white', },
-            // showInLegend: false,
-            // verticalAlign: 'top', 
-            // enabled: true,
-            maxHeight: 80,
-            y: 10,
-
-            // x:15,
-            navigation: {
-              activeColor: 'white',
-              animation: true,
-              arrowSize: 12,
-              inactiveColor: '#333',
-              style: {
-                fontWeight: '2px',
-                color: 'white'
-
+            plotOptions: {
+              column: {
+                stacking: 'normal' as any,
+                maxPointWidth: 50,
+                animation: false
+              },
+              series: {
+                animation: false
               }
-            }
+            },
+            legend: {
+              itemStyle: { color: 'white' },
+              maxHeight: 80,
+              y: 10,
+              navigation: {
+                activeColor: 'white',
+                animation: true,
+                arrowSize: 12,
+                inactiveColor: '#333',
+                style: { fontWeight: '2px', color: 'white' }
+              }
+            },
+            series: response["Data"]
+          };
 
+          if (this.chartInst) {
+            this.chartInst.update(options as any, true, true, false);
+          } else {
+            this.barChartOptions = options;
+          }
 
-          },
-          series: response["Data"],
-
-        }
-        console.log("graph data", this.barChartOptions)
-        this.chartLoading = false;
-
+          this.chartLoading = false;
+          this.cdr.detectChanges();
+        });
       });
-
   }
 
 
@@ -805,149 +778,56 @@ export class WarehouseComponent implements OnInit {
       // Energy Consumption Graph
       if (mode == '0') {
         // Graph Filter is for daily data
-        this.showHourlygraph = false;
-        this.showDailygraph = true;
         this.chartLoading = true;
         // Call the API with specific data
         let data = { 'site_id': this.siteId, 'from_date': fromDate, 'till_date': tillDate, "user_type": this.user_type };
         this.UserService.warehouseMonthlyData(data).subscribe(
           response => {
-            categories = response['Dates'];
-            series = response['Data'];
-            this.updateFlag = true;
-            this.barChartOptions.xAxis.categories = categories;
-            this.barChartOptions.series = series;
-            this.chartLoading = false;
-            // this.updateFlag = true;
+            this.ngZone.runOutsideAngular(() => {
+              this.showHourlygraph = false;
+              this.showDailygraph = true;
+              if (this.chartInst) {
+                this.chartInst.update({
+                  xAxis: { categories: response['Dates'] },
+                  series: response['Data'],
+                  plotOptions: { column: { animation: false }, series: { animation: false } }
+                } as any, true, true, false);
+              } else {
+                this.barChartOptions.xAxis.categories = response['Dates'];
+                this.barChartOptions.series = response['Data'];
+              }
+              this.chartLoading = false;
+              this.cdr.detectChanges();
+            });
           },
           error => { }
         );
       }
       else {
         // Graph Filter is for hourly data
-        this.showDailygraph = false;
-        this.showHourlygraph = true;
         this.chartLoading = true;
         let data = { 'site_id': this.siteId, 'date': hourlySelectedDate };
-        console.log('This is mine selected Date in hourly data', hourlySelectedDate);
+        // console.log('This is mine selected Date in hourly data', hourlySelectedDate);
         // this.barChartOptions.plotOptions.column.stacking='percent';
 
         this.UserService.warehouseHourlyData(data).subscribe(
           response => {
-            // this.chart.chart.redraw()
-            // categories = response['Hours'];
-            // series = response['Data'];
-            // this.updateFlag = true;
-            // this.barChartOptions.xAxis.categories= categories;
-            // this.barChartOptions.series = series;
-            // this.updateFlag = true;
-            this.updatedbarChartOptions = {
-              colorCount: '12',
-              colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
-              credits: {
-                enabled: false,
-              },
-
-              chart: {
-                backgroundColor: '#222222',
-                type: 'column',
-                zoomType: 'x',
-                setVisible: 'false',
-              },
-
-              title: {
-                text: this.graphTitle,
-                style: {
-                  color: 'white',
-                },
-              },
-
-              xAxis: {
-                labels: {
-                  style: {
-                    color: 'white',
-                  },
-                },
-                categories: response['Hours']
-              },
-
-
-              yAxis: {
-                allowDecimals: false,
-                min: 0,
-                title: {
-                  style: { color: 'white', },
-                  text: 'Number of units (kWh)'
-                },
-                labels: {
-                  style: {
-                    color: 'white'
-                  }
-                },
-                stackLabels: {
-                  enabled: true,
-                  rotation: 270,
-                  y: -28,
-                  style: {
-                    color: 'white',
-                    fontSize: '11px',
-                    verticalAlign: "top",
-                  }
-                }
-
-              },
-
-              tooltip: {
-                formatter: function () {
-                  return '<b>' + this.x + '</b><br/>' +
-                    this.series.name + ': ' + this.y + '<br/>' +
-                    'Total: ' + this.point.stackTotal;
-                }
-              },
-
-              plotOptions: {
-                // series:{
-                //   pointWidth:15
-                // },
-                column: {
-                  stacking: 'normal',
-                  maxPointWidth: 50
-                  //colors: ['orange', 'white', 'blue']
-                },
-
-
-
-              },
-
-              legend: {
-                itemStyle: { color: 'white', },
-                // showInLegend: false,
-                // verticalAlign: 'top', 
-                // enabled: true,
-                maxHeight: 80,
-                y: 10,
-
-                // x:15,
-                navigation: {
-                  activeColor: 'white',
-                  animation: true,
-                  arrowSize: 12,
-                  inactiveColor: '#333',
-                  style: {
-                    fontWeight: '2px',
-                    color: 'white'
-
-                  }
-                }
-
-
-              },
-              series: response["Data"],
-
-            }
-            // this.chart.chart.redraw()
-            console.log("hour : ", this.updatedbarChartOptions);
-            this.chartLoading = false;
+            this.ngZone.runOutsideAngular(() => {
+              this.showDailygraph = false;
+              this.showHourlygraph = true;
+              if (this.chartInst) {
+                this.chartInst.update({
+                  xAxis: { categories: response['Hours'] },
+                  series: response['Data'],
+                  plotOptions: { column: { animation: false }, series: { animation: false } }
+                } as any, true, true, false);
+              } else {
+                this.updatedbarChartOptions.xAxis.categories = response['Hours'];
+                this.updatedbarChartOptions.series = response['Data'];
+              }
+              this.chartLoading = false;
+              this.cdr.detectChanges();
+            });
           },
           error => { }
         );
@@ -957,43 +837,55 @@ export class WarehouseComponent implements OnInit {
       // Graph for energy saving data ....
       if (mode == '0') {
         // Graph Filter is for daily data
-        this.showDailygraph = true;
-        this.showHourlygraph = false;
         this.chartLoading = true;
         // Call the API with specific data
         let data = { 'site_id': this.siteId, 'from_date': fromDate, 'till_date': tillDate, "user_type": this.user_type };
         //this.barChartOptions.plotOptions.column.stacking='percent'; //mandeep for percentage show
         this.UserService.warehouseMonthlyData(data).subscribe(
           response => {
-
-            categories = response['Dates'];
-            series = response['SavingData'];
-
-            this.barChartOptions.xAxis.categories = categories;
-            this.barChartOptions.series = series;
-            this.updateFlag = true;
-            this.chartLoading = false;
+            this.ngZone.runOutsideAngular(() => {
+              this.showDailygraph = true;
+              this.showHourlygraph = false;
+              if (this.chartInst) {
+                this.chartInst.update({
+                  xAxis: { categories: response['Dates'] },
+                  series: response['SavingData'],
+                  plotOptions: { column: { animation: false }, series: { animation: false } }
+                } as any, true, true, false);
+              } else {
+                this.barChartOptions.xAxis.categories = response['Dates'];
+                this.barChartOptions.series = response['SavingData'];
+              }
+              this.chartLoading = false;
+              this.cdr.detectChanges();
+            });
           },
           error => { }
         );
       }
       else {
-        this.showDailygraph = false;
-        this.showHourlygraph = true;
         this.chartLoading = true;
         // Graph Filter is for hourly data
         let data = { 'site_id': this.siteId, 'date': hourlySelectedDate };
-        console.log('This is mine selected Date in hourly data for energy saving data', hourlySelectedDate);
+        // console.log('This is mine selected Date in hourly data for energy saving data', hourlySelectedDate);
         this.UserService.warehouseHourlyData(data).subscribe(
           response => {
-            console.log("respsmdksk: ", response)
-            categories = response['Hours'];
-            series = response['SavingData'];
-            this.updateFlag = true;
-            this.updatedbarChartOptions.xAxis.categories = categories;
-            this.updatedbarChartOptions.series = series;
-            this.updateFlag = true;
-            this.chartLoading = false;
+            this.ngZone.runOutsideAngular(() => {
+              this.showDailygraph = false;
+              this.showHourlygraph = true;
+              if (this.chartInst) {
+                this.chartInst.update({
+                  xAxis: { categories: response['Hours'] },
+                  series: response['SavingData'],
+                  plotOptions: { column: { animation: false }, series: { animation: false } }
+                } as any, true, true, false);
+              } else {
+                this.updatedbarChartOptions.xAxis.categories = response['Hours'];
+                this.updatedbarChartOptions.series = response['SavingData'];
+              }
+              this.chartLoading = false;
+              this.cdr.detectChanges();
+            });
           },
           error => { }
         );
@@ -1009,297 +901,104 @@ export class WarehouseComponent implements OnInit {
 
   //Call function for monthly trend Graph.....
   getMonthlyTrend() {
-
-
+    this.trendChartLoading = true;
     let data1 = { 'site_id': this.siteId, "user_type": this.user_type };
-    if (this.is_carbon_emission_visible == true) {
-      this.UserService.energySavingMonthlyTrend(data1).subscribe(
-        response => {
-          let seriesData = [];
-          //this.Highcharts = Highcharts;
-          //let xyz = [response['Data'],{"leg":'baseline', 'type': "spline", 'data':[{"a":100,'b':90,'c':80,'d':86,'e':90,'f':100,'g':100,'h':100,'i':100,'j':100,'k':100,'l':100,'m':100,'n':100,'o':100,'p':100,'q':100,'r':100,'s':100,'t':100,'u':100,'v':100,'w':100,'x':100,'y':100,'z':100,'ca':100,'cb':100,'cc':100,'cd':100,}]}]
+    this.UserService.energySavingMonthlyTrend(data1).subscribe(
+      response => {
+        this.ngZone.runOutsideAngular(() => {
+          const seriesData = [
+            { name: 'Energy Consumed', data: response['energyConsumed'] },
+            { name: 'Energy Saved', data: response["energySaved"] }
+          ];
 
+          if (this.is_carbon_emission_visible) {
+            seriesData.push({ name: 'Carbon Emission Saved', data: response["carbon_saved"] });
+          }
 
-          let energyConsumed: any;
-          energyConsumed = { "name": "energyConsumed", 'type': "spline", 'y': response['energyConsumed'] }
-          let enegySaved = { "name": "energySaved", 'type': 'spline', 'y': response['energySaved'] }
-          let percentageSaved = { "name": "percentageSaved", 'type': 'spline', 'y': response['percentageSaved'] }
-          let carbonSaved = { "name": "carbonSaved", 'type': 'spline', 'y': response['carbon_saved'] }
+          seriesData.push({
+            name: 'Percentage Saved',
+            data: response["percentageSaved"],
+            yAxis: 1
+          } as any);
 
-
-
-          let data2 = [{ "data": [energyConsumed, enegySaved, percentageSaved, carbonSaved] }]
-          // seriesData.push(consumption);
-          // seriesData1.push(dataSaving);
-          seriesData.push(data2);
-
-
-          // highcharts = Highcharts;
-          this.lineChartOptions = {
+          const options = {
             colorCount: '4',
             colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7'],
             chart: {
               type: "spline",
               backgroundColor: "#222222",
-
-              overflow: 'scroll'
+              overflow: 'scroll',
+              animation: false
             },
             title: {
-              style: {
-                color: 'white',
-              },
+              style: { color: 'white' },
               text: 'Snapshot Monthly Trend'
             },
-            credits: {
-              enabled: false
-            },
+            credits: { enabled: false },
             xAxis: {
-              labels: {
-                style: {
-                  color: 'white',
-                },
-              },
+              labels: { style: { color: 'white' } },
               categories: response['months']
             },
-            // yAxis: {
-            //   title: {
-            //     style: {color:'white',},
-            //     text: "Value"
-            //   },
-            //   labels : {
-            //     style: {
-            //       color:'white'
-            //     }
-            //   }
-            // },
-
-            yAxis: [{ // Primary yAxis
-              labels: {
-                // format: '{value} units',
-                style: {
-                  color: '#ff7a01'
-                }
-              },
+            yAxis: [{
+              labels: { style: { color: '#ff7a01' } },
               title: {
                 text: 'Units (KWH)',
-                style: {
-                  color: '#ff7a01'
-                }
+                style: { color: '#ff7a01' }
               },
               opposite: false
-
-            }, { // Secondary yAxis
+            }, {
               gridLineWidth: 0,
               title: {
                 text: 'Percentage Saved',
-                style: {
-                  color: '#7cb5ec'
-                }
+                style: { color: '#7cb5ec' }
               },
               labels: {
                 format: '{value} %',
-                style: {
-                  color: '#7cb5ec'
-                }
-
+                style: { color: '#7cb5ec' }
               },
               opposite: true
-
             }],
-
-
-
+            plotOptions: {
+              series: {
+                animation: false
+              },
+              spline: {
+                animation: false
+              }
+            },
             tooltip: {
               formatter: function () {
-                let date = new Date().toLocaleDateString("en-US", { month: 'short' }) + '-' + new Date().getFullYear().toString();
-                if (date == this.x) {
-                  var d = new Date(); // today!
+                let dateStr = new Date().toLocaleDateString("en-US", { month: 'short' }) + '-' + new Date().getFullYear().toString();
+                if (dateStr == (this as any).x) {
+                  var d = new Date();
                   d.setDate(d.getDate() - 1);
                   return '<b>' + 'till' + ' ' + d.getDate().toString() + '-' + new Date().toLocaleDateString("en-US", { month: 'short' }) + '-' + new Date().getFullYear().toString() + '</b><br/>' +
-                    this.series.name + ': ' + this.y + '<br/>'
+                    (this as any).series.name + ': ' + (this as any).y + '<br/>'
                 }
-                return '<b>' + this.x + '</b><br/>' +
-                  this.series.name + ': ' + this.y + '<br/>'
-
+                return '<b>' + (this as any).x + '</b><br/>' +
+                  (this as any).series.name + ': ' + (this as any).y + '<br/>'
               }
             },
             legend: {
-              itemStyle: { color: 'white', },
+              itemStyle: { color: 'white' },
             },
-            series: [
+            series: seriesData
+          };
 
-              {
-                name: 'Energy Consumed',
-                data: response['energyConsumed'],
-
-
-              },
-              {
-                name: 'Energy Saved',
-                data: response["energySaved"],
-
-
-              },
-              {
-                name: 'Carbon Emission Saved',
-                data: response["carbon_saved"],
-
-
-              },
-              {
-                yAxis: 1,
-                name: 'Percentage Saved',
-                data: response["percentageSaved"],
-
-              }
-            ]
+          if (this.lineChartInst) {
+            this.lineChartInst.update(options as any, true, true, false);
+          } else {
+            this.lineChartOptions = options;
           }
-          console.log("graph data", this.lineChartOptions)
-        });
-    }
-    else {
-      console.log("else##################################")
-      this.UserService.energySavingMonthlyTrend(data1).subscribe(
-        response => {
-          let seriesData = [];
-          //this.Highcharts = Highcharts;
-          //let xyz = [response['Data'],{"leg":'baseline', 'type': "spline", 'data':[{"a":100,'b':90,'c':80,'d':86,'e':90,'f':100,'g':100,'h':100,'i':100,'j':100,'k':100,'l':100,'m':100,'n':100,'o':100,'p':100,'q':100,'r':100,'s':100,'t':100,'u':100,'v':100,'w':100,'x':100,'y':100,'z':100,'ca':100,'cb':100,'cc':100,'cd':100,}]}]
-
-
-          let energyConsumed: any;
-          energyConsumed = { "name": "energyConsumed", 'type': "spline", 'y': response['energyConsumed'] }
-          let enegySaved = { "name": "energySaved", 'type': 'spline', 'y': response['energySaved'] }
-          let percentageSaved = { "name": "percentageSaved", 'type': 'spline', 'y': response['percentageSaved'] }
-
-
-
-          let data2 = [{ "data": [energyConsumed, enegySaved, percentageSaved] }]
-          // seriesData.push(consumption);
-          // seriesData1.push(dataSaving);
-          seriesData.push(data2);
-
-
-          // highcharts = Highcharts;
-          this.lineChartOptions = {
-            colorCount: '4',
-            colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7'],
-            chart: {
-              type: "spline",
-              backgroundColor: "#222222",
-
-              overflow: 'scroll'
-            },
-            title: {
-              style: {
-                color: 'white',
-              },
-              text: 'Snapshot Monthly Trend'
-            },
-            credits: {
-              enabled: false
-            },
-            xAxis: {
-              labels: {
-                style: {
-                  color: 'white',
-                },
-              },
-              categories: response['months']
-            },
-            // yAxis: {
-            //   title: {
-            //     style: {color:'white',},
-            //     text: "Value"
-            //   },
-            //   labels : {
-            //     style: {
-            //       color:'white'
-            //     }
-            //   }
-            // },
-
-            yAxis: [{ // Primary yAxis
-              labels: {
-                // format: '{value} units',
-                style: {
-                  color: '#ff7a01'
-                }
-              },
-              title: {
-                text: 'Units (KWH)',
-                style: {
-                  color: '#ff7a01'
-                }
-              },
-              opposite: false
-
-            }, { // Secondary yAxis
-              gridLineWidth: 0,
-              title: {
-                text: 'Percentage Saved',
-                style: {
-                  color: '#7cb5ec'
-                }
-              },
-              labels: {
-                format: '{value} %',
-                style: {
-                  color: '#7cb5ec'
-                }
-
-              },
-              opposite: true
-
-            }],
-
-
-
-            tooltip: {
-              formatter: function () {
-                let date = new Date().toLocaleDateString("en-US", { month: 'short' }) + '-' + new Date().getFullYear().toString();
-                if (date == this.x) {
-                  var d = new Date(); // today!
-                  d.setDate(d.getDate() - 1);
-                  return '<b>' + 'till' + ' ' + d.getDate().toString() + '-' + new Date().toLocaleDateString("en-US", { month: 'short' }) + '-' + new Date().getFullYear().toString() + '</b><br/>' +
-                    this.series.name + ': ' + this.y + '<br/>'
-                }
-                return '<b>' + this.x + '</b><br/>' +
-                  this.series.name + ': ' + this.y + '<br/>'
-
-              }
-            },
-            legend: {
-              itemStyle: { color: 'white', },
-            },
-            series: [
-
-              {
-                name: 'Energy Consumed',
-                data: response['energyConsumed'],
-
-
-              },
-              {
-                name: 'Energy Saved',
-                data: response["energySaved"],
-
-
-              },
-              {
-                yAxis: 1,
-                name: 'Percentage Saved',
-                data: response["percentageSaved"],
-
-              }
-            ]
-          }
-          console.log("graph data", this.lineChartOptions)
           this.trendChartLoading = false;
+          this.cdr.detectChanges();
         });
-
-    }
-
-
+      },
+      error => {
+        this.trendChartLoading = false;
+        this.cdr.detectChanges();
+      }
+    );
   }
 
 
@@ -1347,7 +1046,7 @@ export class WarehouseComponent implements OnInit {
 
 
   baseline() {
-    console.log("baseline html hit")
+    // console.log("baseline html hit")
     this.DataService.changeMessage("baseline");
     localStorage.setItem('siteId', this.siteId);
     localStorage.setItem("baseline", 'true');

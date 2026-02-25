@@ -6,9 +6,9 @@ import { DashboardDataService } from './../services/dashboard-data.service';
 import { LoginComponent } from './../login/login.component';
 
 import { UserService } from './../services/user.service';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
-import { MatLegacyTableDataSource as MatTableDataSource, MatLegacyTable as MatTable } from '@angular/material/legacy-table';
+import { AfterViewInit, ChangeDetectorRef, Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource, MatTable } from '@angular/material/table';
 import * as Highcharts from 'highcharts';
 //import {MatPaginator} from '@angular/material';
 import { MatSort } from '@angular/material/sort';
@@ -18,7 +18,7 @@ import { from } from 'rxjs';
 // import {formatDate} from '@angular/common';
 import { formatDate, getLocaleDayNames } from '@angular/common';
 import { SiteDetailsModel, LiveMeteringDataModel } from './../models/siteDataModel';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material/dialog';
 import { DialogSwitchdashComponent } from '../dialog-switchdash/dialog-switchdash.component';
 import { Router } from '@angular/router';
 import { preserveWhitespacesDefault } from '@angular/compiler';
@@ -49,7 +49,8 @@ export interface KeyValueIf {
 @Component({
   selector: 'app-submetering',
   templateUrl: './submetering.component.html',
-  styleUrls: ['./submetering.component.css']
+  styleUrls: ['./submetering.component.css'],
+  standalone: false
 })
 
 
@@ -143,8 +144,12 @@ export class SubmeteringComponent implements OnInit {
   chartCallback: any;
   oneToOneFlag = true;
   pieChart = Highcharts;
-  chartLoading: boolean = true;
-  trendChartLoading: boolean = true;
+  chartLoading: boolean = false;
+  trendChartLoading: boolean = false;
+  trendChartInst: Highcharts.Chart;
+  energyChartInst: Highcharts.Chart;
+  trendChartCallback: (chart: Highcharts.Chart) => void;
+  energyChartCallback: (chart: Highcharts.Chart) => void;
   //breadcrumbs keywords 
   myObj = JSON.parse(localStorage.getItem("account"));
   user_id = this.myObj["id"];
@@ -177,15 +182,23 @@ export class SubmeteringComponent implements OnInit {
 
   //@ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private dashData: DashboardDataService, private UserService: UserService, private DataService: DataService, public dialog: MatDialog, private router: Router,) {
-
-
+  constructor(
+    private dashData: DashboardDataService,
+    private UserService: UserService,
+    private DataService: DataService,
+    public dialog: MatDialog,
+    private router: Router,
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
+  ) {
+    this.trendChartCallback = (chart: Highcharts.Chart) => { this.trendChartInst = chart; };
+    this.energyChartCallback = (chart: Highcharts.Chart) => { this.energyChartInst = chart; };
+    this.chartCallback = this.energyChartCallback;
   }
 
   ngOnInit() {
     this.siteId = localStorage.getItem('siteId');
     this.sitename = localStorage.getItem('sitename')
-    console.log('here site id in energy saving', this.siteId)
 
     //here is implementation of breadcrumb...
     if (this.user_type == '1') {
@@ -249,7 +262,6 @@ export class SubmeteringComponent implements OnInit {
 
   valuechange(newValue) {
     //mymodel = newValue;
-    console.log(newValue)
   }
   //   ngAfterViewInit() {
   //     Observable.interval(5000).subscribe(
@@ -305,17 +317,12 @@ export class SubmeteringComponent implements OnInit {
       try {
         this.barChartOptions.plotOptions.column.stacking = ''; // for daily
       }
-      catch {
-        console.log("error in daily")
-      }
+      catch { }
       try {
         this.updatedbarChartOptions.plotOptions.column.stacking = '';  // for hourly
       }
-      catch {
-        console.log("err in hourly")
-      }
+      catch { }
       this.updateFlag = true;
-      console.log('Inside normal stacking false')
     }
     else {
       try {
@@ -325,7 +332,6 @@ export class SubmeteringComponent implements OnInit {
         this.updatedbarChartOptions.plotOptions.column.stacking = 'normal'; // for hourly
       } catch { console.log("error in hourly ....") }
       this.updateFlag = true;
-      console.log('Inside normal stacking True')
     }
   }
 
@@ -351,17 +357,15 @@ export class SubmeteringComponent implements OnInit {
       // this.chart.chart.legend.allItems.forEach(item=>console.log("item : ", item));
       let chartData = this.chart.chart.legend.allItems
       for (let i = 0; i <= chartData.length - 1; i++) {
-        console.log("data : ", chartData[i])
+        // console.log("data : ", chartData[i])
         chartData[i].setVisible(true, false)
       }
       this.chart.chart.redraw()
-      console.log("reenable function true")
     }
     else {
       this.graphShown = false
       let chartData = this.chart.chart.legend.allItems
       for (let i = 0; i <= chartData.length - 1; i++) {
-        console.log("data : ", chartData[i])
         chartData[i].setVisible(false, false)
       }
       this.chart.chart.redraw()
@@ -397,7 +401,6 @@ export class SubmeteringComponent implements OnInit {
           })
         }
         this.dataSource = new MatTableDataSource(data);
-        console.log(data);
         this.dataSource.paginator = this.paginator;  //mandeep
         this.dataSource.sort = this.sort;  //mandeep
 
@@ -411,7 +414,6 @@ export class SubmeteringComponent implements OnInit {
     let data = { "site_id": this.siteId }
     this.UserService.siteSnapshot(data).subscribe(
       response => {
-        console.log(response);
 
       }
     )
@@ -429,7 +431,6 @@ export class SubmeteringComponent implements OnInit {
     this.isShown = true;
   }
   customerdetail(obj) {
-    console.log(obj);
   }
   onChangePwd() {
 
@@ -439,7 +440,6 @@ export class SubmeteringComponent implements OnInit {
         //console.log("server_Res: ", data);
       },
       error => {
-        console.log("Server Error: ", error);
       });
   }
 
@@ -455,126 +455,94 @@ export class SubmeteringComponent implements OnInit {
   //Here is implementation of bar graph daily and hourly data
 
   submeteringMonthlyBarChart() {
-
+    this.chartLoading = true;
     let todayDate = new Date();
     let tillDate = formatDate(new Date(), 'yyyy/MM/dd', 'en');
     let fromDate = formatDate(new Date().setDate(todayDate.getDate() - 30), 'yyyy/MM/dd', 'en');
     let data1 = { 'site_id': this.siteId, 'from_date': fromDate, 'till_date': tillDate, "user_type": this.user_type };
     this.UserService.submeteringMonthlyBarChart(data1).subscribe(
       response => {
-        console.log("ressnw  : ", response)
-        // $(function () {
-        this.barChartOptions = {
-          colorCount: '12',
-          colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
-          credits: {
-            enabled: false,
-          },
-
-          chart: {
-            backgroundColor: '#222222',
-            type: 'column',
-            zoomType: 'x',
-            setVisible: 'false',
-          },
-
-          title: {
-            text: this.graphTitle,
-            style: {
-              color: 'white',
+        this.ngZone.runOutsideAngular(() => {
+          const options = {
+            colorCount: '12',
+            colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+            credits: { enabled: false },
+            chart: {
+              backgroundColor: '#222222',
+              type: 'column',
+              zoomType: 'x',
+              animation: false,
             },
-          },
-
-          xAxis: {
-            labels: {
-              style: {
-                color: 'white',
-              },
-            },
-            categories: response['Dates']
-          },
-
-
-          yAxis: {
-            allowDecimals: false,
-            min: 0,
-            // max:6000,
             title: {
-              style: { color: 'white', },
-              text: 'Number of units (kWh)'
+              text: this.graphTitle,
+              style: { color: 'white' },
             },
-            labels: {
-              style: {
-                color: 'white'
+            xAxis: {
+              labels: { style: { color: 'white' } },
+              categories: response['Dates']
+            },
+            yAxis: {
+              allowDecimals: false,
+              min: 0,
+              title: { style: { color: 'white' }, text: 'Number of units (kWh)' },
+              labels: { style: { color: 'white' } },
+              stackLabels: {
+                enabled: true,
+                rotation: 270,
+                y: -28,
+                style: {
+                  color: 'white',
+                  fontSize: '11px',
+                  verticalAlign: "top" as any,
+                }
               }
             },
-
-            stackLabels: {
-              enabled: true,
-              rotation: 270,
-              y: -28,
-              style: {
-                color: 'white',
-                fontSize: '11px',
-                verticalAlign: "top",
+            tooltip: {
+              formatter: function () {
+                return '<b>' + this.x + '</b><br/>' +
+                  this.series.name + ': ' + this.y + '<br/>' +
+                  'Total: ' + this.point.stackTotal;
               }
-            }
-
-          },
-
-          tooltip: {
-            formatter: function () {
-              return '<b>' + this.x + '</b><br/>' +
-                this.series.name + ': ' + this.y + '<br/>' +
-                'Total: ' + this.point.stackTotal;
-            }
-          },
-
-          plotOptions: {
-            // series:{
-            //   pointWidth:15
-            // },
-            column: {
-              stacking: 'normal',
-              maxPointWidth: 50
-              //colors: ['orange', 'white', 'blue']
             },
-
-
-
-          },
-
-          legend: {
-            itemStyle: { color: 'white', },
-            // showInLegend: false,
-            // verticalAlign: 'top', 
-            // enabled: true,
-            maxHeight: 80,
-            y: 10,
-
-            // x:15,
-            navigation: {
-              activeColor: 'white',
-              animation: true,
-              arrowSize: 12,
-              inactiveColor: '#333',
-              style: {
-                fontWeight: '2px',
-                color: 'white'
-
+            plotOptions: {
+              column: {
+                stacking: 'normal' as any,
+                maxPointWidth: 50,
+                animation: false
+              },
+              series: {
+                animation: false
               }
-            }
+            },
+            legend: {
+              itemStyle: { color: 'white' },
+              maxHeight: 80,
+              y: 10,
+              navigation: {
+                activeColor: 'white',
+                animation: true,
+                arrowSize: 12,
+                inactiveColor: '#333',
+                style: {
+                  fontWeight: '2px' as any,
+                  color: 'white'
+                }
+              }
+            },
+            series: response['Data']
+          };
 
-
-          },
-          series: response["Data"],
-
-        }
-        console.log("graph data", this.barChartOptions)
-        this.chartLoading = false;
-
-      });
-
+          if (this.energyChartInst) {
+            this.energyChartInst.update(options as any, true, true, false);
+          } else {
+            this.barChartOptions = options;
+          }
+          this.chartLoading = false;
+          this.cdr.detectChanges();
+        });
+      },
+      error => { }
+    );
   }
 
 
@@ -599,8 +567,8 @@ export class SubmeteringComponent implements OnInit {
       const formattedFrom = formatDate(this.energyExportStartDate, 'yyyy-MM-dd', 'en');
       const formattedTo = formatDate(this.energyExportEndDate, 'yyyy-MM-dd', 'en');
 
-      console.log(`Exporting Energy Data from ${formattedFrom} to ${formattedTo}`);
-      console.log(`Site: ${this.sitename}`);
+      // console.log(`Exporting Energy Data from ${formattedFrom} to ${formattedTo}`);
+      // console.log(`Site: ${this.sitename}`);
 
       let data = {
         "user_id": this.user_id,
@@ -678,147 +646,117 @@ export class SubmeteringComponent implements OnInit {
       // Energy Consumption Graph
       if (mode == '0') {
         // Graph Filter is for daily data
-        this.showHourlygraph = false;
-        this.showDailygraph = true;
-        // Call the API with specific data
+        this.chartLoading = true;
         let data = { 'site_id': this.siteId, 'from_date': fromDate, 'till_date': tillDate, "user_type": this.user_type };
         this.UserService.submeteringMonthlyBarChart(data).subscribe(
           response => {
-            categories = response['Dates'];
-            series = response['Data'];
-            this.updateFlag = true;
-            this.barChartOptions.xAxis.categories = categories;
-            this.barChartOptions.series = series;
-            // this.updateFlag = true;
+            this.ngZone.runOutsideAngular(() => {
+              this.showHourlygraph = false;
+              this.showDailygraph = true;
+              if (this.energyChartInst) {
+                this.energyChartInst.update({
+                  xAxis: { categories: response['Dates'] },
+                  series: response['Data'],
+                  plotOptions: { column: { animation: false }, series: { animation: false } }
+                } as any, true, true, false);
+              } else {
+                this.barChartOptions.xAxis.categories = response['Dates'];
+                this.barChartOptions.series = response['Data'];
+              }
+              this.chartLoading = false;
+              this.cdr.detectChanges();
+            });
           },
           error => { }
         );
       }
       else {
         // Graph Filter is for hourly data
-        this.showDailygraph = false;
-        this.showHourlygraph = true;
         this.chartLoading = true;
         let data = { 'site_id': this.siteId, 'date': hourlySelectedDate };
-        console.log('This is mine selected Date in hourly data', hourlySelectedDate);
-        // this.barChartOptions.plotOptions.column.stacking='percent';
 
         this.UserService.submeteringHourlyData(data).subscribe(
           response => {
-            // this.chart.chart.redraw()
-            // categories = response['Hours'];
-            // series = response['Data'];
-            // this.updateFlag = true;
-            // this.barChartOptions.xAxis.categories= categories;
-            // this.barChartOptions.series = series;
-            // this.updateFlag = true;
-            this.updatedbarChartOptions = {
-              colorCount: '12',
-              colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
-              credits: {
-                enabled: false,
-              },
-
-              chart: {
-                backgroundColor: '#222222',
-                type: 'column',
-                zoomType: 'x',
-                setVisible: 'false',
-              },
-
-              title: {
-                text: this.graphTitle,
-                style: {
-                  color: 'white',
+            this.ngZone.runOutsideAngular(() => {
+              this.showDailygraph = false;
+              this.showHourlygraph = true;
+              const options = {
+                colorCount: '12',
+                colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+                credits: { enabled: false },
+                chart: {
+                  type: "column",
+                  backgroundColor: "#222222",
+                  zoomType: 'x',
+                  animation: false
                 },
-              },
-
-              xAxis: {
-                labels: {
-                  style: {
-                    color: 'white',
-                  },
-                },
-                categories: response['Hours']
-              },
-
-
-              yAxis: {
-                allowDecimals: false,
-                min: 0,
                 title: {
-                  style: { color: 'white', },
-                  text: 'Number of units (kWh)'
+                  text: this.graphTitle,
+                  style: { color: 'white' },
                 },
-                labels: {
-                  style: {
-                    color: 'white'
+                xAxis: {
+                  labels: { style: { color: 'white' } },
+                  categories: response['Hours']
+                },
+                yAxis: {
+                  allowDecimals: false,
+                  min: 0,
+                  title: { style: { color: 'white' }, text: 'Number of units (kWh)' },
+                  labels: { style: { color: 'white' } },
+                  stackLabels: {
+                    enabled: true,
+                    rotation: 270,
+                    y: -28,
+                    style: {
+                      color: 'white',
+                      fontSize: '11px',
+                      verticalAlign: "top" as any,
+                    }
                   }
                 },
-                stackLabels: {
-                  enabled: true,
-                  rotation: 270,
-                  y: -28,
-                  style: {
-                    color: 'white',
-                    fontSize: '11px',
-                    verticalAlign: "top",
+                tooltip: {
+                  formatter: function () {
+                    return '<b>' + this.x + '</b><br/>' +
+                      this.series.name + ': ' + this.y + '<br/>' +
+                      'Total: ' + this.point.stackTotal;
                   }
-                }
-
-              },
-
-              tooltip: {
-                formatter: function () {
-                  return '<b>' + this.x + '</b><br/>' +
-                    this.series.name + ': ' + this.y + '<br/>' +
-                    'Total: ' + this.point.stackTotal;
-                }
-              },
-
-              plotOptions: {
-                // series:{
-                //   pointWidth:15
-                // },
-                column: {
-                  stacking: 'normal',
-                  maxPointWidth: 50
-                  //colors: ['orange', 'white', 'blue']
                 },
-
-
-
-              },
-
-              legend: {
-                itemStyle: { color: 'white', },
-                // showInLegend: false,
-                // verticalAlign: 'top', 
-                // enabled: true,
-                maxHeight: 80,
-                y: 10,
-
-                // x:15,
-                navigation: {
-                  activeColor: 'white',
-                  animation: true,
-                  arrowSize: 12,
-                  inactiveColor: '#333',
-                  style: {
-                    fontWeight: '2px',
-                    color: 'white'
-
+                plotOptions: {
+                  column: {
+                    stacking: 'normal' as any,
+                    maxPointWidth: 50,
+                    animation: false
+                  },
+                  series: {
+                    animation: false
                   }
-                }
+                },
+                legend: {
+                  itemStyle: { color: 'white' },
+                  maxHeight: 80,
+                  y: 10,
+                  navigation: {
+                    activeColor: 'white',
+                    animation: true,
+                    arrowSize: 12,
+                    inactiveColor: '#333',
+                    style: {
+                      fontWeight: '2px' as any,
+                      color: 'white'
+                    }
+                  }
+                },
+                series: response["Data"],
+              };
 
-
-              },
-              series: response["Data"],
-
-            }
-            // this.chart.chart.redraw()
-            console.log("hour : ", this.updatedbarChartOptions);
-            this.chartLoading = false;
+              if (this.energyChartInst) {
+                this.energyChartInst.update(options as any, true, true, false);
+              } else {
+                this.updatedbarChartOptions = options;
+              }
+              this.chartLoading = false;
+              this.cdr.detectChanges();
+            });
           },
           error => { }
         );
@@ -828,43 +766,51 @@ export class SubmeteringComponent implements OnInit {
       // Graph for energy saving data ....
       if (mode == '0') {
         // Graph Filter is for daily data
-        this.showDailygraph = true;
-        this.showHourlygraph = false;
         this.chartLoading = true;
-        // Call the API with specific data
         let data = { 'site_id': this.siteId, 'from_date': fromDate, 'till_date': tillDate, "user_type": this.user_type };
-        //this.barChartOptions.plotOptions.column.stacking='percent'; //mandeep for percentage show
         this.UserService.energySavingMonthlyData(data).subscribe(
           response => {
-
-            categories = response['Dates'];
-            series = response['SavingData'];
-
-            this.barChartOptions.xAxis.categories = categories;
-            this.barChartOptions.series = series;
-            this.updateFlag = true;
-            this.chartLoading = false;
+            this.ngZone.runOutsideAngular(() => {
+              this.showDailygraph = true;
+              this.showHourlygraph = false;
+              if (this.energyChartInst) {
+                this.energyChartInst.update({
+                  xAxis: { categories: response['Dates'] },
+                  series: response['SavingData'],
+                  plotOptions: { column: { animation: false }, series: { animation: false } }
+                } as any, true, true, false);
+              } else {
+                this.barChartOptions.xAxis.categories = response['Dates'];
+                this.barChartOptions.series = response['SavingData'];
+              }
+              this.chartLoading = false;
+              this.cdr.detectChanges();
+            });
           },
           error => { }
         );
       }
       else {
-        this.showDailygraph = false;
-        this.showHourlygraph = true;
         this.chartLoading = true;
-        // Graph Filter is for hourly data
         let data = { 'site_id': this.siteId, 'date': hourlySelectedDate };
-        console.log('This is mine selected Date in hourly data for energy saving data', hourlySelectedDate);
         this.UserService.energySavingHourlyData(data).subscribe(
           response => {
-            console.log("respsmdksk: ", response)
-            categories = response['Hours'];
-            series = response['SavingData'];
-            this.updateFlag = true;
-            this.updatedbarChartOptions.xAxis.categories = categories;
-            this.updatedbarChartOptions.series = series;
-            this.updateFlag = true;
-            this.chartLoading = false;
+            this.ngZone.runOutsideAngular(() => {
+              this.showDailygraph = false;
+              this.showHourlygraph = true;
+              if (this.energyChartInst) {
+                this.energyChartInst.update({
+                  xAxis: { categories: response['Hours'] },
+                  series: response['SavingData'],
+                  plotOptions: { column: { animation: false }, series: { animation: false } }
+                } as any, true, true, false);
+              } else {
+                this.updatedbarChartOptions.xAxis.categories = response['Hours'];
+                this.updatedbarChartOptions.series = response['SavingData'];
+              }
+              this.chartLoading = false;
+              this.cdr.detectChanges();
+            });
           },
           error => { }
         );
@@ -880,132 +826,73 @@ export class SubmeteringComponent implements OnInit {
 
   //Call function for monthly trend Graph.....
   getMonthlyTrend() {
+    this.trendChartLoading = true;
     let data1 = { 'site_id': this.siteId, "user_type": this.user_type };
     this.UserService.subMeteringMonthlyTrend(data1).subscribe(
       response => {
-        this.lineChartOptions = {
-          colorCount: '4',
-          colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
-          chart: {
-            backgroundColor: '#222222',
-            type: 'column',
-            zoomType: 'x',
-            setVisible: 'false',
-          },
-          title: {
-            style: {
-              color: 'white',
+        this.ngZone.runOutsideAngular(() => {
+          const options = {
+            colorCount: '4',
+            colors: ['#90ED7D', '#ff7a01', '#7cb5ec', '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+            chart: {
+              backgroundColor: '#222222',
+              type: 'spline',
+              zoomType: 'x',
+              animation: false,
+              overflow: 'scroll'
             },
-            text: 'Snapshot Monthly Trend'
-          },
-          credits: {
-            enabled: false
-          },
-          xAxis: {
-            labels: {
-              style: {
-                color: 'white',
+            title: {
+              style: { color: 'white' },
+              text: 'Monthly Trend'
+            },
+            credits: { enabled: false },
+            xAxis: {
+              labels: { style: { color: 'white' } },
+              categories: response['months']
+            },
+            yAxis: [{ // Primary yAxis
+              labels: { style: { color: '#ff7a01' } },
+              title: { text: 'Units (KWH)', style: { color: '#ff7a01' } },
+              opposite: false
+            }, { // Secondary yAxis
+              gridLineWidth: 0,
+              title: { text: 'Monthly Avg', style: { color: '#90ED7D' } },
+              labels: { style: { color: '#90ED7D' } },
+              opposite: true
+            }],
+            plotOptions: {
+              column: {
+                stacking: 'normal' as any,
+                maxPointWidth: 50,
+                animation: false
               },
-            },
-            categories: response['months']
-          },
-          // yAxis: {
-          //   allowDecimals: false,
-          //   min: 0,
-          //   // max:6000,
-          //   title: {
-          //     style: {color:'white',},
-          //     text: 'Number of units (kWh)'
-          //   },
-          //   labels : {
-          //     style: {
-          //       color:'white'
-          //     }
-          //   },
-          //   stackLabels: {
-          //     enabled: true,
-          //     rotation: 270,
-          //     y: -28,
-          //     style: {
-          //       color:'white',
-          //       fontSize:'11px',
-          //       verticalAlign: "top",
-          //     }
-          //   }
-          // },
-          yAxis: [{ // Primary yAxis
-            labels: {
-              // format: '{value} units',
-              style: {
-                color: '#ff7a01'
+              series: {
+                animation: false
               }
             },
-            title: {
-              text: 'Units (KWH)',
-              style: {
-                color: '#ff7a01'
+            tooltip: {
+              formatter: function () {
+                return '<b>' + this.x + '</b><br/>' +
+                  this.series.name + ': ' + this.y + '<br/>' +
+                  'Total: ' + this.point.stackTotal;
               }
             },
-            opposite: false
+            legend: { itemStyle: { color: 'white' } },
+            series: response['unit_consumed_data'],
+          };
 
-          }, { // Secondary yAxis
-            gridLineWidth: 0,
-            title: {
-              text: 'Monthly Avg',
-              style: {
-                color: '#90ED7D'
-              }
-            },
-            labels: {
-              // format: '{value} ',
-              style: {
-                color: '#90ED7D'
-              }
-
-            },
-            opposite: true
-
-          }],
-          plotOptions: {
-            // series:{
-            //   pointWidth:15
-            // },
-            column: {
-              stacking: 'normal',
-              maxPointWidth: 50
-              //colors: ['orange', 'white', 'blue']
-            },
-          },
-          tooltip: {
-            formatter: function () {
-              return '<b>' + this.x + '</b><br/>' +
-                this.series.name + ': ' + this.y + '<br/>' +
-                'Total: ' + this.point.stackTotal;
-            }
-          },
-          legend: {
-            itemStyle: { color: 'white', },
-          },
-
-          series: response['unit_consumed_data'],
-          // {yAxis: 1,
-          //   name: 'Percentage Saved',
-          //   data: response['unit_consumed_data']['AvgDataMonthlysssss'],
-
-          // }
-
-
-
-        }
-        // console.log("graph data", this.lineChartOptions)
-        this.trendChartLoading = false;
-      });
-
-
-
-
+          if (this.trendChartInst) {
+            this.trendChartInst.update(options as any, true, true, false);
+          } else {
+            this.lineChartOptions = options;
+          }
+          this.trendChartLoading = false;
+          this.cdr.detectChanges();
+        });
+      },
+      error => { }
+    );
   }
-
 
   exportExcelData() {
     const dialogConfig = new MatDialogConfig();
@@ -1013,9 +900,7 @@ export class SubmeteringComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.width = "20%";
     this.dialog.open(ExcelsheetComponent, dialogConfig);
-
   }
-
 }
 
 export interface SiteAlarmData {

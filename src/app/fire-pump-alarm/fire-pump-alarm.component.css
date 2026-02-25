@@ -1,4 +1,4 @@
-.mat-row:hover .mat-cell .customer-table{
+.mat-mdc-row:hover .mat-mdc-cell .customer-table{
    /*border-color: white;*/
    /* border-bottom: 5px #ff6600;
    border-top: 5px #ff6600; */
@@ -8,7 +8,7 @@
  }
  
  
- .mat-row:hover .mat-cell{
+ .mat-mdc-row:hover .mat-mdc-cell{
    /*border-color: white;*/
    /* border-bottom: 5px #ff6600;
    border-top: 5px #ff6600; */
@@ -36,7 +36,7 @@
     
    }
    
-   .mat-option.mat-selected:not(.mat-option-disabled) {
+   .mat-mdc-option.mat-selected:not(.mat-option-disabled) {
       color: #ffffff !important;
   }
   
@@ -183,13 +183,13 @@
    border-spacing: 0;
    border-collapse: collapse;
  }
- .mat-header-cell{
+ .mat-mdc-header-cell{
    background-color: black;
    padding: 8px;
    font-size: 16px;
  }
  
- .mat-cell {
+ .mat-mdc-cell {
    font-size: 12px;
    border-right: 1px solid #222;
    padding: 10px;
@@ -201,7 +201,7 @@
    text-align: center;
    font-size: 16px;
  }
- .mat-paginator{
+ .mat-mdc-paginator{
    background: #000000;
  }
  
@@ -214,21 +214,21 @@
    padding:8px;
  } 
  
- .mat-row:nth-child(even){
+ .mat-mdc-row:nth-child(even){
    background-color: #696969;
  }
- .mat-row:nth-child(odd){
+ .mat-mdc-row:nth-child(odd){
    background-color: #3F3F3F;
  }
- .mat-table .mat-cell:last-child{
+ .mat-mdc-table .mat-mdc-cell:last-child{
    border-bottom: 0;
  }
  /*
- .mat-table .mat-cell:first-child{
+ .mat-mdc-table .mat-mdc-cell:first-child{
    margin-top: 2%;
   }*/
  
- /*.mat-header-row{
+ /*.mat-mdc-header-row{
    display: none;
  }*/
  
@@ -396,11 +396,11 @@
      display:none;
    }
  
-   .mat-input-element {
+   .mat-mdc-input-element {
     caret-color: #E66F00 !important;
    }
  
-   .mat-input-element ng-reflect-placeholder {
+   .mat-mdc-input-element ng-reflect-placeholder {
     color: #E66F00 !important;
    }
    /* === For phones =================================== */

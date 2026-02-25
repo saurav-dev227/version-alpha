@@ -19,7 +19,7 @@ hr {
    background: black;
 }
 
-.mat-option.mat-selected:not(.mat-option-disabled) {
+.mat-mdc-option.mat-selected:not(.mat-option-disabled) {
    color: #fff !important;
 }
 
@@ -194,7 +194,7 @@ table {
    border-collapse: collapse;
 }
 
-.mat-header-cell {
+.mat-mdc-header-cell {
    background-color: black;
    padding: 8px;
    font-size: 16px;
@@ -207,7 +207,7 @@ table {
    font-size: 16px;
 }
 
-.mat-paginator {
+.mat-mdc-paginator {
    background: #000000;
 }
 
@@ -222,11 +222,11 @@ td {
    padding: 8px;
 }
 
-.mat-row:nth-child(even) {
+.mat-mdc-row:nth-child(even) {
    background-color: #696969;
 }
 
-.mat-row:nth-child(odd) {
+.mat-mdc-row:nth-child(odd) {
    background-color: #3F3F3F;
 }
 
@@ -472,7 +472,7 @@ td {
    opacity: .5;
 }
 
-.mat-table[_ngcontent-c13] .mat-cell[_ngcontent-c13]:first-child {
+.mat-mdc-table[_ngcontent-c13] .mat-mdc-cell[_ngcontent-c13]:first-child {
    margin-top: 0%;
 }
 
@@ -554,11 +554,11 @@ td {
    color: white;
 }
 
-::ng-deep .custom-mat-select .mat-select-value {
+::ng-deep .custom-mat-select .mat-mdc-select-value {
    color: white !important;
 }
 
-::ng-deep .custom-mat-select .mat-select-arrow {
+::ng-deep .custom-mat-select .mat-mdc-select-arrow {
    color: white !important;
 }
 
@@ -566,11 +566,11 @@ td {
    background-color: #444 !important;
 }
 
-::ng-deep .mat-option {
+::ng-deep .mat-mdc-option {
    color: white !important;
 }
 
-::ng-deep .mat-option.mat-active {
+::ng-deep .mat-mdc-option.mat-active {
    background-color: #555 !important;
    color: #ff7a01 !important;
 }
@@ -609,11 +609,11 @@ td {
    padding: 0;
 }
 
-.custom-mat-date .mat-form-field-wrapper {
+.custom-mat-date .mat-mdc-form-field {
    padding-bottom: 0;
 }
 
-.custom-mat-date .mat-form-field-flex {
+.custom-mat-date .mat-mdc-form-field-flex {
    background-color: transparent !important;
    padding: 0 10px !important;
 }
@@ -622,7 +622,7 @@ td {
    display: none !important;
 }
 
-.custom-mat-date input.mat-input-element {
+.custom-mat-date input.mat-mdc-input-element {
    color: white !important;
    font-size: 16px;
    padding: 10px 0;
