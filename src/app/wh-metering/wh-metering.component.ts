@@ -1606,25 +1606,27 @@ export class WhMeteringComponent implements OnInit {
 
     changeGraphStacking() {
         this.whichGraph ^= 0x1;
+        const stacking = this.whichGraph == 0 ? '' : 'normal';
 
-        if (this.whichGraph == 0) {
-            this.barChartOptions.plotOptions.column.stacking = '';
-            this.updateFlag = true;
-        }
-        else {
-            this.barChartOptions.plotOptions.column.stacking = 'normal';
+        if (this.energyChartInst) {
+            this.energyChartInst.update({
+                plotOptions: { column: { stacking: stacking as any } }
+            } as any, true, false, false);
+        } else {
+            this.barChartOptions.plotOptions.column.stacking = stacking;
             this.updateFlag = true;
         }
     }
     changeGraphStackingRunTime() {
         this.whichGraph ^= 0x1;
+        const stacking = this.whichGraph == 0 ? '' : 'normal';
 
-        if (this.whichGraph == 0) {
-            this.barChartOptionsRunTime.plotOptions.column.stacking = '';
-            this.updateFlag = true;
-        }
-        else {
-            this.barChartOptionsRunTime.plotOptions.column.stacking = 'normal';
+        if (this.energyChartInst) {
+            this.energyChartInst.update({
+                plotOptions: { column: { stacking: stacking as any } }
+            } as any, true, false, false);
+        } else {
+            this.barChartOptionsRunTime.plotOptions.column.stacking = stacking;
             this.updateFlag = true;
         }
     }
