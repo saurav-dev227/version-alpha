@@ -1,384 +1,365 @@
 import { GlobalService } from './../services/global.service';
 import { DataService } from './../services/data.service';
-import { Component, OnInit, Input,Inject } from '@angular/core';
+import { Component, OnInit, Input, Inject } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { TokenService } from '../services/token.service';
 import { changePassword } from '../models/changepassword';
 import { Forgotpassword } from './../models/forgotpassword';
 import { UserService } from '../services/user.service';
 import * as Highcharts from 'highcharts';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material/dialog';
 import { DialogSwitchdashComponent } from '../dialog-switchdash/dialog-switchdash.component';
 
 
 @Component({
-    selector: 'app-dashboard',
-    templateUrl: './dashboard.component.html',
-    styleUrls: ['./dashboard.component.css'],
-    standalone: false
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.css'],
+  standalone: false
 })
-export class DashboardComponent implements OnInit 
-  {
-    isSupperAdmin=true;
+export class DashboardComponent implements OnInit {
+  isSupperAdmin = true;
 
-    siteId: any;
-    
-    title = 'Common Dashboard';
-    dashboardType: string;
-    infoToken: { token: string; };   //shahid
-    Result = 0;
-    msg:string;
-    isCollapsed:boolean = false ;
-    modalOpen:boolean = false ;
-    userActName=localStorage.getItem('account');
-    chngpwd: { token: string; old_password: string; new_password: string; }; // shahid
-    oldpwd:string;
-    token = localStorage.getItem('token');
-    changePasswordModel = new changePassword(this.token,'','');
+  siteId: any;
 
-    superAdmin:boolean = false;
-    admin:boolean = false;
-    customer:string;
-    customerUser:boolean = false;
-    cat:any;
-    cunsData:any;
-    saveData:any;
-    myObj = JSON.parse(localStorage.getItem("account"));
+  title = 'Common Dashboard';
+  dashboardType: string;
+  infoToken: { token: string; };   //shahid
+  Result = 0;
+  msg: string;
+  isCollapsed: boolean = false;
+  modalOpen: boolean = false;
+  userActName = localStorage.getItem('account');
+  chngpwd: { token: string; old_password: string; new_password: string; }; // shahid
+  oldpwd: string;
+  token = localStorage.getItem('token');
+  changePasswordModel = new changePassword(this.token, '', '');
 
-    userType = this.myObj["UserType"];
-    user_id = this.myObj["id"];
-    UserName = this.myObj["username"];
-    whouser:any;
-    Highcharts = Highcharts;
-    wh_metering :any;
-    energy_saving:any;
-    firealarm_equipments_system:any;
-    firealarm_monitoring_system:any;
-    submetering:any;
-    warehouseName : string;
-    sessionVerify: string; //for session verification    shahid
-    baselineVisibility: boolean = true;
+  superAdmin: boolean = false;
+  admin: boolean = false;
+  customer: string;
+  customerUser: boolean = false;
+  cat: any;
+  cunsData: any;
+  saveData: any;
+  myObj = JSON.parse(localStorage.getItem("account"));
 
-    // Variables for Breadcrumb
-    ifCustDashboard : boolean = false;
-    ifSiteDashboard : boolean = false;
+  userType = this.myObj["UserType"];
+  user_id = this.myObj["id"];
+  UserName = this.myObj["username"];
+  whouser: any;
+  Highcharts = Highcharts;
+  wh_metering: any;
+  energy_saving: any;
+  firealarm_equipments_system: any;
+  firealarm_monitoring_system: any;
+  submetering: any;
+  warehouseName: string;
+  sessionVerify: string; //for session verification    shahid
+  baselineVisibility: boolean = true;
 
-    user_category : any;
+  // Variables for Breadcrumb
+  ifCustDashboard: boolean = false;
+  ifSiteDashboard: boolean = false;
 
-    isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+  user_category: any;
+
+  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
-            map(result => result.matches)
-         );
-         
-    userService: any;
+      map(result => result.matches)
+    );
 
-    constructor(private data: DataService, private breakpointObserver: BreakpointObserver,
-                private router: Router,private tokenService: TokenService,private global:GlobalService,
-                private user_service:UserService,public dialog: MatDialog) { }
+  userService: any;
 
-    ngOnInit()
-      {
-        this.siteId = localStorage.getItem('siteId');
+  constructor(private data: DataService, private breakpointObserver: BreakpointObserver,
+    private router: Router, private route: ActivatedRoute, private tokenService: TokenService, private global: GlobalService,
+    private user_service: UserService, public dialog: MatDialog) { }
 
-        window.addEventListener('storage', (event) =>
-        {
-          if (event.storageArea == localStorage)
-          {
-            let token = localStorage.getItem("token")
-            if(token == undefined)
-            {
-            this.router.navigate(["/login"]);
-            }
-          }
-        }, false);
+  ngOnInit() {
+    this.siteId = localStorage.getItem('siteId');
 
-        let myObj = JSON.parse(localStorage.getItem("account"));
+    window.addEventListener('storage', (event) => {
+      if (event.storageArea == localStorage) {
+        let token = localStorage.getItem("token")
+        if (token == undefined) {
+          this.router.navigate(["/login"]);
+        }
+      }
+    }, false);
 
-        this.verifySession();
+    let myObj = JSON.parse(localStorage.getItem("account"));
 
-        if(myObj['UserType'] == 1)
-        {
+    this.verifySession();
+
+    this.route.queryParams.subscribe(params => {
+      if (params['view']) {
+        this.data.changeMessage(params['view']);
+      } else {
+        if (myObj['UserType'] == 1) {
           this.data.changeMessage("superadmin");
           // this.baselineVisibility=true;
         }
 
-        else if(myObj['UserType'] == 4 || myObj['UserType']==5)
-        {
+        else if (myObj['UserType'] == 4 || myObj['UserType'] == 5) {
           this.data.changeMessage("customer");
           // this.baselineVisibility=true;
         }
-        else if(myObj['UserType'] == 2){
+        else if (myObj['UserType'] == 2) {
           this.data.changeMessage("fireAlarm")
         }
-      
-        else 
-        {
+
+        else {
           // Handle Site manager view here
         }
+      }
+    });
+
+    this.data.currentMessage.subscribe(response => {
+      this.dashboardType = response;
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { view: response },
+        queryParamsHandling: 'merge'
+      });
+    });
 
 
-        this.data.currentMessage.subscribe(response => this.dashboardType = response);
+    if (this.dashboardType == 'customer' &&
+      (myObj['UserType'] == 1 ||
+        myObj['UserType'] == 2 ||
+        myObj['UserType'] == 3
+      )
+    ) {
+      /**
+      * If the user is admin or superadmin and
+      * the dashboard is customer dashboard then
+      * set the variable ifCustDashboard to True
+      */
+      this.ifCustDashboard = true;
+      this.baselineVisibility = true;
+    }
 
+    else if (this.dashboardType == 'wh_metering') {
+      /**
+      * If the dashboard type is WH Metering, WH Energy Saving or WH Asset Tracking
+      */
 
-        if(this.dashboardType == 'customer' && 
-            (myObj['UserType'] == 1 ||
-            myObj['UserType'] == 2 ||
-            myObj['UserType'] == 3
-            )
-          )
-          {
-            /**
-            * If the user is admin or superadmin and
-            * the dashboard is customer dashboard then
-            * set the variable ifCustDashboard to True
-            */
-            this.ifCustDashboard = true;
-            this.baselineVisibility = true;
-          }
-
-        else if(this.dashboardType == 'wh_metering')
-        {
-          /**
-          * If the dashboard type is WH Metering, WH Energy Saving or WH Asset Tracking
-          */
-
-          /**
-          * If the user is admin or superadmin then set the customer dashboard also to true
-          */
-          if(myObj['UserType'] == 1 ||
-            myObj['UserType'] == 2 ||
-            myObj['UserType'] == 3
-            )
-            
-            {
-              this.ifCustDashboard = true;
-            }
-
-          else if(myObj['UserType']==4 || myObj['UserType']==5)
-            {
-            // If user is customer then
-            // customer dashboard shall be visible
-            this.ifCustDashboard = true;
-            this.baselineVisibility = true;
-            }
-
-          else
-            {
-            // If user is site manager,
-            // then customer dashboard shall not be visible
-            this.ifCustDashboard = false;
-            }
-
-            // Site Dashboard is visible to all Superadmin, Admins,
-            // Aviconn User, Customer, Site Manager
-            this.ifSiteDashboard = true;
-        }
-
-        else if(this.dashboardType == 'energy_saving')
-        {
-          if(myObj['UserType'] == 1 ||
-            myObj['UserType'] == 2 ||
-            myObj['UserType'] == 3
-            )
-          {
-            this.ifCustDashboard = true;
-          }
-          else
-          {
-            this.ifCustDashboard = false;
-          }
-
-          this.ifSiteDashboard = true;
-        }
-        
-        console.log("Dashboard Type :" + this.dashboardType);
-
-        // if (this.userType == '1')
-        // {
-        //   this.superAdmin= true;
-        // }
-        // else if(this.userType == '2')
-        // {
-        //   this.admin= true;
-        // }
-        // else if(this.userType == '4')
-        // {
-        //   this.customerUser = true;
-        // }
-
-        // this.user_id = localStorage.getItem();
-        this.customer = localStorage.getItem('customer');
-        console.log("user login by",this.customer);
-        // this account.username
-
-        this.user_category = localStorage.getItem('user_category');
-        console.log("user login by user caterory ",this.user_category);
-        
-        this.whouser = localStorage.getItem('whouser');
-        console.log("User login by pta nhi",this.whouser)
-      
-        this.wh_metering  = localStorage.getItem('wh_metering');
-        console.log("dashboard type is WH_M",this.wh_metering)
-      
-        this.energy_saving  = localStorage.getItem('energy_saving');
-        console.log("Dashboard type is WH_S",this.energy_saving)
-
-        this.firealarm_monitoring_system  = localStorage.getItem('firealarm_monitoring_system');
-        console.log("Dashboard type is WH_monitoring",this.firealarm_monitoring_system)
-
-        this.firealarm_equipments_system  = localStorage.getItem('firealarm_equipments_system');
-        console.log("Dashboard type is WH_management",this.firealarm_equipments_system)
-      
-        this.warehouseName = localStorage.getItem('siteName');
-        
-        this.submetering = localStorage.getItem('submetering')
-        console.log("dashboard type is wh_submetering")
-
-        //Here is handling for baseline and jump dashboard
-        if((this.wh_metering == true )&&(this.energy_saving == true))
-          {
-            this.baselineVisibility = true;
-          }
-        
-          if(localStorage.getItem('token') && localStorage.getItem('account'))
-            {
-              this.global.me = JSON.parse(localStorage.getItem('account'));
-              //this.getMovies();
-              this.getToken();
-              //this.idel.start();
-            }
-            
-          else
-            {
-              this.router.navigate(['/login']);
-            }
+      /**
+      * If the user is admin or superadmin then set the customer dashboard also to true
+      */
+      if (myObj['UserType'] == 1 ||
+        myObj['UserType'] == 2 ||
+        myObj['UserType'] == 3
+      ) {
+        this.ifCustDashboard = true;
       }
 
-    verifySession()
-      {
-        this.infoToken = {"token": localStorage.getItem("token")}
-        this.user_service.validateToken(this.infoToken).subscribe
-        (
-          response => {
-                        this.sessionVerify = response['result']
-                        if (this.sessionVerify == 'true')
-                          {
-                            console.log(this.sessionVerify+ 'Session verified')
-                          }
-
-                        else
-                          {
-                            // localStorage.removeItem('token');
-                            localStorage.clear();
-                            localStorage.removeItem('token');
-                            this.router.navigate(['/login']);
-                          }
-                      }
-        )
+      else if (myObj['UserType'] == 4 || myObj['UserType'] == 5) {
+        // If user is customer then
+        // customer dashboard shall be visible
+        this.ifCustDashboard = true;
+        this.baselineVisibility = true;
       }
 
-      dgFuelGraph(){
-        this.data.changeMessage("loadData");
-      }
-    getToken()
-    {
-        this.tokenService.getToken().subscribe
-        (
-          response => {
-                        this.infoToken = response;
-                        // this.moviesInfo = response['title'];
-                        console.log('My-token',response);
-                      },
-
-          error => {
-                      console.log('error',error);
-                  }
-        );               
-      }
-
-    baseline()
-      {
-        console.log("baseline html hit")
-        this.data.changeMessage("baseline");
-        localStorage.setItem('siteId',this.siteId);
-        localStorage.setItem("baseline", 'true');
-      }
-
-    logOut()
-      {
-        console.log('system is going to logout')
-        localStorage.clear();
-        localStorage.removeItem('token');
-        this.router.navigate(['/login']);
-        console.log('system is successfully logout')
-      }
-
-    home()
-      {
-        this.ifSiteDashboard = false;
+      else {
+        // If user is site manager,
+        // then customer dashboard shall not be visible
         this.ifCustDashboard = false;
-        localStorage.removeItem('customer');
-        localStorage.removeItem('whouser');
-        localStorage.removeItem('wh_metering');
-        localStorage.removeItem('energy_savinging');
-        
-
-        location.reload();
       }
 
+      // Site Dashboard is visible to all Superadmin, Admins,
+      // Aviconn User, Customer, Site Manager
+      this.ifSiteDashboard = true;
+    }
 
-
-    customerPage()
-      {
-        this.ifSiteDashboard = false;
-        localStorage.removeItem('whouser');
-        localStorage.removeItem('wh_metering');
-        localStorage.removeItem('energy_savinging');
-        location.reload();
+    else if (this.dashboardType == 'energy_saving') {
+      if (myObj['UserType'] == 1 ||
+        myObj['UserType'] == 2 ||
+        myObj['UserType'] == 3
+      ) {
+        this.ifCustDashboard = true;
       }
-
-    
-    Super_Admin_Home()
-      {
-        this.ifSiteDashboard = false;
+      else {
         this.ifCustDashboard = false;
-        localStorage.removeItem('customer');
-        localStorage.removeItem('whouser');
-        localStorage.removeItem('wh_metering');
-        localStorage.removeItem('energy_savinging');
-
-        location.reload();
-        
-        console.log("Super_Admin_Home Clicked at dashboard")
       }
 
-    onChangepwd()
-      {
-        console.log("New Password :", this.changePasswordModel.newpassword);
-        this.chngpwd = {'token':this.token,
-                        'old_password':btoa(this.changePasswordModel.oldpassword),
-                        'new_password':btoa(this.changePasswordModel.newpassword)
-                      };
+      this.ifSiteDashboard = true;
+    }
 
-        this.user_service.changePassword(this.chngpwd).subscribe
-        (
-          response =>
-            {
-              //console.log("server_Res: ", data);
-              if(response['result'] == '1')
-                this.data.success(response['msg']);
-              else
-                this.data.warn(response['msg']);
-            },
+    console.log("Dashboard Type :" + this.dashboardType);
 
-          error =>
-            {
-              console.log("Server Error: ", error);
-            }
-        );
-      }
+    // if (this.userType == '1')
+    // {
+    //   this.superAdmin= true;
+    // }
+    // else if(this.userType == '2')
+    // {
+    //   this.admin= true;
+    // }
+    // else if(this.userType == '4')
+    // {
+    //   this.customerUser = true;
+    // }
 
+    // this.user_id = localStorage.getItem();
+    this.customer = localStorage.getItem('customer');
+    console.log("user login by", this.customer);
+    // this account.username
+
+    this.user_category = localStorage.getItem('user_category');
+    console.log("user login by user caterory ", this.user_category);
+
+    this.whouser = localStorage.getItem('whouser');
+    console.log("User login by pta nhi", this.whouser)
+
+    this.wh_metering = localStorage.getItem('wh_metering');
+    console.log("dashboard type is WH_M", this.wh_metering)
+
+    this.energy_saving = localStorage.getItem('energy_saving');
+    console.log("Dashboard type is WH_S", this.energy_saving)
+
+    this.firealarm_monitoring_system = localStorage.getItem('firealarm_monitoring_system');
+    console.log("Dashboard type is WH_monitoring", this.firealarm_monitoring_system)
+
+    this.firealarm_equipments_system = localStorage.getItem('firealarm_equipments_system');
+    console.log("Dashboard type is WH_management", this.firealarm_equipments_system)
+
+    this.warehouseName = localStorage.getItem('siteName');
+
+    this.submetering = localStorage.getItem('submetering')
+    console.log("dashboard type is wh_submetering")
+
+    //Here is handling for baseline and jump dashboard
+    if ((this.wh_metering == true) && (this.energy_saving == true)) {
+      this.baselineVisibility = true;
+    }
+
+    if (localStorage.getItem('token') && localStorage.getItem('account')) {
+      this.global.me = JSON.parse(localStorage.getItem('account'));
+      //this.getMovies();
+      this.getToken();
+      //this.idel.start();
+    }
+
+    else {
+      this.router.navigate(['/login']);
+    }
   }
+
+  verifySession() {
+    this.infoToken = { "token": localStorage.getItem("token") }
+    this.user_service.validateToken(this.infoToken).subscribe
+      (
+        response => {
+          this.sessionVerify = response['result']
+          if (this.sessionVerify == 'true') {
+            console.log(this.sessionVerify + 'Session verified')
+          }
+
+          else {
+            // localStorage.removeItem('token');
+            localStorage.clear();
+            localStorage.removeItem('token');
+            this.router.navigate(['/login']);
+          }
+        }
+      )
+  }
+
+  dgFuelGraph() {
+    this.data.changeMessage("loadData");
+  }
+  getToken() {
+    this.tokenService.getToken().subscribe
+      (
+        response => {
+          this.infoToken = response;
+          // this.moviesInfo = response['title'];
+          console.log('My-token', response);
+        },
+
+        error => {
+          console.log('error', error);
+        }
+      );
+  }
+
+  baseline() {
+    console.log("baseline html hit")
+    this.data.changeMessage("baseline");
+    localStorage.setItem('siteId', this.siteId);
+    localStorage.setItem("baseline", 'true');
+  }
+
+  logOut() {
+    console.log('system is going to logout')
+    localStorage.clear();
+    localStorage.removeItem('token');
+    this.router.navigate(['/login']);
+    console.log('system is successfully logout')
+  }
+
+  home() {
+    this.ifSiteDashboard = false;
+    this.ifCustDashboard = false;
+    localStorage.removeItem('customer');
+    localStorage.removeItem('whouser');
+    localStorage.removeItem('wh_metering');
+    localStorage.removeItem('energy_savinging');
+
+
+    location.reload();
+  }
+
+
+
+  customerPage() {
+    this.ifSiteDashboard = false;
+    localStorage.removeItem('whouser');
+    localStorage.removeItem('wh_metering');
+    localStorage.removeItem('energy_savinging');
+    location.reload();
+  }
+
+
+  Super_Admin_Home() {
+    this.ifSiteDashboard = false;
+    this.ifCustDashboard = false;
+    localStorage.removeItem('customer');
+    localStorage.removeItem('whouser');
+    localStorage.removeItem('wh_metering');
+    localStorage.removeItem('energy_savinging');
+
+    location.reload();
+
+    console.log("Super_Admin_Home Clicked at dashboard")
+  }
+
+  onChangepwd() {
+    console.log("New Password :", this.changePasswordModel.newpassword);
+    this.chngpwd = {
+      'token': this.token,
+      'old_password': btoa(this.changePasswordModel.oldpassword),
+      'new_password': btoa(this.changePasswordModel.newpassword)
+    };
+
+    this.user_service.changePassword(this.chngpwd).subscribe
+      (
+        response => {
+          //console.log("server_Res: ", data);
+          if (response['result'] == '1')
+            this.data.success(response['msg']);
+          else
+            this.data.warn(response['msg']);
+        },
+
+        error => {
+          console.log("Server Error: ", error);
+        }
+      );
+  }
+
+}
