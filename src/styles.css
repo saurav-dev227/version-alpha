@@ -72,6 +72,8 @@ body {
   display: flex !important;
   align-items: center !important;
   min-height: 60px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .orange-graph-header .row {
@@ -97,14 +99,15 @@ body {
   margin: 0 !important;
 }
 
+.orange-graph-header .mat-mdc-form-field-flex {
+  background-color: transparent !important;
+  padding: 0 12px !important;
+  margin-top: 0 !important;
+}
+
 .orange-graph-header .mat-mdc-form-field-infix {
   padding: 12px 0 !important;
   border-top: 0 !important;
-}
-
-.orange-graph-header .mat-mdc-form-field-type-mat-input .mat-mdc-form-field-flex {
-  padding: 0 12px !important;
-  margin-top: 0 !important;
 }
 
 /* Make form fields inside orange header look integrated */
@@ -130,8 +133,16 @@ body {
 .orange-graph-header .header-title-field {
   font-size: 16px;
   font-weight: 500;
+  display: flex;
+  align-items: center;
   max-width: 100%;
   text-align: left;
+}
+
+.orange-graph-header .header-title-field mat-form-field {
+  width: 100% !important;
+  min-width: 340px !important;
+  max-width: 400px !important;
 }
 
 .orange-graph-header .header-date-field {
@@ -264,6 +275,7 @@ body {
 .mat-mdc-progress-spinner circle {
   stroke: #69f0ae !important;
 }
+
 /* Professional Chart Loading Overlay - Non-destructive */
 .chart-loading-overlay {
   position: absolute;

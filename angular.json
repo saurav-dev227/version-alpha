@@ -38,7 +38,8 @@
             "allowedCommonJsDependencies": [
               "highcharts",
               "highcharts/highcharts-more",
-              "highcharts/modules/exporting"
+              "highcharts/modules/exporting",
+              "hammerjs"
             ],
             "browser": "src/main.ts"
           },

@@ -8,7 +8,7 @@ import { DashboardDataService } from './../services/dashboard-data.service';
 import { LoginComponent } from './../login/login.component';
 
 import { UserService } from './../services/user.service';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import * as Highcharts from 'highcharts';
@@ -23,7 +23,8 @@ Highcharts.setOptions({
 //import {MatPaginator} from '@angular/material';
 import { MatSort } from '@angular/material/sort';
 import { UntypedFormControl } from '@angular/forms';
-import { Observable, from, interval } from 'rxjs';
+import { Observable, from, interval, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { formatDate, getLocaleDayNames } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material/dialog';
@@ -36,6 +37,7 @@ import { LightsWattDataComponent } from '../lights-watt-data/lights-watt-data.co
 import { LoadDataTableComponent } from '../load-data-table/load-data-table.component';
 import { CustomDateRangePickerComponent } from '../custom-date-range-picker/custom-date-range-picker.component';
 import { DgFuelExcelExportComponent } from '../dg-fuel-excel-export/dg-fuel-excel-export.component';
+import { LoadGraphExcelExportComponent } from '../load-graph-excel-export/load-graph-excel-export.component';
 
 
 export interface KeyValueIf {
@@ -52,7 +54,7 @@ export interface KeyValueIf {
     ,
     standalone: false
 })
-export class WhMeteringComponent implements OnInit {
+export class WhMeteringComponent implements OnInit, OnDestroy {
 
     myObj = JSON.parse(localStorage.getItem("account"));
     siteId = localStorage.getItem('siteId');
@@ -128,8 +130,6 @@ export class WhMeteringComponent implements OnInit {
     pieChart = Highcharts;
     public pieChartOptions: any = {};
     barChartOptions: any = {};
-    barChartOptionsRunTime: any = {}; // this is for run time graph
-    unitConsumptionGraph: boolean = true;
     runTimeGraph: boolean = false
     graphTitle: string;
     graphYAxis: string;
@@ -165,6 +165,9 @@ export class WhMeteringComponent implements OnInit {
     pieChartLoading: boolean = true;
     barChartLoading: boolean = true;
     loadGraphLoading: boolean = true;
+    dgFuelChartLoading: boolean = false;
+    energyExportLoading: boolean = false;
+    dgFuelExportLoading: boolean = false;
     @ViewChild('chart') chart;
     @ViewChild("loadChart") loadChart;
 
@@ -173,6 +176,7 @@ export class WhMeteringComponent implements OnInit {
     loadChartInst: Highcharts.Chart;
     trendChartInst: Highcharts.Chart;
     energyChartInst: Highcharts.Chart;
+    private destroy$ = new Subject<void>();
 
     pieChartCallback: any;
     dgFuelChartCallback: any;
@@ -196,7 +200,7 @@ export class WhMeteringComponent implements OnInit {
         this.loadChartCallback = (chart: Highcharts.Chart) => { this.loadChartInst = chart; };
         this.trendChartCallback = (chart: Highcharts.Chart) => { this.trendChartInst = chart; };
         this.energyChartCallback = (chart: Highcharts.Chart) => { this.energyChartInst = chart; };
-        this.chartCallback = this.energyChartCallback;
+        this.chartCallback = this.trendChartCallback;
         this.show_dg_mains_run_time = localStorage.getItem('show_dg_mains_run_time');
         if (this.show_dg_mains_run_time == "true") {
             this.graphTypes = [
@@ -293,7 +297,7 @@ export class WhMeteringComponent implements OnInit {
 
 
     ngAfterViewInit() {
-        interval(15000).subscribe(
+        interval(60000).pipe(takeUntil(this.destroy$)).subscribe(
             response => {
                 if (this.selected_load_options == "4" && this.liveLoadApiCal) {
                     this.load_data_every_second();
@@ -301,10 +305,15 @@ export class WhMeteringComponent implements OnInit {
 
             }
         );
-        interval(5000).subscribe(
+        interval(30000).pipe(takeUntil(this.destroy$)).subscribe(
             response => {
                 this.getSiteCurrLoadInfoData();
             });
+    }
+
+    ngOnDestroy() {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     dgFuelConsumptionGraph() {
@@ -312,19 +321,25 @@ export class WhMeteringComponent implements OnInit {
         let reqData = { "site_id": this.siteId, "date": todayDate, "user_type": this.user_type }
         this.dgFuelDataSelectionChange = false;
         this.dgFuelData = true;
+        this.dgFuelChartLoading = true;
         this.DataService.dgFuelConsumptionData(reqData).subscribe(
             res => {
                 this.ngZone.runOutsideAngular(() => {
                     let dataSeries = res["data"]
-                    let refuelSeries = res["refuel_alert"]
+                    if (!dataSeries || dataSeries.length === 0) {
+                        const epoch_time = new Date(this.dgFuelDate.value).getTime();
+                        dataSeries = [[epoch_time, 0]];
+                    }
+
+                    let refuelSeries = res["refuel_alert"] || { data: [] };
                     refuelSeries["dataLabels"] = { "enabled": true }
-                    let theftSeries = res["theft_alert"]
+                    let theftSeries = res["theft_alert"] || { data: [] };
                     theftSeries["dataLabels"] = { "enabled": true }
-                    let dgFuelConsumed = res["dg_fuel_data"]
+                    let dgFuelConsumed = res["dg_fuel_data"] || { data: [] };
                     dgFuelConsumed["dataLabels"] = { "enabled": true }
-                    let dgUnitPerLtr = res["dg_unit_per_litre_data"]
+                    let dgUnitPerLtr = res["dg_unit_per_litre_data"] || { data: [] };
                     dgUnitPerLtr["dataLabels"] = { "enabled": true }
-                    let dgConsumptionDataSeries = res["dg_unit_data"]
+                    let dgConsumptionDataSeries = res["dg_unit_data"] || { data: [] };
                     dgConsumptionDataSeries["yAxis"] = 1
                     dgConsumptionDataSeries["dataLabels"] = { "enabled": true }
 
@@ -332,6 +347,7 @@ export class WhMeteringComponent implements OnInit {
                         colorCount: '5',
                         colors: ['#90ED7D', '#7cb5ec', '#ff0000', '#ff7a01', '#800080', '#00008B'],
                         chart: {
+                            type: "spline",
                             backgroundColor: "#222222",
                             scrollablePlotArea: {
                                 minWidth: 300,
@@ -376,11 +392,27 @@ export class WhMeteringComponent implements OnInit {
                             series: { turboThreshold: 0, pointWidth: 15, animation: false }
                         },
                         series: [{
-                            type: "areaspline",
+                            type: "spline",
                             name: 'Fuel Level',
                             data: dataSeries,
-                            fillColor: (Highcharts as any).color('#808080').setOpacity(0.66).get()
-                        }, refuelSeries, theftSeries, dgConsumptionDataSeries, dgFuelConsumed, dgUnitPerLtr]
+                            color: '#90ED7D',
+                            lineWidth: 2
+                        }, {
+                            ...refuelSeries,
+                            color: '#7cb5ec'
+                        }, {
+                            ...theftSeries,
+                            color: '#ff0000'
+                        }, {
+                            ...dgConsumptionDataSeries,
+                            color: '#ff7a01'
+                        }, {
+                            ...dgFuelConsumed,
+                            color: '#800080'
+                        }, {
+                            ...dgUnitPerLtr,
+                            color: '#00008B'
+                        }]
                     };
 
                     if (this.dgFuelChartInst) {
@@ -388,9 +420,13 @@ export class WhMeteringComponent implements OnInit {
                     } else {
                         this.dgFuelConsumptionOptions = options;
                     }
-                    this.chartLoading = false;
+                    this.dgFuelChartLoading = false;
                     this.cdr.detectChanges();
                 });
+            },
+            error => {
+                this.dgFuelChartLoading = false;
+                this.cdr.detectChanges();
             }
         )
     }
@@ -398,21 +434,27 @@ export class WhMeteringComponent implements OnInit {
     dgFuelConsumptionGraphSelectionChange() {
         let todayDate = formatDate(this.dgFuelDate.value, 'yyyy/MM/dd', 'en');
         let reqData = { "site_id": this.siteId, "date": todayDate, "user_type": this.user_type }
-        this.dgFuelData = false;
-        this.dgFuelDataSelectionChange = true;
+        this.dgFuelData = true;
+        this.dgFuelDataSelectionChange = false;
+        this.dgFuelChartLoading = true;
         this.DataService.dgFuelConsumptionData(reqData).subscribe(
             res => {
                 this.ngZone.runOutsideAngular(() => {
                     let dataSeries = res["data"]
-                    let refuelSeries = res["refuel_alert"]
+                    if (!dataSeries || dataSeries.length === 0) {
+                        const epoch_time = new Date(this.dgFuelDate.value).getTime();
+                        dataSeries = [[epoch_time, 0]];
+                    }
+
+                    let refuelSeries = res["refuel_alert"] || { data: [] };
                     refuelSeries["dataLabels"] = { "enabled": true }
-                    let theftSeries = res["theft_alert"]
+                    let theftSeries = res["theft_alert"] || { data: [] };
                     theftSeries["dataLabels"] = { "enabled": true }
-                    let dgFuelConsumed = res["dg_fuel_data"]
+                    let dgFuelConsumed = res["dg_fuel_data"] || { data: [] };
                     dgFuelConsumed["dataLabels"] = { "enabled": true }
-                    let dgUnitPerLtr = res["dg_unit_per_litre_data"]
+                    let dgUnitPerLtr = res["dg_unit_per_litre_data"] || { data: [] };
                     dgUnitPerLtr["dataLabels"] = { "enabled": true }
-                    let dgConsumptionDataSeries = res["dg_unit_data"]
+                    let dgConsumptionDataSeries = res["dg_unit_data"] || { data: [] };
                     dgConsumptionDataSeries["yAxis"] = 1
                     dgConsumptionDataSeries["dataLabels"] = { "enabled": true }
 
@@ -487,21 +529,40 @@ export class WhMeteringComponent implements OnInit {
                             }
                         },
                         series: [{
-                            type: "areaspline",
+                            type: "spline",
                             name: 'Fuel Level',
                             data: dataSeries,
-                            fillColor: (Highcharts as any).color('#808080').setOpacity(0.66).get(),
-                        }, refuelSeries, theftSeries, dgConsumptionDataSeries, dgFuelConsumed, dgUnitPerLtr]
+                            color: '#90ED7D',
+                            lineWidth: 2
+                        }, {
+                            ...refuelSeries,
+                            color: '#7cb5ec'
+                        }, {
+                            ...theftSeries,
+                            color: '#ff0000'
+                        }, {
+                            ...dgConsumptionDataSeries,
+                            color: '#ff7a01'
+                        }, {
+                            ...dgFuelConsumed,
+                            color: '#800080'
+                        }, {
+                            ...dgUnitPerLtr,
+                            color: '#00008B'
+                        }]
                     };
 
                     if (this.dgFuelChartInst) {
                         this.dgFuelChartInst.update(options as any, true, true, false);
-                    } else {
-                        this.dgFuelConsumptionSelectionOptions = options;
                     }
-                    this.chartLoading = false;
+                    this.dgFuelConsumptionOptions = options;
+                    this.dgFuelChartLoading = false;
                     this.cdr.detectChanges();
                 });
+            },
+            error => {
+                this.dgFuelChartLoading = false;
+                this.cdr.detectChanges();
             }
         )
     }
@@ -981,6 +1042,7 @@ export class WhMeteringComponent implements OnInit {
                         this.energyChartInst.update(options as any, true, true, false);
                     } else {
                         this.barChartOptions = options;
+                        this.updateFlag = true;
                     }
                     this.barChartLoading = false;
                     this.cdr.detectChanges();
@@ -995,6 +1057,16 @@ export class WhMeteringComponent implements OnInit {
     showEnergyExportModal: boolean = false;
     energyExportStartDate: Date;
     energyExportEndDate: Date;
+
+    // DG Fuel Custom Range Modal Properties
+    showDgFuelCustomRangeModal: boolean = false;
+    dgFuelCustomRangeStartDate: Date;
+    dgFuelCustomRangeEndDate: Date;
+
+    // DG Fuel Export Modal Properties
+    showDgFuelExportModal: boolean = false;
+    dgFuelExportStartDate: Date;
+    dgFuelExportEndDate: Date;
 
     openEnergyExportModal() {
         this.showEnergyExportModal = true;
@@ -1012,9 +1084,6 @@ export class WhMeteringComponent implements OnInit {
             const formattedFrom = formatDate(this.energyExportStartDate, 'yyyy-MM-dd', 'en');
             const formattedTo = formatDate(this.energyExportEndDate, 'yyyy-MM-dd', 'en');
 
-            // console.log(`Exporting Energy Data from ${formattedFrom} to ${formattedTo}`);
-            // console.log(`Site: ${this.siteDetails.site_name}`);
-
             let data = {
                 "user_id": this.user_id,
                 "user_type": this.user_type,
@@ -1023,11 +1092,11 @@ export class WhMeteringComponent implements OnInit {
                 "end_date": formattedTo,
             }
 
-            this.DataService.showLoader();
+            this.energyExportLoading = true;
             this.DataService.excelDataValue(data).subscribe(
                 (response: any) => {
                     this.downloadFile(response);
-                    this.DataService.hideLoader();
+                    this.energyExportLoading = false;
 
                     const msg = `Download Successful! ${this.siteDetails.site_name} Energy Saving (${formattedFrom} - ${formattedTo})`;
                     this.DataService.showCustomSuccess(msg);
@@ -1035,7 +1104,7 @@ export class WhMeteringComponent implements OnInit {
                     this.closeEnergyExportModal();
                 },
                 error => {
-                    this.DataService.hideLoader();
+                    this.energyExportLoading = false;
                     console.error("Error exporting data", error);
                 }
             )
@@ -1050,6 +1119,177 @@ export class WhMeteringComponent implements OnInit {
         link.href = downloadURL;
         link.download = ("energy_data_" + date + ".csv")
         link.click();
+    }
+
+    // ── DG Fuel Custom Range Modal ──────────────────────────────────
+    openDgFuelCustomRangeModal() {
+        this.showDgFuelCustomRangeModal = true;
+        const today = new Date();
+        this.dgFuelCustomRangeEndDate = new Date(today);
+        this.dgFuelCustomRangeStartDate = new Date(today);
+        this.dgFuelCustomRangeStartDate.setDate(today.getDate() - 30);
+    }
+
+    closeDgFuelCustomRangeModal() {
+        this.showDgFuelCustomRangeModal = false;
+    }
+
+    submitDgFuelCustomRange() {
+        if (this.dgFuelCustomRangeStartDate && this.dgFuelCustomRangeEndDate) {
+            this.dgFuelChartLoading = true;
+            const start_date = formatDate(this.dgFuelCustomRangeStartDate, 'yyyy-MM-dd', 'en');
+            const end_date = formatDate(this.dgFuelCustomRangeEndDate, 'yyyy-MM-dd', 'en');
+            const reqData = { "site_id": this.siteId, "from_date": start_date, "end_date": end_date };
+            this.DataService.fetchDGFuelDataCustomeRange(reqData).subscribe(
+                res => {
+                    this.ngZone.runOutsideAngular(() => {
+                        this.dgFuelData = true;
+                        this.dgFuelDataSelectionChange = false;
+
+                        let dataSeries = res["data"];
+                        if (!dataSeries || dataSeries.length === 0) {
+                            const epoch_time = new Date(this.dgFuelCustomRangeStartDate).getTime();
+                            dataSeries = [[epoch_time, 0]];
+                        }
+
+                        let refuelSeries = res["refuel_alert"] || { data: [] };
+                        refuelSeries["dataLabels"] = { "enabled": true };
+                        let theftSeries = res["theft_alert"] || { data: [] };
+                        theftSeries["dataLabels"] = { "enabled": true };
+                        let dgFuelConsumed = res["dg_fuel_data"] || { data: [] };
+                        let dgUnitPerLtr = res["dg_unit_per_litre_data"] || { data: [] };
+                        let dgConsumptionDataSeries = res["dg_unit_data"] || { data: [] };
+                        dgConsumptionDataSeries["yAxis"] = 1;
+                        dgConsumptionDataSeries["dataLabels"] = { "enabled": true };
+
+                        const options = {
+                            colorCount: '5',
+                            colors: ['#90ED7D', '#7cb5ec', '#ff0000', '#ff7a01', '#800080', '#00008B'],
+                            chart: {
+                                type: "spline",
+                                backgroundColor: "#222222",
+                                scrollablePlotArea: { minWidth: 300, scrollPositionX: 1 },
+                                zoomType: "x",
+                                animation: false
+                            },
+                            navigator: { enabled: true },
+                            scrollbar: { enabled: true },
+                            legend: { itemStyle: { color: 'white' } },
+                            xAxis: {
+                                type: 'datetime',
+                                dateTimeLabelFormats: { day: '%d %b %Y' },
+                                startOnTick: true,
+                                endOnTick: true,
+                                showLastLabel: true,
+                                labels: {
+                                    style: { color: 'white' },
+                                    rotation: -45,
+                                    format: '{value:%Y-%m-%d %H:%M}',
+                                }
+                            },
+                            yAxis: [{
+                                labels: { style: { color: 'white' } },
+                                title: { text: 'Fuel Level (in Litres)', style: { color: 'white' } },
+                                opposite: false,
+                            }, {
+                                gridLineWidth: 0,
+                                title: { text: 'Unit Consumed In KWH', style: { color: 'white' } },
+                                labels: { format: '{value} KWH', style: { color: 'white' } },
+                                opposite: true,
+                                min: 0,
+                                max: 600,
+                                tickInterval: 100,
+                            }],
+                            time: { useUTC: false },
+                            title: { text: 'DG Fuel and Unit Trend', style: { color: 'white' } },
+                            credits: { enabled: false },
+                            plotOptions: {
+                                series: { turboThreshold: 0, pointWidth: 15, animation: false },
+                                spline: { animation: false },
+                                areaspline: { animation: false }
+                            },
+                            series: [{
+                                type: "spline",
+                                name: 'Fuel Level',
+                                color: '#90ED7D',
+                                data: dataSeries,
+                                lineWidth: 2
+                            }, {
+                                ...refuelSeries,
+                                color: '#7cb5ec'
+                            }, {
+                                ...theftSeries,
+                                color: '#ff0000'
+                            }, {
+                                ...dgConsumptionDataSeries,
+                                color: '#ff7a01'
+                            }, {
+                                ...dgFuelConsumed,
+                                color: '#800080'
+                            }, {
+                                ...dgUnitPerLtr,
+                                color: '#00008B'
+                            }]
+                        };
+
+                        if (this.dgFuelChartInst) {
+                            this.dgFuelChartInst.update(options as any, true, true, false);
+                        }
+                        this.dgFuelConsumptionOptions = options;
+                        this.dgFuelChartLoading = false;
+                        this.cdr.detectChanges();
+                    });
+                },
+                error => {
+                    this.dgFuelChartLoading = false;
+                    this.cdr.detectChanges();
+                }
+            );
+            this.closeDgFuelCustomRangeModal();
+        }
+    }
+
+    // ── DG Fuel Export Excel Modal ──────────────────────────────────
+    openDgFuelExportModal() {
+        this.showDgFuelExportModal = true;
+        const today = new Date();
+        this.dgFuelExportEndDate = new Date(today);
+        this.dgFuelExportStartDate = new Date(today);
+        this.dgFuelExportStartDate.setDate(today.getDate() - 30);
+    }
+
+    closeDgFuelExportModal() {
+        this.showDgFuelExportModal = false;
+    }
+
+    submitDgFuelExport() {
+        if (this.dgFuelExportStartDate && this.dgFuelExportEndDate) {
+            const start_date = formatDate(this.dgFuelExportStartDate, 'yyyy-MM-dd', 'en');
+            const end_date = formatDate(this.dgFuelExportEndDate, 'yyyy-MM-dd', 'en');
+            const data = { "site_id": this.siteId, "start_date": start_date, "end_date": end_date };
+            this.dgFuelExportLoading = true;
+            this.DataService.dgFuelExcelExport(data).subscribe(
+                (response: any) => {
+                    let date = new Date().getDate().toString() + '-' + new Date().toLocaleDateString("en-US", { month: 'short' }) + '-' + new Date().getFullYear().toString();
+                    let blob: Blob = response.body as Blob;
+                    var downloadURL = window.URL.createObjectURL(blob);
+                    var link = document.createElement('a');
+                    link.href = downloadURL;
+                    link.download = ("Report DG Fuel & Unit Trend_" + date + ".xlsx");
+                    link.click();
+                    this.dgFuelExportLoading = false;
+
+                    const msg = `Download Successful! ${this.siteDetails.site_name} DG Fuel Report (${start_date} - ${end_date})`;
+                    this.DataService.showCustomSuccess(msg);
+
+                    this.closeDgFuelExportModal();
+                },
+                error => {
+                    this.dgFuelExportLoading = false;
+                    console.error("Error exporting DG fuel data", error);
+                }
+            );
+        }
     }
 
     columnGraphFilterChanged(interval) {
@@ -1105,6 +1345,7 @@ export class WhMeteringComponent implements OnInit {
                             } else {
                                 this.barChartOptions.xAxis.categories = response['Dates'];
                                 this.barChartOptions.series = response['Data'];
+                                this.updateFlag = true;
                             }
                             this.barChartLoading = false;
                             this.cdr.detectChanges();
@@ -1130,6 +1371,7 @@ export class WhMeteringComponent implements OnInit {
                             } else {
                                 this.barChartOptions.xAxis.categories = response['Hours'];
                                 this.barChartOptions.series = response['Data'];
+                                this.updateFlag = true;
                             }
                             this.barChartLoading = false;
                             this.cdr.detectChanges();
@@ -1138,8 +1380,8 @@ export class WhMeteringComponent implements OnInit {
                     error => { }
                 );
             }
-            this.unitConsumptionGraph = true;
-            this.runTimeGraph = false;
+
+
         }
         else if (graphType == "1") {
             // Percentage Run Graph
@@ -1164,6 +1406,7 @@ export class WhMeteringComponent implements OnInit {
                                 this.barChartOptions.xAxis.categories = response['Dates'];
                                 this.barChartOptions.series = response['Data'];
                                 this.barChartOptions.yAxis.title.text = "Number of units % (KWh)"
+                                this.updateFlag = true;
                             }
                             this.barChartLoading = false;
                             this.cdr.detectChanges();
@@ -1187,6 +1430,7 @@ export class WhMeteringComponent implements OnInit {
                             } else {
                                 this.barChartOptions.xAxis.categories = response['Hours'];
                                 this.barChartOptions.series = response['Data'];
+                                this.updateFlag = true;
                             }
                             this.barChartLoading = false;
                             this.cdr.detectChanges();
@@ -1195,8 +1439,8 @@ export class WhMeteringComponent implements OnInit {
                     error => { }
                 );
             }
-            this.unitConsumptionGraph = true;
-            this.runTimeGraph = false;
+
+
         }
 
         else {
@@ -1275,10 +1519,11 @@ export class WhMeteringComponent implements OnInit {
                             if (this.energyChartInst) {
                                 this.energyChartInst.update(options as any, true, true, false);
                             } else {
-                                this.barChartOptionsRunTime = options;
+                                this.barChartOptions = options;
+                                this.updateFlag = true;
                             }
-                            this.unitConsumptionGraph = false;
-                            this.runTimeGraph = true;
+
+
                             this.barChartLoading = false;
                             this.cdr.detectChanges();
                         });
@@ -1308,7 +1553,7 @@ export class WhMeteringComponent implements OnInit {
                                 },
                                 xAxis: {
                                     labels: { style: { color: 'white' } },
-                                    categories: response['Dates']
+                                    categories: response['Hours']
                                 },
                                 yAxis: {
                                     allowDecimals: false,
@@ -1357,10 +1602,11 @@ export class WhMeteringComponent implements OnInit {
                             if (this.energyChartInst) {
                                 this.energyChartInst.update(options as any, true, true, false);
                             } else {
-                                this.barChartOptionsRunTime = options;
+                                this.barChartOptions = options;
+                                this.updateFlag = true;
                             }
-                            this.unitConsumptionGraph = false;
-                            this.runTimeGraph = true;
+
+
                             this.barChartLoading = false;
                             this.cdr.detectChanges();
                         });
@@ -1373,25 +1619,14 @@ export class WhMeteringComponent implements OnInit {
 
     changeGraphStacking() {
         this.whichGraph ^= 0x1;
+        const stacking = this.whichGraph == 0 ? '' : 'normal';
 
-        if (this.whichGraph == 0) {
-            this.barChartOptions.plotOptions.column.stacking = '';
-            this.updateFlag = true;
-        }
-        else {
-            this.barChartOptions.plotOptions.column.stacking = 'normal';
-            this.updateFlag = true;
-        }
-    }
-    changeGraphStackingRunTime() {
-        this.whichGraph ^= 0x1;
-
-        if (this.whichGraph == 0) {
-            this.barChartOptionsRunTime.plotOptions.column.stacking = '';
-            this.updateFlag = true;
-        }
-        else {
-            this.barChartOptionsRunTime.plotOptions.column.stacking = 'normal';
+        if (this.energyChartInst) {
+            this.energyChartInst.update({
+                plotOptions: { column: { stacking: stacking as any } }
+            } as any, true, false, false);
+        } else {
+            this.barChartOptions.plotOptions.column.stacking = stacking;
             this.updateFlag = true;
         }
     }
@@ -1428,19 +1663,47 @@ export class WhMeteringComponent implements OnInit {
         this.dialog.open(DgFuelExcelExportComponent, dialogConfig);
     }
 
-    exportLoadData() {
-        let data = { "site_id": this.siteId, "date": formatDate(this.loadDate.value, 'yyyy/MM/dd', 'en'), "graph_type": this.selected_load_options }
-        this.DataService.download_excel_load_data(data).subscribe(
-            (response: any) => {
-                let selectedGraphName = this.loadGraphintervals[parseInt(this.selected_load_options)].viewValue
-                let blob: Blob = response.body as Blob;
-                var downloadURL = window.URL.createObjectURL(blob);
-                var link = document.createElement('a');
-                link.href = downloadURL;
-                link.download = (selectedGraphName + "load_data_" + formatDate(this.loadDate.value, 'yyyy/MM/dd', 'en') + ".csv")
-                link.click();
-            }
-        )
+    exportLoadData(type: string = '2') {
+        if (this.selected_load_options == '0' || this.selected_load_options == '1' || this.selected_load_options == '4') {
+            const selectedDate = formatDate(this.loadDate.value, 'yyyy/MM/dd', 'en');
+            let data = {
+                "site_id": this.siteId,
+                "date": selectedDate,
+                "graph_type": this.selected_load_options
+            };
+            this.DataService.showLoader();
+            this.DataService.download_excel_load_data(data).subscribe(
+                (response: any) => {
+                    let blob: Blob = response.body as Blob;
+                    var downloadURL = window.URL.createObjectURL(blob);
+                    var link = document.createElement('a');
+                    link.href = downloadURL;
+                    link.download = ("load_data_" + selectedDate + ".csv");
+                    link.click();
+                    this.DataService.hideLoader();
+                    this.DataService.success("Report Downloaded Successfully");
+                },
+                error => {
+                    this.DataService.hideLoader();
+                    this.DataService.warn("Failed to download report");
+                }
+            );
+        } else {
+            const dialogConfig = new MatDialogConfig();
+            dialogConfig.disableClose = true;
+            dialogConfig.autoFocus = true;
+            dialogConfig.width = "20%";
+            dialogConfig.data = {
+                site_name: this.siteDetails.site_name,
+                graph_type: type
+            };
+            this.dialog.open(LoadGraphExcelExportComponent, dialogConfig);
+        }
+    }
+
+    getSelectedGraphLabel(): string {
+        const selected = this.graphTypes.find(g => g.value === this.selected_graph);
+        return selected ? selected.viewValue : '';
     }
 
     getSiteCurrLoadInfoData() {
@@ -1498,7 +1761,7 @@ export class WhMeteringComponent implements OnInit {
 
     home() {
         localStorage.removeItem('customer');
-        location.reload();
+        this.router.navigate(['/dashboard']);
     }
 
     sitePage() {

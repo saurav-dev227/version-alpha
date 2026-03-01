@@ -312,25 +312,15 @@ export class SubmeteringComponent implements OnInit {
   }
   changeGraphStacking() {
     this.whichGraph ^= 0x1;
+    const stacking = this.whichGraph == 0 ? '' : 'normal';
 
-    if (this.whichGraph == 0) {
-      try {
-        this.barChartOptions.plotOptions.column.stacking = ''; // for daily
-      }
-      catch { }
-      try {
-        this.updatedbarChartOptions.plotOptions.column.stacking = '';  // for hourly
-      }
-      catch { }
-      this.updateFlag = true;
-    }
-    else {
-      try {
-        this.barChartOptions.plotOptions.column.stacking = 'normal'; // for daily
-      } catch { console.log("error in daily....") }
-      try {
-        this.updatedbarChartOptions.plotOptions.column.stacking = 'normal'; // for hourly
-      } catch { console.log("error in hourly ....") }
+    if (this.energyChartInst) {
+      this.energyChartInst.update({
+        plotOptions: { column: { stacking: stacking as any } }
+      } as any, true, false, false);
+    } else {
+      try { this.barChartOptions.plotOptions.column.stacking = stacking; } catch { }
+      try { this.updatedbarChartOptions.plotOptions.column.stacking = stacking; } catch { }
       this.updateFlag = true;
     }
   }
@@ -445,7 +435,7 @@ export class SubmeteringComponent implements OnInit {
 
   home() {
     localStorage.removeItem('customer');
-    location.reload();
+    this.router.navigate(['/dashboard']);
   }
 
   customerPage() {

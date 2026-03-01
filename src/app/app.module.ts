@@ -68,13 +68,15 @@ import { LoadDataTableComponent } from './load-data-table/load-data-table.compon
 import { CustomDateRangePickerComponent } from './custom-date-range-picker/custom-date-range-picker.component';
 import { DgFuelExcelExportComponent } from './dg-fuel-excel-export/dg-fuel-excel-export.component';
 import { SubmeteringComponent } from './submetering/submetering.component';
+import { LoadGraphExcelExportComponent } from './load-graph-excel-export/load-graph-excel-export.component';
 
 
 
 //pass the fusioncharts library and chart modules
 // FusionChartsModule.fcRoot(FusionCharts, Charts, FusionTheme);
 
-@NgModule({ declarations: [
+@NgModule({
+    declarations: [
         AppComponent,
         LoginComponent,
         DialogOverComponent,
@@ -109,6 +111,7 @@ import { SubmeteringComponent } from './submetering/submetering.component';
         CustomDateRangePickerComponent,
         DgFuelExcelExportComponent,
         SubmeteringComponent,
+        LoadGraphExcelExportComponent,
     ],
     exports: [MatDialogModule
     ],
@@ -142,9 +145,10 @@ import { SubmeteringComponent } from './submetering/submetering.component';
         MatRadioModule,
         MatCardModule,
         MatSlideToggleModule], providers: [
-        GlobalService,
-        ModalService,
-        provideHttpClient(withInterceptorsFromDi()),
-    ] })
+            GlobalService,
+            ModalService,
+            provideHttpClient(withInterceptorsFromDi()),
+        ]
+})
 
 export class AppModule { }
