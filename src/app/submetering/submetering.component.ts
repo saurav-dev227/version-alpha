@@ -435,7 +435,7 @@ export class SubmeteringComponent implements OnInit {
 
   home() {
     localStorage.removeItem('customer');
-    location.reload();
+    this.router.navigate(['/dashboard']);
   }
 
   customerPage() {

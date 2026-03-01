@@ -1761,7 +1761,7 @@ export class WhMeteringComponent implements OnInit, OnDestroy {
 
     home() {
         localStorage.removeItem('customer');
-        location.reload();
+        this.router.navigate(['/dashboard']);
     }
 
     sitePage() {

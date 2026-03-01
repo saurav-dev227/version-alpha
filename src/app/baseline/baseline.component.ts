@@ -15,13 +15,14 @@ import { DataService } from './../services/data.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material/dialog';
 import { DialogSwitchdashComponent } from '../dialog-switchdash/dialog-switchdash.component';
 import { MatSnackBar, MatSnackBarConfig, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 
 @Component({
-    selector: 'app-baseline',
-    templateUrl: './baseline.component.html',
-    styleUrls: ['./baseline.component.css'],
-    standalone: false
+  selector: 'app-baseline',
+  templateUrl: './baseline.component.html',
+  styleUrls: ['./baseline.component.css'],
+  standalone: false
 })
 
 export class BaselineComponent implements OnInit {
@@ -72,7 +73,7 @@ export class BaselineComponent implements OnInit {
 
 
 
-  constructor(private UserService: UserService, private DataService: DataService, public dialog: MatDialog) {
+  constructor(private UserService: UserService, private DataService: DataService, public dialog: MatDialog, private router: Router) {
 
 
   }
@@ -447,7 +448,7 @@ export class BaselineComponent implements OnInit {
     localStorage.removeItem('wh_metering');
     localStorage.removeItem('energy_saving');
 
-    location.reload();
+    this.router.navigate(['/dashboard']);
   }
 
   customerPage() {
@@ -455,7 +456,7 @@ export class BaselineComponent implements OnInit {
     localStorage.removeItem('whouser');
     localStorage.removeItem('wh_metering');
     localStorage.removeItem('energy_saving');
-    location.reload();
+    this.router.navigate(['/dashboard'], { queryParams: { view: 'customer' } });
   }
   sitePage() {
     localStorage.removeItem('baseline');

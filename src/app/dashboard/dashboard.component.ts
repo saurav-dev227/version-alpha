@@ -311,7 +311,7 @@ export class DashboardComponent implements OnInit {
     localStorage.removeItem('energy_savinging');
 
 
-    location.reload();
+    this.router.navigate(['/dashboard']);
   }
 
 
@@ -321,7 +321,7 @@ export class DashboardComponent implements OnInit {
     localStorage.removeItem('whouser');
     localStorage.removeItem('wh_metering');
     localStorage.removeItem('energy_savinging');
-    location.reload();
+    this.router.navigate(['/dashboard'], { queryParams: { view: 'customer' } });
   }
 
 
@@ -333,7 +333,7 @@ export class DashboardComponent implements OnInit {
     localStorage.removeItem('wh_metering');
     localStorage.removeItem('energy_savinging');
 
-    location.reload();
+    this.router.navigate(['/dashboard']);
 
     console.log("Super_Admin_Home Clicked at dashboard")
   }

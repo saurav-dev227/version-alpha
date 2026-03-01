@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { Observable, interval, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -38,7 +39,7 @@ export class FirePumpAlarmComponent implements OnInit, OnDestroy {
   @ViewChildren(MatSort) sort = new QueryList<MatSort>();
   @ViewChild(MatTable) table: MatTable<DataTableItem>;
 
-  constructor(private user: UserService, private dataService: DataService) { }
+  constructor(private user: UserService, private dataService: DataService, private router: Router) { }
   myObj = JSON.parse(localStorage.getItem("account"));
   user_id = this.myObj["id"];
   user_type = this.myObj["UserType"];
@@ -117,7 +118,7 @@ export class FirePumpAlarmComponent implements OnInit, OnDestroy {
   }
   home() {
     localStorage.removeItem('customer');
-    location.reload();
+    this.router.navigate(['/dashboard']);
   }
 
   getFireAlarmEmailHistory() {
